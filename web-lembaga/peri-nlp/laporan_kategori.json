@@ -1,0 +1,62 @@
+{
+  "jumlah_data": 240,
+  "data_latih": 192,
+  "data_uji": 48,
+  "konfigurasi": {
+    "algoritma": "logistic_regression",
+    "fitur": "unigram",
+    "parameter": 10.0
+  },
+  "cv_f1_macro": 0.8814,
+  "accuracy": 0.8333,
+  "precision_macro": 0.8374,
+  "recall_macro": 0.8289,
+  "f1_macro": 0.8286,
+  "confusion_matrix": {
+    "label": [
+      "kerjasama",
+      "kritik",
+      "lainnya",
+      "pertanyaan",
+      "saran"
+    ],
+    "nilai": [
+      [
+        8,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        7,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        9,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        10,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        1,
+        6
+      ]
+    ]
+  },
+  "catatan": "Dilatih pada contoh umpan balik yang ditulis manual (bukan data asli peserta PERI). Skor di atas belum mencerminkan kinerja pada umpan balik nyata."
+}
