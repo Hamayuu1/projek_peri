@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kelola Program — PERI Admin</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/guard.js"></script>
+  </head>
+  <body data-page="kelola-program">
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark"></div>
+          <div>
+            <div class="brand-name">PERI Admin</div>
+            <div class="brand-sub">Perempuan Kreatif Indonesia</div>
+          </div>
+        </div>
+        <nav class="nav">
+          <a class="nav-item" href="dashboard.html">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-item active" href="kelola-program.html">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <span>Kelola program</span>
+          </a>
+          <a class="nav-item" href="pendaftar.html">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Pendaftar</span>
+          </a>
+          <a class="nav-item" href="buku-tamu.html">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              ></path>
+            </svg>
+            <span>Buku tamu</span>
+          </a>
+          <a class="nav-item" href="kinerja-program.html">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="12" y1="20" x2="12" y2="10"></line>
+              <line x1="18" y1="20" x2="18" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="16"></line>
+            </svg>
+            <span>Kinerja program</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <p class="page-title">Kelola program</p>
+            <p class="page-sub">Tambah, ubah, atau hapus program kerja PERI</p>
+          </div>
+          <div class="avatar">A</div>
+        </div>
+
+        <div class="toolbar" style="justify-content: flex-end">
+          <button class="btn btn-primary" id="btn-tambah-program">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Tambah program
+          </button>
+        </div>
+
+        <div class="panel">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nama program</th>
+                  <th>Tujuan</th>
+                  <th>Periode</th>
+                  <th>Pendaftar</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="program-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modal tambah/ubah program -->
+    <div class="modal-backdrop" id="program-modal">
+      <div class="modal">
+        <h3 id="program-modal-title">Tambah program</h3>
+        <div class="field">
+          <label for="input-nama">Nama program</label>
+          <input
+            type="text"
+            id="input-nama"
+            placeholder="Digital Skill Academy"
+          />
+        </div>
+        <div class="field">
+          <label for="input-tujuan">Tujuan</label>
+          <input
+            type="text"
+            id="input-tujuan"
+            placeholder="Adaptasi teknologi & inovasi"
+          />
+        </div>
+        <div class="field">
+          <label for="input-periode">Periode</label>
+          <select id="input-periode">
+            <option>Mingguan</option>
+            <option>Bulanan</option>
+            <option>Triwulanan</option>
+            <option>Semesteran</option>
+            <option>Tahunan</option>
+          </select>
+        </div>
+        <p class="error-text" id="program-error">
+          Nama program dan tujuan wajib diisi.
+        </p>
+        <div class="modal-actions">
+          <button class="btn" id="btn-batal-program">Batal</button>
+          <button class="btn btn-primary" id="btn-simpan-program">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
