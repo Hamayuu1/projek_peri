@@ -1,0 +1,2 @@
+{ "name": "peri-recommendation", "version": "0.1.0", "type": "module",
+  "scripts": { "start": "npx serve .", "test": "node tests/engine.test.js" } }

@@ -1,0 +1,3195 @@
+{
+ "_catatan": "DATA DUMMY untuk uji coba (50 profil x 10 program = 500 penilaian). Bukan penilaian pengurus PERI. admin_rating: 0=tidak sesuai, 1=kurang sesuai, 2=sesuai, 3=sangat sesuai.",
+ "profiles": [
+  {
+   "id": 1,
+   "age": 28,
+   "employment_status": "irt",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "kesehatan_mental",
+    "kesehatan_parenting"
+   ],
+   "goals": [
+    "pemulihan_diri"
+   ]
+  },
+  {
+   "id": 2,
+   "age": 35,
+   "employment_status": "irt",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "kewirausahaan",
+    "keuangan_usaha"
+   ],
+   "goals": [
+    "akses_permodalan",
+    "kemandirian_ekonomi"
+   ]
+  },
+  {
+   "id": 3,
+   "age": 19,
+   "employment_status": "pelajar",
+   "economic_condition": "menengah",
+   "interests": [
+    "literasi_advokasi",
+    "karya_kreatif"
+   ],
+   "goals": [
+    "promosi_karya",
+    "perluas_jejaring"
+   ]
+  },
+  {
+   "id": 4,
+   "age": 42,
+   "employment_status": "karyawan",
+   "economic_condition": "mapan",
+   "interests": [
+    "sosial_lingkungan",
+    "jejaring_kolaborasi"
+   ],
+   "goals": [
+    "kontribusi_sosial",
+    "perluas_jejaring"
+   ]
+  },
+  {
+   "id": 5,
+   "age": 30,
+   "employment_status": "wirausaha",
+   "economic_condition": "menengah",
+   "interests": [
+    "pemasaran_digital",
+    "kewirausahaan"
+   ],
+   "goals": [
+    "promosi_karya",
+    "kemandirian_ekonomi"
+   ]
+  },
+  {
+   "id": 6,
+   "age": 55,
+   "employment_status": "irt",
+   "economic_condition": "menengah",
+   "interests": [
+    "kesehatan_parenting",
+    "kesehatan_mental"
+   ],
+   "goals": [
+    "pemulihan_diri"
+   ]
+  },
+  {
+   "id": 7,
+   "age": 24,
+   "employment_status": "belum_bekerja",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "pemasaran_digital",
+    "kewirausahaan"
+   ],
+   "goals": [
+    "tambah_keterampilan",
+    "kemandirian_ekonomi"
+   ]
+  },
+  {
+   "id": 8,
+   "age": 38,
+   "employment_status": "irt",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "pendidikan_anak"
+   ],
+   "goals": [
+    "bantuan_pendidikan_anak"
+   ]
+  },
+  {
+   "id": 9,
+   "age": 17,
+   "employment_status": "pelajar",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "pendidikan_anak"
+   ],
+   "goals": [
+    "bantuan_pendidikan_anak",
+    "tambah_keterampilan"
+   ]
+  },
+  {
+   "id": 10,
+   "age": 33,
+   "employment_status": "wirausaha",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "keuangan_usaha",
+    "kewirausahaan"
+   ],
+   "goals": [
+    "akses_permodalan"
+   ]
+  },
+  {
+   "id": 11,
+   "age": 26,
+   "employment_status": "karyawan",
+   "economic_condition": "menengah",
+   "interests": [
+    "literasi_advokasi",
+    "jejaring_kolaborasi"
+   ],
+   "goals": [
+    "perluas_jejaring",
+    "kontribusi_sosial"
+   ]
+  },
+  {
+   "id": 12,
+   "age": 47,
+   "employment_status": "irt",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "kesehatan_mental",
+    "kesehatan_parenting"
+   ],
+   "goals": [
+    "pemulihan_diri",
+    "kemandirian_ekonomi"
+   ]
+  },
+  {
+   "id": 13,
+   "age": 22,
+   "employment_status": "pelajar",
+   "economic_condition": "menengah",
+   "interests": [
+    "pemasaran_digital",
+    "karya_kreatif"
+   ],
+   "goals": [
+    "tambah_keterampilan",
+    "promosi_karya"
+   ]
+  },
+  {
+   "id": 14,
+   "age": 40,
+   "employment_status": "lainnya",
+   "economic_condition": "menengah",
+   "interests": [
+    "sosial_lingkungan",
+    "kesehatan_parenting"
+   ],
+   "goals": [
+    "kontribusi_sosial"
+   ]
+  },
+  {
+   "id": 15,
+   "age": 29,
+   "employment_status": "wirausaha",
+   "economic_condition": "mapan",
+   "interests": [
+    "karya_kreatif",
+    "pemasaran_digital"
+   ],
+   "goals": [
+    "promosi_karya",
+    "perluas_jejaring"
+   ]
+  },
+  {
+   "id": 16,
+   "age": 51,
+   "employment_status": "irt",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "kewirausahaan",
+    "keuangan_usaha"
+   ],
+   "goals": [
+    "kemandirian_ekonomi",
+    "akses_permodalan"
+   ]
+  },
+  {
+   "id": 17,
+   "age": 21,
+   "employment_status": "belum_bekerja",
+   "economic_condition": "menengah",
+   "interests": [
+    "kesehatan_mental",
+    "literasi_advokasi"
+   ],
+   "goals": [
+    "pemulihan_diri",
+    "perluas_jejaring"
+   ]
+  },
+  {
+   "id": 18,
+   "age": 36,
+   "employment_status": "karyawan",
+   "economic_condition": "menengah",
+   "interests": [
+    "kesehatan_parenting",
+    "pendidikan_anak"
+   ],
+   "goals": [
+    "bantuan_pendidikan_anak"
+   ]
+  },
+  {
+   "id": 19,
+   "age": 27,
+   "employment_status": "irt",
+   "economic_condition": "menengah",
+   "interests": [
+    "kewirausahaan",
+    "pemasaran_digital"
+   ],
+   "goals": [
+    "kemandirian_ekonomi",
+    "tambah_keterampilan"
+   ]
+  },
+  {
+   "id": 20,
+   "age": 45,
+   "employment_status": "wirausaha",
+   "economic_condition": "menengah",
+   "interests": [
+    "jejaring_kolaborasi",
+    "kewirausahaan"
+   ],
+   "goals": [
+    "perluas_jejaring",
+    "kemandirian_ekonomi"
+   ]
+  },
+  {
+   "id": 21,
+   "age": 20,
+   "employment_status": "pelajar",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "pemasaran_digital",
+    "kewirausahaan"
+   ],
+   "goals": [
+    "tambah_keterampilan"
+   ]
+  },
+  {
+   "id": 22,
+   "age": 32,
+   "employment_status": "irt",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "kesehatan_mental",
+    "pendidikan_anak"
+   ],
+   "goals": [
+    "pemulihan_diri",
+    "bantuan_pendidikan_anak"
+   ]
+  },
+  {
+   "id": 23,
+   "age": 58,
+   "employment_status": "irt",
+   "economic_condition": "menengah",
+   "interests": [
+    "sosial_lingkungan",
+    "kesehatan_parenting"
+   ],
+   "goals": [
+    "kontribusi_sosial"
+   ]
+  },
+  {
+   "id": 24,
+   "age": 25,
+   "employment_status": "karyawan",
+   "economic_condition": "mapan",
+   "interests": [
+    "pemasaran_digital",
+    "literasi_advokasi"
+   ],
+   "goals": [
+    "promosi_karya",
+    "perluas_jejaring"
+   ]
+  },
+  {
+   "id": 25,
+   "age": 34,
+   "employment_status": "wirausaha",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "kewirausahaan",
+    "keuangan_usaha",
+    "pemasaran_digital"
+   ],
+   "goals": [
+    "akses_permodalan",
+    "tambah_keterampilan",
+    "kemandirian_ekonomi"
+   ]
+  },
+  {
+   "id": 26,
+   "age": 23,
+   "employment_status": "pelajar",
+   "economic_condition": "menengah",
+   "interests": [
+    "karya_kreatif",
+    "jejaring_kolaborasi"
+   ],
+   "goals": [
+    "promosi_karya",
+    "perluas_jejaring"
+   ]
+  },
+  {
+   "id": 27,
+   "age": 39,
+   "employment_status": "irt",
+   "economic_condition": "menengah",
+   "interests": [
+    "kesehatan_mental",
+    "kesehatan_parenting"
+   ],
+   "goals": [
+    "pemulihan_diri",
+    "tambah_keterampilan"
+   ]
+  },
+  {
+   "id": 28,
+   "age": 31,
+   "employment_status": "belum_bekerja",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "kewirausahaan",
+    "pemasaran_digital"
+   ],
+   "goals": [
+    "kemandirian_ekonomi",
+    "tambah_keterampilan"
+   ]
+  },
+  {
+   "id": 29,
+   "age": 44,
+   "employment_status": "karyawan",
+   "economic_condition": "menengah",
+   "interests": [
+    "literasi_advokasi",
+    "sosial_lingkungan"
+   ],
+   "goals": [
+    "kontribusi_sosial",
+    "perluas_jejaring"
+   ]
+  },
+  {
+   "id": 30,
+   "age": 18,
+   "employment_status": "pelajar",
+   "economic_condition": "menengah",
+   "interests": [
+    "kesehatan_mental",
+    "literasi_advokasi"
+   ],
+   "goals": [
+    "pemulihan_diri"
+   ]
+  },
+  {
+   "id": 31,
+   "age": 37,
+   "employment_status": "irt",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "kewirausahaan",
+    "kesehatan_mental"
+   ],
+   "goals": [
+    "kemandirian_ekonomi",
+    "pemulihan_diri"
+   ]
+  },
+  {
+   "id": 32,
+   "age": 28,
+   "employment_status": "wirausaha",
+   "economic_condition": "menengah",
+   "interests": [
+    "keuangan_usaha",
+    "kewirausahaan"
+   ],
+   "goals": [
+    "akses_permodalan",
+    "kemandirian_ekonomi"
+   ]
+  },
+  {
+   "id": 33,
+   "age": 50,
+   "employment_status": "karyawan",
+   "economic_condition": "mapan",
+   "interests": [
+    "jejaring_kolaborasi",
+    "kesehatan_parenting"
+   ],
+   "goals": [
+    "perluas_jejaring"
+   ]
+  },
+  {
+   "id": 34,
+   "age": 24,
+   "employment_status": "pelajar",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "pendidikan_anak",
+    "kewirausahaan"
+   ],
+   "goals": [
+    "bantuan_pendidikan_anak",
+    "tambah_keterampilan"
+   ]
+  },
+  {
+   "id": 35,
+   "age": 41,
+   "employment_status": "wirausaha",
+   "economic_condition": "menengah",
+   "interests": [
+    "pemasaran_digital",
+    "karya_kreatif"
+   ],
+   "goals": [
+    "promosi_karya"
+   ]
+  },
+  {
+   "id": 36,
+   "age": 35,
+   "employment_status": "irt",
+   "economic_condition": "menengah",
+   "interests": [
+    "kesehatan_parenting",
+    "pendidikan_anak"
+   ],
+   "goals": [
+    "pemulihan_diri",
+    "bantuan_pendidikan_anak"
+   ]
+  },
+  {
+   "id": 37,
+   "age": 29,
+   "employment_status": "belum_bekerja",
+   "economic_condition": "menengah",
+   "interests": [
+    "pemasaran_digital",
+    "karya_kreatif",
+    "kewirausahaan"
+   ],
+   "goals": [
+    "tambah_keterampilan",
+    "kemandirian_ekonomi",
+    "promosi_karya"
+   ]
+  },
+  {
+   "id": 38,
+   "age": 62,
+   "employment_status": "irt",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "sosial_lingkungan",
+    "kesehatan_mental"
+   ],
+   "goals": [
+    "kontribusi_sosial",
+    "pemulihan_diri"
+   ]
+  },
+  {
+   "id": 39,
+   "age": 26,
+   "employment_status": "karyawan",
+   "economic_condition": "menengah",
+   "interests": [
+    "kesehatan_mental",
+    "jejaring_kolaborasi"
+   ],
+   "goals": [
+    "pemulihan_diri",
+    "perluas_jejaring"
+   ]
+  },
+  {
+   "id": 40,
+   "age": 33,
+   "employment_status": "irt",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "keuangan_usaha",
+    "kewirausahaan"
+   ],
+   "goals": [
+    "akses_permodalan"
+   ]
+  },
+  {
+   "id": 41,
+   "age": 21,
+   "employment_status": "pelajar",
+   "economic_condition": "mapan",
+   "interests": [
+    "literasi_advokasi",
+    "pemasaran_digital"
+   ],
+   "goals": [
+    "promosi_karya",
+    "perluas_jejaring"
+   ]
+  },
+  {
+   "id": 42,
+   "age": 46,
+   "employment_status": "irt",
+   "economic_condition": "menengah",
+   "interests": [
+    "kewirausahaan",
+    "karya_kreatif"
+   ],
+   "goals": [
+    "kemandirian_ekonomi",
+    "promosi_karya"
+   ]
+  },
+  {
+   "id": 43,
+   "age": 30,
+   "employment_status": "karyawan",
+   "economic_condition": "menengah",
+   "interests": [
+    "kesehatan_parenting",
+    "kesehatan_mental"
+   ],
+   "goals": [
+    "pemulihan_diri"
+   ]
+  },
+  {
+   "id": 44,
+   "age": 36,
+   "employment_status": "wirausaha",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "kewirausahaan",
+    "sosial_lingkungan"
+   ],
+   "goals": [
+    "kemandirian_ekonomi",
+    "kontribusi_sosial"
+   ]
+  },
+  {
+   "id": 45,
+   "age": 19,
+   "employment_status": "pelajar",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "literasi_advokasi",
+    "pendidikan_anak"
+   ],
+   "goals": [
+    "bantuan_pendidikan_anak"
+   ]
+  },
+  {
+   "id": 46,
+   "age": 52,
+   "employment_status": "wirausaha",
+   "economic_condition": "mapan",
+   "interests": [
+    "jejaring_kolaborasi",
+    "literasi_advokasi"
+   ],
+   "goals": [
+    "perluas_jejaring",
+    "kontribusi_sosial"
+   ]
+  },
+  {
+   "id": 47,
+   "age": 27,
+   "employment_status": "belum_bekerja",
+   "economic_condition": "menengah",
+   "interests": [
+    "kesehatan_mental",
+    "kewirausahaan"
+   ],
+   "goals": [
+    "pemulihan_diri",
+    "kemandirian_ekonomi"
+   ]
+  },
+  {
+   "id": 48,
+   "age": 43,
+   "employment_status": "irt",
+   "economic_condition": "kurang_mampu",
+   "interests": [
+    "kewirausahaan",
+    "pendidikan_anak"
+   ],
+   "goals": [
+    "kemandirian_ekonomi",
+    "bantuan_pendidikan_anak"
+   ]
+  },
+  {
+   "id": 49,
+   "age": 25,
+   "employment_status": "pelajar",
+   "economic_condition": "menengah",
+   "interests": [
+    "karya_kreatif",
+    "pemasaran_digital"
+   ],
+   "goals": [
+    "promosi_karya",
+    "tambah_keterampilan"
+   ]
+  },
+  {
+   "id": 50,
+   "age": 34,
+   "employment_status": "karyawan",
+   "economic_condition": "menengah",
+   "interests": [
+    "kesehatan_parenting",
+    "literasi_advokasi"
+   ],
+   "goals": [
+    "pemulihan_diri",
+    "perluas_jejaring"
+   ]
+  }
+ ],
+ "ground_truth": [
+  {
+   "profile_id": 1,
+   "program_id": 1,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 1,
+   "program_id": 2,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 1,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 1,
+   "program_id": 4,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 1,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 1,
+   "program_id": 6,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 1,
+   "program_id": 7,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 1,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 1,
+   "program_id": 9,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 1,
+   "program_id": 10,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 2,
+   "program_id": 1,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 2,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 2,
+   "program_id": 3,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 2,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 2,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 2,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 2,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 2,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 2,
+   "program_id": 9,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 2,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 3,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 3,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 3,
+   "program_id": 3,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 3,
+   "program_id": 4,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 3,
+   "program_id": 5,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 3,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 3,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 3,
+   "program_id": 8,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 3,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 3,
+   "program_id": 10,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 4,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 4,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 4,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 4,
+   "program_id": 4,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 4,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 4,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 4,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 4,
+   "program_id": 8,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 4,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 4,
+   "program_id": 10,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 5,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 5,
+   "program_id": 2,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 5,
+   "program_id": 3,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 5,
+   "program_id": 4,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 5,
+   "program_id": 5,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 5,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 5,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 5,
+   "program_id": 8,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 5,
+   "program_id": 9,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 5,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 6,
+   "program_id": 1,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 6,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 6,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 6,
+   "program_id": 4,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 6,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 6,
+   "program_id": 6,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 6,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 6,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 6,
+   "program_id": 9,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 6,
+   "program_id": 10,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 7,
+   "program_id": 1,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 7,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 7,
+   "program_id": 3,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 7,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 7,
+   "program_id": 5,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 7,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 7,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 7,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 7,
+   "program_id": 9,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 7,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 8,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 8,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 8,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 8,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 8,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 8,
+   "program_id": 6,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 8,
+   "program_id": 7,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 8,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 8,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 8,
+   "program_id": 10,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 9,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 9,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 9,
+   "program_id": 3,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 9,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 9,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 9,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 9,
+   "program_id": 7,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 9,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 9,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 9,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 10,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 10,
+   "program_id": 2,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 10,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 10,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 10,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 10,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 10,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 10,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 10,
+   "program_id": 9,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 10,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 11,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 11,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 11,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 11,
+   "program_id": 4,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 11,
+   "program_id": 5,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 11,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 11,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 11,
+   "program_id": 8,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 11,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 11,
+   "program_id": 10,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 12,
+   "program_id": 1,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 12,
+   "program_id": 2,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 12,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 12,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 12,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 12,
+   "program_id": 6,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 12,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 12,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 12,
+   "program_id": 9,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 12,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 13,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 13,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 13,
+   "program_id": 3,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 13,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 13,
+   "program_id": 5,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 13,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 13,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 13,
+   "program_id": 8,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 13,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 13,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 14,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 14,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 14,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 14,
+   "program_id": 4,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 14,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 14,
+   "program_id": 6,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 14,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 14,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 14,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 14,
+   "program_id": 10,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 15,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 15,
+   "program_id": 2,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 15,
+   "program_id": 3,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 15,
+   "program_id": 4,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 15,
+   "program_id": 5,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 15,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 15,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 15,
+   "program_id": 8,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 15,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 15,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 16,
+   "program_id": 1,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 16,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 16,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 16,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 16,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 16,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 16,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 16,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 16,
+   "program_id": 9,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 16,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 17,
+   "program_id": 1,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 17,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 17,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 17,
+   "program_id": 4,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 17,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 17,
+   "program_id": 6,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 17,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 17,
+   "program_id": 8,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 17,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 17,
+   "program_id": 10,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 18,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 18,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 18,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 18,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 18,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 18,
+   "program_id": 6,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 18,
+   "program_id": 7,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 18,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 18,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 18,
+   "program_id": 10,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 19,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 19,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 19,
+   "program_id": 3,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 19,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 19,
+   "program_id": 5,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 19,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 19,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 19,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 19,
+   "program_id": 9,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 19,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 20,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 20,
+   "program_id": 2,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 20,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 20,
+   "program_id": 4,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 20,
+   "program_id": 5,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 20,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 20,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 20,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 20,
+   "program_id": 9,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 20,
+   "program_id": 10,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 21,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 21,
+   "program_id": 2,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 21,
+   "program_id": 3,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 21,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 21,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 21,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 21,
+   "program_id": 7,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 21,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 21,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 21,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 22,
+   "program_id": 1,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 22,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 22,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 22,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 22,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 22,
+   "program_id": 6,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 22,
+   "program_id": 7,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 22,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 22,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 22,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 23,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 23,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 23,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 23,
+   "program_id": 4,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 23,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 23,
+   "program_id": 6,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 23,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 23,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 23,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 23,
+   "program_id": 10,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 24,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 24,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 24,
+   "program_id": 3,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 24,
+   "program_id": 4,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 24,
+   "program_id": 5,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 24,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 24,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 24,
+   "program_id": 8,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 24,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 24,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 25,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 25,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 25,
+   "program_id": 3,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 25,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 25,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 25,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 25,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 25,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 25,
+   "program_id": 9,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 25,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 26,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 26,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 26,
+   "program_id": 3,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 26,
+   "program_id": 4,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 26,
+   "program_id": 5,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 26,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 26,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 26,
+   "program_id": 8,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 26,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 26,
+   "program_id": 10,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 27,
+   "program_id": 1,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 27,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 27,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 27,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 27,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 27,
+   "program_id": 6,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 27,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 27,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 27,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 27,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 28,
+   "program_id": 1,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 28,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 28,
+   "program_id": 3,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 28,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 28,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 28,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 28,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 28,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 28,
+   "program_id": 9,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 28,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 29,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 29,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 29,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 29,
+   "program_id": 4,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 29,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 29,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 29,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 29,
+   "program_id": 8,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 29,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 29,
+   "program_id": 10,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 30,
+   "program_id": 1,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 30,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 30,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 30,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 30,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 30,
+   "program_id": 6,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 30,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 30,
+   "program_id": 8,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 30,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 30,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 31,
+   "program_id": 1,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 31,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 31,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 31,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 31,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 31,
+   "program_id": 6,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 31,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 31,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 31,
+   "program_id": 9,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 31,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 32,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 32,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 32,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 32,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 32,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 32,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 32,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 32,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 32,
+   "program_id": 9,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 32,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 33,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 33,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 33,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 33,
+   "program_id": 4,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 33,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 33,
+   "program_id": 6,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 33,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 33,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 33,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 33,
+   "program_id": 10,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 34,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 34,
+   "program_id": 2,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 34,
+   "program_id": 3,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 34,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 34,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 34,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 34,
+   "program_id": 7,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 34,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 34,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 34,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 35,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 35,
+   "program_id": 2,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 35,
+   "program_id": 3,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 35,
+   "program_id": 4,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 35,
+   "program_id": 5,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 35,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 35,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 35,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 35,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 35,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 36,
+   "program_id": 1,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 36,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 36,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 36,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 36,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 36,
+   "program_id": 6,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 36,
+   "program_id": 7,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 36,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 36,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 36,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 37,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 37,
+   "program_id": 2,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 37,
+   "program_id": 3,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 37,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 37,
+   "program_id": 5,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 37,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 37,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 37,
+   "program_id": 8,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 37,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 37,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 38,
+   "program_id": 1,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 38,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 38,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 38,
+   "program_id": 4,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 38,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 38,
+   "program_id": 6,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 38,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 38,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 38,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 38,
+   "program_id": 10,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 39,
+   "program_id": 1,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 39,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 39,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 39,
+   "program_id": 4,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 39,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 39,
+   "program_id": 6,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 39,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 39,
+   "program_id": 8,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 39,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 39,
+   "program_id": 10,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 40,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 40,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 40,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 40,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 40,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 40,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 40,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 40,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 40,
+   "program_id": 9,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 40,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 41,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 41,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 41,
+   "program_id": 3,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 41,
+   "program_id": 4,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 41,
+   "program_id": 5,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 41,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 41,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 41,
+   "program_id": 8,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 41,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 41,
+   "program_id": 10,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 42,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 42,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 42,
+   "program_id": 3,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 42,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 42,
+   "program_id": 5,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 42,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 42,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 42,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 42,
+   "program_id": 9,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 42,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 43,
+   "program_id": 1,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 43,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 43,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 43,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 43,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 43,
+   "program_id": 6,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 43,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 43,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 43,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 43,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 44,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 44,
+   "program_id": 2,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 44,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 44,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 44,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 44,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 44,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 44,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 44,
+   "program_id": 9,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 44,
+   "program_id": 10,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 45,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 45,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 45,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 45,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 45,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 45,
+   "program_id": 6,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 45,
+   "program_id": 7,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 45,
+   "program_id": 8,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 45,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 45,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 46,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 46,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 46,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 46,
+   "program_id": 4,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 46,
+   "program_id": 5,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 46,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 46,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 46,
+   "program_id": 8,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 46,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 46,
+   "program_id": 10,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 47,
+   "program_id": 1,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 47,
+   "program_id": 2,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 47,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 47,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 47,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 47,
+   "program_id": 6,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 47,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 47,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 47,
+   "program_id": 9,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 47,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 48,
+   "program_id": 1,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 48,
+   "program_id": 2,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 48,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 48,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 48,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 48,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 48,
+   "program_id": 7,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 48,
+   "program_id": 8,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 48,
+   "program_id": 9,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 48,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 49,
+   "program_id": 1,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 49,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 49,
+   "program_id": 3,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 49,
+   "program_id": 4,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 49,
+   "program_id": 5,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 49,
+   "program_id": 6,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 49,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 49,
+   "program_id": 8,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 49,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 49,
+   "program_id": 10,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 50,
+   "program_id": 1,
+   "admin_rating": 1
+  },
+  {
+   "profile_id": 50,
+   "program_id": 2,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 50,
+   "program_id": 3,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 50,
+   "program_id": 4,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 50,
+   "program_id": 5,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 50,
+   "program_id": 6,
+   "admin_rating": 3
+  },
+  {
+   "profile_id": 50,
+   "program_id": 7,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 50,
+   "program_id": 8,
+   "admin_rating": 2
+  },
+  {
+   "profile_id": 50,
+   "program_id": 9,
+   "admin_rating": 0
+  },
+  {
+   "profile_id": 50,
+   "program_id": 10,
+   "admin_rating": 1
+  }
+ ]
+}
