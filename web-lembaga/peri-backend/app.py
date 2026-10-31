@@ -553,6 +553,25 @@ def daftar_program():
     return jsonify({"ok": True, "data": {"nama": nama, "email": email, "wa": wa, "program": program}}), 201
 
 
+@app.get("/api/pendaftaran-program")
+@peran_wajib("admin")
+def daftar_pendaftar_program():
+    """Daftar pendaftar program untuk panel admin (terbaru di atas)."""
+    with db().cursor() as cur:
+        cur.execute(
+            "SELECT id, nama, email, wa, program, created_at "
+            "FROM pendaftaran_program ORDER BY id DESC LIMIT 2000"
+        )
+        baris = cur.fetchall()
+    return jsonify({"pendaftar": [
+        {
+            "id": b["id"], "nama": b["nama"], "email": b["email"], "wa": b["wa"],
+            "program": b["program"], "tanggal": b["created_at"].strftime("%Y-%m-%d"),
+        }
+        for b in baris
+    ]})
+
+
 @app.get("/api/buku-tamu")
 @peran_wajib("admin")
 def daftar_umpan_balik():

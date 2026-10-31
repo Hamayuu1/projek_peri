@@ -66,7 +66,8 @@ function renderKinerjaTable(bodyId, withRank) {
   const body = document.getElementById(bodyId);
   if (!body) return;
   const sorted = [...programs].sort((a, b) => b.pendaftar - a.pendaftar);
-  const topId = sorted[0] ? sorted[0].id : null;
+  // Lencana "Terbanyak" hanya untuk program yang benar-benar sudah punya pendaftar.
+  const topId = sorted[0] && sorted[0].pendaftar > 0 ? sorted[0].id : null;
   body.innerHTML = sorted
     .map((p, i) => kinerjaRowHtml(p, withRank ? i + 1 : null, topId))
     .join("");
@@ -107,14 +108,51 @@ async function muatPesanApi() {
   }
 }
 
+// ---------- Pendaftar program (API peri-backend) ----------
+
+let pendaftarApiAktif = false;
+
+// Ambil pendaftar asli dari database. Gagal (server mati / bukan admin) -> daftar dikosongkan.
+async function muatPendaftarApi() {
+  try {
+    const r = await fetch(API_BASE + "/api/pendaftaran-program", {
+      credentials: "include",
+    });
+    if (!r.ok) throw new Error("API " + r.status);
+    const { pendaftar } = await r.json();
+    registrants = pendaftar.map((p) => ({
+      id: "api-" + p.id,
+      nama: p.nama,
+      email: p.email,
+      wa: p.wa,
+      program: p.program,
+      tanggal: p.tanggal,
+      duplikat: false,
+    }));
+    pendaftarApiAktif = true;
+  } catch (e) {
+    registrants = [];
+    pendaftarApiAktif = false;
+  }
+  hitungPendaftar();
+}
+
+// Jumlah pendaftar setiap program dihitung dari data pendaftaran asli.
+function hitungPendaftar() {
+  programs.forEach((p) => {
+    p.pendaftar = registrants.filter((r) => r.program === p.nama).length;
+  });
+}
+
 // ---------- Dashboard ----------
 
 async function initDashboard() {
   const elPendaftar = document.getElementById("stat-pendaftar");
   const elProgram = document.getElementById("stat-program");
   const elPesan = document.getElementById("stat-pesan");
-  await muatPesanApi();
-  if (elPendaftar) elPendaftar.textContent = registrants.length;
+  await Promise.all([muatPesanApi(), muatPendaftarApi()]);
+  if (elPendaftar)
+    elPendaftar.textContent = pendaftarApiAktif ? registrants.length : "–";
   if (elProgram) elProgram.textContent = programs.length;
   if (elPesan) elPesan.textContent = guestbook.filter((g) => !g.dibaca).length;
   renderKinerjaTable("kinerja-body", false);
@@ -244,7 +282,8 @@ function deleteProgram(id) {
   showToast("Program dihapus");
 }
 
-function initKelolaProgram() {
+async function initKelolaProgram() {
+  await muatPendaftarApi();
   renderProgramTable();
   document
     .getElementById("btn-tambah-program")
@@ -263,31 +302,29 @@ function initKelolaProgram() {
 // ---------- Pendaftar ----------
 
 function registrantRowHtml(r) {
-  const program = getProgramById(r.programId);
   return `
     <tr>
       <td>
         <div class="name-cell">
-          <span>${r.nama}</span>
+          <span>${esc(r.nama)}</span>
           ${r.duplikat ? '<span class="badge badge-warn">Duplikat</span>' : '<span class="badge badge-muted">Terverifikasi</span>'}
         </div>
       </td>
-      <td>${r.email}</td>
-      <td>${r.wa}</td>
-      <td>${program ? program.nama : "-"}</td>
+      <td>${esc(r.email)}</td>
+      <td>${esc(r.wa)}</td>
+      <td>${esc(r.program)}</td>
       <td>${formatTanggal(r.tanggal)}</td>
     </tr>`;
 }
 
 function currentFilteredRegistrants() {
-  const programId = document.getElementById("filter-program").value;
+  const programNama = document.getElementById("filter-program").value;
   const query = document
     .getElementById("search-pendaftar")
     .value.trim()
     .toLowerCase();
   return registrants.filter((r) => {
-    const matchProgram =
-      programId === "all" || r.programId === Number(programId);
+    const matchProgram = programNama === "all" || r.program === programNama;
     const haystack = `${r.nama} ${r.email} ${r.wa}`.toLowerCase();
     const matchSearch = !query || haystack.includes(query);
     return matchProgram && matchSearch;
@@ -299,7 +336,12 @@ function renderRegistrantTable() {
   if (!body) return;
   const rows = currentFilteredRegistrants();
   if (rows.length === 0) {
-    body.innerHTML = `<tr><td colspan="5"><div class="empty">Tidak ada pendaftar yang cocok dengan pencarian ini.</div></td></tr>`;
+    const pesan = !pendaftarApiAktif
+      ? "Data pendaftar belum bisa dimuat. Pastikan peri-backend berjalan (python app.py) dan Anda masuk sebagai admin."
+      : registrants.length === 0
+        ? "Belum ada pendaftar."
+        : "Tidak ada pendaftar yang cocok dengan pencarian ini.";
+    body.innerHTML = `<tr><td colspan="5"><div class="empty">${pesan}</div></td></tr>`;
     return;
   }
   body.innerHTML = rows.map(registrantRowHtml).join("");
@@ -308,7 +350,7 @@ function renderRegistrantTable() {
 function populateProgramFilter() {
   const select = document.getElementById("filter-program");
   const options = programs
-    .map((p) => `<option value="${p.id}">${p.nama}</option>`)
+    .map((p) => `<option value="${esc(p.nama)}">${esc(p.nama)}</option>`)
     .join("");
   select.innerHTML = `<option value="all">Semua program</option>${options}`;
 }
@@ -328,16 +370,17 @@ function exportCsv() {
     "Status",
   ];
   const lines = rows.map((r) => {
-    const program = getProgramById(r.programId);
     const status = r.duplikat ? "Duplikat" : "Terverifikasi";
     return [
       r.nama,
       r.email,
       r.wa,
-      program ? program.nama : "-",
+      r.program,
       formatTanggal(r.tanggal),
       status,
     ]
+      // Awalan ' mencegah isian seperti "=1+1" dibaca sebagai rumus saat CSV dibuka di Excel.
+      .map((v) => (/^[=+\-@]/.test(String(v)) ? "'" + v : v))
       .map((v) => `"${String(v).replace(/"/g, '""')}"`)
       .join(",");
   });
@@ -354,8 +397,9 @@ function exportCsv() {
   showToast("Data pendaftar diekspor ke CSV");
 }
 
-function initPendaftar() {
+async function initPendaftar() {
   populateProgramFilter();
+  await muatPendaftarApi();
   renderRegistrantTable();
   document
     .getElementById("filter-program")
@@ -519,7 +563,8 @@ async function initBukuTamu() {
 
 // ---------- Kinerja Program (halaman detail) ----------
 
-function initKinerjaProgram() {
+async function initKinerjaProgram() {
+  await muatPendaftarApi();
   renderKinerjaTable("kinerja-full-body", true);
 }
 
