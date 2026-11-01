@@ -130,6 +130,8 @@
       if (e.target.closest("[data-dp-close]")) tutup();
       else if (e.target.closest("[data-dp-lain]")) {
         tutup();
+        // Tutup tampilan lain yang menutupi daftar program (mis. hasil rekomendasi).
+        document.dispatchEvent(new CustomEvent("peri:lihat-program"));
         var grid = document.getElementById("program-grid");
         if (grid) grid.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -240,7 +242,7 @@
       (opsi.hint ? '<p class="dp-hint">' + esc(opsi.hint) + "</p>" : "") +
       '<p class="dp-error">' +
       svg("alert") +
-      '<span data-msg></span></p></div>'
+      "<span data-msg></span></p></div>"
     );
   }
 
@@ -422,14 +424,20 @@
       '<div class="dp-program">' +
       (p.gambar ? '<img src="' + esc(p.gambar) + '" alt="" />' : "") +
       "<div>" +
-      (p.kategori ? '<span class="dp-badge">' + esc(p.kategori) + "</span>" : "") +
+      (p.kategori
+        ? '<span class="dp-badge">' + esc(p.kategori) + "</span>"
+        : "") +
       "<h3>" +
       esc(p.nama) +
       "</h3>" +
       (p.deskripsi ? "<p>" + esc(p.deskripsi) + "</p>" : "") +
       "</div></div>" +
       field("dp-nama", "Nama lengkap", { value: d.nama, readonly: true }) +
-      field("dp-email", "Email", { value: d.email, readonly: true, lock: true }) +
+      field("dp-email", "Email", {
+        value: d.email,
+        readonly: true,
+        lock: true,
+      }) +
       field("dp-wa", "Nomor WhatsApp", { value: d.wa, readonly: true }) +
       "</div>" +
       '<div class="dp-actions">' +
@@ -484,7 +492,9 @@
     if (!tombol) return;
     e.preventDefault();
     var kartu = tombol.closest(".program-card-full");
+    var nama = tombol.getAttribute("data-daftar-nama");
     if (kartu) mulai(infoDariKartu(kartu));
+    else if (nama) mulai(cariProgram(nama)); // tombol di luar kartu (unggulan / hasil rekomendasi)
   });
 
   // Setelah login berhasil (dikirim oleh auth-modal.js), lanjutkan ke formulir.

@@ -1,0 +1,532 @@
+/* =========================================================
+   PERI — Halaman Program: blok "Program Unggulan", band
+   "Temukan Program Anda", dan wizard 3 langkah.
+   Desain: Figma node 152:144 (halaman), 166:371 / 167:263 / 168:536 (wizard).
+   ========================================================= */
+
+/* ---------- Program unggulan ---------- */
+.tp-featured {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin: 0 0 56px;
+}
+.tp-featured img {
+  flex: none;
+  width: 388px;
+  max-width: 42%;
+  aspect-ratio: 388 / 225;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12);
+}
+.tp-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #c5404c;
+}
+.tp-featured h2 {
+  margin: 0 0 12px;
+  font-size: 34px;
+  line-height: 1.15;
+  color: var(--maroon);
+}
+.tp-featured p {
+  margin: 0 0 22px;
+  max-width: 560px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--maroon);
+}
+.tp-btn-red {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 22px;
+  border: 0;
+  border-radius: 30px;
+  background: #e0232e;
+  color: #fff;
+  font-family: "Roboto", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.tp-btn-red:hover {
+  background: #c41d27;
+}
+.tp-btn-red svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Band "Belum tahu program yang cocok?" ---------- */
+.tp-band {
+  padding: 64px 0;
+  background: #fff;
+}
+.tp-band .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+.tp-band h2 {
+  margin: 0 0 14px;
+  font-size: 38px;
+  line-height: 1.15;
+  color: var(--maroon);
+}
+.tp-band p {
+  margin: 0 0 26px;
+  max-width: 600px;
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--maroon);
+}
+.tp-band img {
+  flex: none;
+  width: 388px;
+  max-width: 42%;
+  aspect-ratio: 388 / 225;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12);
+}
+.tp-band .tp-btn-red {
+  padding: 13px 28px;
+  font-size: 17px;
+}
+
+/* ---------- Wizard (tampil di bawah navbar) ---------- */
+.tp-overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 93px; /* diatur ulang lewat JS sesuai tinggi navbar */
+  z-index: 40;
+  overflow-y: auto;
+  background: #fff;
+}
+.tp-overlay[hidden] {
+  display: none;
+}
+body.tp-open {
+  overflow: hidden;
+}
+.tp-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 44px 20px 72px;
+  text-align: center;
+}
+.tp-title {
+  margin: 0 0 24px;
+  font-family: "Roboto", sans-serif;
+  font-size: 40px;
+  line-height: 1.15;
+  font-weight: 700;
+  color: #500f11;
+}
+
+/* Penanda langkah */
+.tp-steps {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 0 0 32px;
+  padding: 0;
+  list-style: none;
+}
+.tp-steps li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  color: #500f11;
+}
+.tp-steps .tp-num {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border: 1px solid #aeaeae;
+  border-radius: 50%;
+  background: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  color: #500f11;
+}
+.tp-steps li.done .tp-num {
+  border-color: #a3162b;
+  color: #a3162b;
+}
+.tp-steps li.active .tp-num {
+  border-color: #a3162b;
+  background: #a3162b;
+  color: #fff;
+}
+.tp-steps li.active .tp-label {
+  font-weight: 500;
+}
+
+/* Kartu isi */
+.tp-card {
+  padding: 36px 40px 32px;
+  border: 1px solid #aeaeae;
+  border-radius: 29px;
+  background: #fff;
+  text-align: left;
+}
+.tp-group {
+  margin: 0 0 20px;
+}
+.tp-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #500f11;
+}
+.tp-help {
+  margin: -2px 0 10px;
+  font-size: 12px;
+  color: #6b5658;
+}
+.tp-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e6dee0;
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  color: #000;
+  outline: none;
+}
+.tp-input::placeholder {
+  color: #a99a9c;
+}
+.tp-input:focus {
+  border-color: #a3162b;
+  box-shadow: 0 0 0 3px rgba(163, 22, 43, 0.14);
+}
+.tp-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px 22px;
+}
+.tp-option {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e6dee0;
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  color: #000;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    color 0.15s;
+}
+.tp-option:hover {
+  border-color: #a3162b;
+}
+.tp-option[aria-checked="true"],
+.tp-option[aria-pressed="true"] {
+  border-color: #a3162b;
+  background: #fbeff3;
+  color: #a3162b;
+  font-weight: 500;
+}
+.tp-option:focus-visible {
+  outline: 2px solid #a3162b;
+  outline-offset: 2px;
+}
+.tp-group.has-error .tp-input,
+.tp-group.has-error .tp-option {
+  border-color: #e0232e;
+}
+.tp-error {
+  display: none;
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #e0232e;
+}
+.tp-group.has-error .tp-error {
+  display: block;
+}
+
+/* Tombol bawah */
+.tp-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 28px;
+}
+.tp-btn {
+  padding: 12px 24px;
+  border: 1px solid #a3162b;
+  border-radius: 100px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #a3162b;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.tp-btn:hover {
+  background: #fbeff3;
+}
+.tp-btn.primary {
+  background: #a3162b;
+  color: #fdfdfd;
+}
+.tp-btn.primary:hover {
+  background: #8a1224;
+}
+
+/* Hasil rekomendasi (Figma 167:359) */
+.tp-page.wide {
+  max-width: 1100px;
+}
+.tp-eyebrow2 {
+  margin: -8px 0 24px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #c5404c;
+}
+.tp-main {
+  padding: 28px 32px;
+  border: 1px solid #aeaeae;
+  border-radius: 20px;
+  background: #f0f0f0;
+  text-align: left;
+}
+.tp-main-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+}
+.tp-main-text {
+  flex: 1;
+}
+.tp-main .tp-eyebrow {
+  font-size: 18px;
+  text-transform: none;
+}
+.tp-main h3 {
+  margin: 0 0 12px;
+  font-size: 30px;
+  line-height: 1.2;
+  color: #500f11;
+}
+.tp-main-text p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.5;
+  color: #500f11;
+}
+.tp-main-top img {
+  flex: none;
+  width: 340px;
+  max-width: 40%;
+  aspect-ratio: 385 / 223;
+  object-fit: cover;
+  border-radius: 20px;
+}
+.tp-why h4 {
+  margin: 4px 0 12px;
+  font-size: 20px;
+  color: #500f11;
+}
+.tp-checks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 24px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+  max-width: 640px;
+}
+.tp-checks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  color: #2e9e1c;
+}
+.tp-score {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 0 16px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  background: #a3162b;
+  color: #fff;
+}
+.tp-score b {
+  font-size: 30px;
+  line-height: 1.1;
+}
+.tp-score span {
+  font-size: 13px;
+}
+.tp-reason {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.55;
+  color: rgba(12, 0, 0, 0.6);
+}
+.tp-main-act {
+  margin-top: 22px;
+  text-align: right;
+}
+.tp-other-title {
+  margin: 44px 0 24px;
+  font-size: 30px;
+  color: #500f11;
+}
+.tp-results {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  text-align: left;
+}
+.tp-result {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #eadfe2;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.08);
+}
+.tp-result img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  background: #ead7de;
+}
+.tp-result .tp-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+}
+.tp-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tp-badge {
+  padding: 3px 14px;
+  border-radius: 100px;
+  background: #fbeff3;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9d1e4a;
+}
+.tp-pct {
+  font-size: 14px;
+  font-weight: 700;
+  color: #c5404c;
+}
+.tp-result h3 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.3;
+  color: #500f11;
+}
+.tp-result p {
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #500f11;
+}
+.tp-result .tp-btn-red {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 10px 20px;
+  font-size: 15px;
+}
+.tp-note {
+  margin: 24px 0 18px;
+  font-size: 12px;
+  color: #6b5658;
+  text-align: center;
+}
+.tp-main .tp-btn.primary {
+  padding: 13px 30px;
+  font-size: 16px;
+}
+
+@media (max-width: 800px) {
+  .tp-featured,
+  .tp-band .container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+  .tp-featured img,
+  .tp-band img {
+    width: 100%;
+    max-width: 100%;
+  }
+  .tp-band .container {
+    flex-direction: column-reverse;
+  }
+  .tp-band h2 {
+    font-size: 28px;
+  }
+  .tp-title {
+    font-size: 28px;
+  }
+  .tp-steps {
+    gap: 12px;
+  }
+  .tp-steps li {
+    font-size: 15px;
+  }
+  .tp-card {
+    padding: 24px 18px;
+  }
+  .tp-options {
+    grid-template-columns: 1fr;
+  }
+  .tp-results,
+  .tp-checks {
+    grid-template-columns: 1fr;
+  }
+  .tp-main {
+    padding: 20px 18px;
+  }
+  .tp-main-top {
+    flex-direction: column-reverse;
+  }
+  .tp-main-top img {
+    width: 100%;
+    max-width: 100%;
+  }
+  .tp-main-act {
+    text-align: center;
+  }
+}
