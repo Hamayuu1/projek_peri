@@ -559,17 +559,34 @@ def daftar_pendaftar_program():
     """Daftar pendaftar program untuk panel admin (terbaru di atas)."""
     with db().cursor() as cur:
         cur.execute(
-            "SELECT id, nama, email, wa, program, created_at "
+            "SELECT id, nama, email, wa, program, status, created_at "
             "FROM pendaftaran_program ORDER BY id DESC LIMIT 2000"
         )
         baris = cur.fetchall()
     return jsonify({"pendaftar": [
         {
             "id": b["id"], "nama": b["nama"], "email": b["email"], "wa": b["wa"],
-            "program": b["program"], "tanggal": b["created_at"].strftime("%Y-%m-%d"),
+            "program": b["program"], "status": b["status"],
+            "tanggal": b["created_at"].strftime("%Y-%m-%d"),
         }
         for b in baris
     ]})
+
+
+@app.post("/api/pendaftaran-program/<int:pid>/konfirmasi")
+@peran_wajib("admin")
+def konfirmasi_pendaftar_program(pid: int):
+    """Admin menerima (diterima=true) atau membatalkan penerimaan (diterima=false) pendaftar."""
+    nilai = data_json().get("diterima")
+    if not isinstance(nilai, bool):
+        return galat("Nilai 'diterima' harus true atau false.")
+    status = "diterima" if nilai else "baru"
+    with db().cursor() as cur:
+        cur.execute("SELECT id FROM pendaftaran_program WHERE id=%s", (pid,))
+        if not cur.fetchone():
+            return galat("Pendaftar tidak ditemukan.", 404)
+        cur.execute("UPDATE pendaftaran_program SET status=%s WHERE id=%s", (status, pid))
+    return jsonify({"ok": True, "status": status})
 
 
 @app.get("/api/buku-tamu")

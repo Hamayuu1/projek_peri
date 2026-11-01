@@ -211,6 +211,10 @@ tbody tr:last-child td {
   background: var(--warn-bg);
   color: var(--warn-text);
 }
+.badge-ok {
+  background: #e6f3eb;
+  color: #2e7d4f;
+}
 .badge-muted {
   background: var(--surface-muted);
   color: var(--text-secondary);

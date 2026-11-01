@@ -127,6 +127,8 @@ async function muatPendaftarApi() {
       wa: p.wa,
       program: p.program,
       tanggal: p.tanggal,
+      status: p.status,
+      apiId: p.id,
       duplikat: false,
     }));
     pendaftarApiAktif = true;
@@ -314,7 +316,49 @@ function registrantRowHtml(r) {
       <td>${esc(r.wa)}</td>
       <td>${esc(r.program)}</td>
       <td>${formatTanggal(r.tanggal)}</td>
+      <td>${konfirmasiHtml(r)}</td>
     </tr>`;
+}
+
+// Kolom konfirmasi: tombol "Terima" untuk pendaftar baru, lencana "Diterima" (bisa dibatalkan) bila sudah diterima.
+function konfirmasiHtml(r) {
+  if (r.status === "diterima") {
+    return `<div class="row-actions" style="align-items: center">
+        <span class="badge badge-ok">Diterima</span>
+        <button class="btn btn-sm btn-ghost btn-batal-terima" data-id="${esc(r.id)}">Batalkan</button>
+      </div>`;
+  }
+  return `<button class="btn btn-sm btn-primary btn-terima" data-id="${esc(r.id)}">Terima</button>`;
+}
+
+async function ubahKonfirmasi(id, diterima, tombol) {
+  const r = registrants.find((x) => x.id === id);
+  if (!r) return;
+  tombol.disabled = true;
+  try {
+    const res = await fetch(
+      API_BASE + "/api/pendaftaran-program/" + r.apiId + "/konfirmasi",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ diterima }),
+      },
+    );
+    if (!res.ok) throw new Error("API " + res.status);
+    r.status = diterima ? "diterima" : "baru";
+    renderRegistrantTable();
+    showToast(
+      diterima
+        ? `${r.nama} diterima di ${r.program}`
+        : `Penerimaan ${r.nama} dibatalkan`,
+    );
+  } catch (e) {
+    tombol.disabled = false;
+    showToast(
+      "Gagal menyimpan konfirmasi. Pastikan peri-backend berjalan dan Anda masuk sebagai admin.",
+    );
+  }
 }
 
 function currentFilteredRegistrants() {
@@ -341,7 +385,7 @@ function renderRegistrantTable() {
       : registrants.length === 0
         ? "Belum ada pendaftar."
         : "Tidak ada pendaftar yang cocok dengan pencarian ini.";
-    body.innerHTML = `<tr><td colspan="5"><div class="empty">${pesan}</div></td></tr>`;
+    body.innerHTML = `<tr><td colspan="6"><div class="empty">${pesan}</div></td></tr>`;
     return;
   }
   body.innerHTML = rows.map(registrantRowHtml).join("");
@@ -368,21 +412,25 @@ function exportCsv() {
     "Program",
     "Tanggal daftar",
     "Status",
+    "Konfirmasi",
   ];
   const lines = rows.map((r) => {
     const status = r.duplikat ? "Duplikat" : "Terverifikasi";
-    return [
-      r.nama,
-      r.email,
-      r.wa,
-      r.program,
-      formatTanggal(r.tanggal),
-      status,
-    ]
-      // Awalan ' mencegah isian seperti "=1+1" dibaca sebagai rumus saat CSV dibuka di Excel.
-      .map((v) => (/^[=+\-@]/.test(String(v)) ? "'" + v : v))
-      .map((v) => `"${String(v).replace(/"/g, '""')}"`)
-      .join(",");
+    return (
+      [
+        r.nama,
+        r.email,
+        r.wa,
+        r.program,
+        formatTanggal(r.tanggal),
+        status,
+        r.status === "diterima" ? "Diterima" : "Menunggu",
+      ]
+        // Awalan ' mencegah isian seperti "=1+1" dibaca sebagai rumus saat CSV dibuka di Excel.
+        .map((v) => (/^[=+\-@]/.test(String(v)) ? "'" + v : v))
+        .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+        .join(",")
+    );
   });
   const csv = [header.join(","), ...lines].join("\n");
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
@@ -408,6 +456,12 @@ async function initPendaftar() {
     .getElementById("search-pendaftar")
     .addEventListener("input", renderRegistrantTable);
   document.getElementById("btn-ekspor").addEventListener("click", exportCsv);
+  document.getElementById("pendaftar-body").addEventListener("click", (e) => {
+    const terima = e.target.closest(".btn-terima");
+    const batal = e.target.closest(".btn-batal-terima");
+    if (terima) ubahKonfirmasi(terima.dataset.id, true, terima);
+    else if (batal) ubahKonfirmasi(batal.dataset.id, false, batal);
+  });
 }
 
 // ---------- Buku Tamu ----------
