@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E-Learning PERI - Peserta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/peserta.css">
+</head>
+<body>
+<div id="login" class="pg on"></div>
+<div id="app" style="display:none">
+<div class="top"><img id="toplogo" alt=""><b>E-Learning PERI</b><span class="nm" id="topnm"></span><span class="av"><svg width="20" height="20" viewBox="0 0 24 24" fill="#9AA"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg></span><button class="out" onclick="PS.keluar()">Keluar</button></div>
+<div id="beranda" class="pg"></div>
+<div id="kelas" class="pg" style="padding:0 0 120px"></div>
+<div id="kdetail" class="pg" style="padding:0 0 120px"></div>
+<div id="program" class="pg"></div>
+<div id="jadwal" class="pg"></div>
+<div id="sesi" class="pg"></div>
+<div id="materi" class="pg"></div>
+<div id="progres" class="pg"></div>
+<div id="sertifikat" class="pg"></div>
+<button id="fab" class="fab" onclick="PS.openJoin()">+ Gabung kelas</button>
+<div class="nav"><button id="b-menu" onclick="PS.drawer(1)" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 6h18v2.5H3zM3 10.8h18v2.5H3zM3 15.6h18v2.5H3z"/></svg></button>
+<button id="b-beranda" onclick="PS.go('beranda')" aria-label="Beranda"><svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h5v-5h4v5h5v-8h3z"/></svg></button>
+<button id="b-kelas" onclick="PS.go('kelas')" aria-label="Kelas"><svg viewBox="0 0 24 24"><circle cx="7" cy="9" r="3"/><path d="M1.5 19c0-3 2.4-5 5.5-5s5.5 2 5.5 5zM13 5h9v8h-9z"/></svg></button>
+<button id="b-program" onclick="PS.go('program')" aria-label="Program"><svg viewBox="0 0 24 24"><path d="M6 2h13a1 1 0 0 1 1 1v15H7a1 1 0 0 0 0 2h13v2H7a3 3 0 0 1-3-3V4a2 2 0 0 1 2-2zm2 3v2h9V5z"/></svg></button></div>
+<div id="scrim" class="scrim" onclick="PS.drawer(0)"></div>
+<aside id="drawer" class="drawer" aria-label="Menu"></aside>
+<div id="sheet" class="sheet" onclick="if(event.target===this)PS.closeSheet()"><div id="sheetc"></div></div>
+<div id="toast" class="toast"></div>
+</div>
+<script src="../shared/store.js"></script>
+<script src="js/logo.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
