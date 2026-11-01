@@ -148,16 +148,231 @@ function hitungPendaftar() {
 
 // ---------- Dashboard ----------
 
+const BULAN_PENDEK = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "Mei",
+  "Jun",
+  "Jul",
+  "Agu",
+  "Sep",
+  "Okt",
+  "Nov",
+  "Des",
+];
+const BULAN_PANJANG = [
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
+];
+const IKON_PANAH =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="%P%"/></svg>';
+
+function setTeks(id, teks) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = teks;
+}
+
+function setLencana(id, jumlah) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.hidden = !(jumlah > 0);
+  el.textContent = jumlah > 99 ? "99+" : String(jumlah);
+}
+
+// Kartu "Perlu tindakan" dan lencana di menu sidebar.
+function renderTindakan() {
+  // 1. Pendaftar yang belum diterima admin
+  if (pendaftarApiAktif) {
+    const menunggu = registrants.filter((r) => r.status !== "diterima");
+    setTeks("aksi-pendaftar-n", menunggu.length);
+    setLencana("nav-pendaftar", menunggu.length);
+    if (menunggu.length === 0) {
+      setTeks("aksi-pendaftar-hint", "Semua pendaftar sudah dikonfirmasi");
+    } else {
+      const tertua = menunggu.map((r) => r.tanggal).sort()[0];
+      const hariIni = new Date();
+      hariIni.setHours(0, 0, 0, 0);
+      const hari = Math.floor(
+        (hariIni - new Date(tertua + "T00:00:00")) / 86400000,
+      );
+      setTeks(
+        "aksi-pendaftar-hint",
+        hari <= 0
+          ? "Paling lama masuk hari ini"
+          : `Paling lama sudah ${hari} hari`,
+      );
+    }
+  } else {
+    setTeks("aksi-pendaftar-n", "–");
+    setTeks("aksi-pendaftar-hint", "Data pendaftar belum bisa dimuat");
+  }
+
+  // 2. Umpan balik yang belum dibaca
+  const belum = guestbook.filter((g) => !g.dibaca);
+  setTeks("aksi-pesan-n", belum.length);
+  setLencana("nav-buku-tamu", belum.length);
+  if (belum.length === 0) {
+    setTeks("aksi-pesan-hint", "Semua umpan balik sudah dibaca");
+  } else {
+    const tanya = belum.filter((g) => kategoriOf(g) === "pertanyaan").length;
+    setTeks(
+      "aksi-pesan-hint",
+      tanya > 0
+        ? `${tanya} di antaranya pertanyaan program`
+        : modelAktif
+          ? "Belum ada pertanyaan program"
+          : "Kategori belum dianalisis",
+    );
+  }
+
+  // 3. Program yang belum punya pendaftar
+  if (pendaftarApiAktif) {
+    const kosong = programs.filter((p) => p.pendaftar === 0).map((p) => p.nama);
+    setTeks("aksi-program-n", kosong.length);
+    setTeks(
+      "aksi-program-hint",
+      kosong.length === 0
+        ? "Semua program sudah punya pendaftar"
+        : kosong.length <= 2
+          ? kosong.join(" dan ")
+          : `${kosong.slice(0, 2).join(", ")} dan ${kosong.length - 2} lainnya`,
+    );
+  } else {
+    setTeks("aksi-program-n", "–");
+    setTeks("aksi-program-hint", "Data pendaftar belum bisa dimuat");
+  }
+}
+
+// Tren pendaftar 6 bulan terakhir, dihitung dari tanggal pendaftaran asli.
+function renderTren() {
+  const wadah = document.getElementById("tren-isi");
+  if (!wadah) return;
+  if (!pendaftarApiAktif) {
+    wadah.innerHTML =
+      '<p class="empty-note">Data pendaftar belum bisa dimuat. Pastikan peri-backend berjalan dan Anda masuk sebagai admin.</p>';
+    return;
+  }
+  const sekarang = new Date();
+  const bulan = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(sekarang.getFullYear(), sekarang.getMonth() - i, 1);
+    const kunci =
+      d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    bulan.push({
+      kunci,
+      nama: BULAN_PENDEK[d.getMonth()],
+      panjang: BULAN_PANJANG[d.getMonth()],
+      jumlah: registrants.filter((r) => (r.tanggal || "").slice(0, 7) === kunci)
+        .length,
+    });
+  }
+  const ini = bulan[5];
+  const lalu = bulan[4];
+  const maks = Math.max(1, ...bulan.map((b) => b.jumlah));
+
+  let delta = "";
+  if (lalu.jumlah > 0) {
+    const persen = Math.round(((ini.jumlah - lalu.jumlah) / lalu.jumlah) * 100);
+    const arah = persen > 0 ? "up" : persen < 0 ? "down" : "flat";
+    const panah =
+      arah === "up"
+        ? IKON_PANAH.replace("%P%", "M12 19V5M5 12l7-7 7 7")
+        : arah === "down"
+          ? IKON_PANAH.replace("%P%", "M12 5v14M19 12l-7 7-7-7")
+          : "";
+    delta = `<div class="trend-stat trend-stat-delta"><span class="delta ${arah}">${panah}${Math.abs(persen)}%</span><span>dibanding ${lalu.panjang}</span></div>`;
+  } else {
+    delta = `<div class="trend-stat trend-stat-delta"><span class="delta flat">–</span><span>belum ada data ${lalu.panjang}</span></div>`;
+  }
+
+  const batang = bulan
+    .map((b, i) => {
+      const tinggi =
+        b.jumlah === 0 ? 4 : Math.max(8, Math.round((b.jumlah / maks) * 150));
+      return `<div class="bar-col${i === 5 ? " now" : ""}">
+          <span class="bar-val">${b.jumlah}</span>
+          <div class="bar" style="height:${tinggi}px" role="img" aria-label="${b.panjang}: ${b.jumlah} pendaftar"></div>
+          <span class="bar-mon">${b.nama}</span>
+        </div>`;
+    })
+    .join("");
+
+  wadah.innerHTML = `
+    <div class="trend-stats">
+      <div class="trend-stat"><b>${ini.jumlah}</b><span>Pendaftar bulan ini</span></div>
+      ${delta}
+      <div class="trend-stat"><b>${registrants.length}</b><span>Total semua pendaftar</span></div>
+    </div>
+    <div class="bars">${batang}</div>`;
+}
+
+// Ringkasan topik umpan balik (hasil klasifikasi NLP yang sama dengan halaman Buku tamu).
+function renderTopik() {
+  const wadah = document.getElementById("topik-isi");
+  if (!wadah) return;
+  if (guestbook.length === 0) {
+    wadah.innerHTML = '<p class="empty-note">Belum ada umpan balik.</p>';
+    return;
+  }
+  const hitung = {};
+  let belumDianalisis = 0;
+  guestbook.forEach((g) => {
+    const k = kategoriOf(g);
+    if (!k) belumDianalisis++;
+    else hitung[k] = (hitung[k] || 0) + 1;
+  });
+  const daftar = Object.keys(hitung)
+    .map((k) => ({ k, n: hitung[k] }))
+    .sort((a, b) => b.n - a.n);
+  const terkelompok = guestbook.length - belumDianalisis;
+  if (daftar.length === 0) {
+    wadah.innerHTML =
+      '<p class="empty-note">Kategori belum tersedia. Jalankan python api.py agar pesan dikelompokkan otomatis.</p>';
+    return;
+  }
+  const maks = daftar[0].n;
+  const baris = daftar
+    .map(
+      (d, i) => `<div class="topic-item${i === 0 ? " top" : ""}">
+        <div class="topic-row"><span>${esc(KATEGORI_LABEL[d.k] || "Lainnya")}</span><b>${d.n}</b></div>
+        <div class="track"><i style="width:${Math.round((d.n / maks) * 100)}%"></i></div>
+      </div>`,
+    )
+    .join("");
+  wadah.innerHTML = `<div class="topic-list">${baris}</div>
+    <p class="topic-note">${terkelompok} pesan terkelompok${belumDianalisis ? ` · ${belumDianalisis} belum dianalisis` : ""}</p>`;
+}
+
 async function initDashboard() {
-  const elPendaftar = document.getElementById("stat-pendaftar");
-  const elProgram = document.getElementById("stat-program");
-  const elPesan = document.getElementById("stat-pesan");
+  setTeks(
+    "dash-tanggal",
+    "Ringkasan aktivitas PERI per " +
+      new Date().toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+  );
   await Promise.all([muatPesanApi(), muatPendaftarApi()]);
-  if (elPendaftar)
-    elPendaftar.textContent = pendaftarApiAktif ? registrants.length : "–";
-  if (elProgram) elProgram.textContent = programs.length;
-  if (elPesan) elPesan.textContent = guestbook.filter((g) => !g.dibaca).length;
-  renderKinerjaTable("kinerja-body", false);
+  renderTindakan();
+  renderTren();
+  renderTopik();
+  // Pengelompokan NLP bisa lambat / server mati: tampilkan dulu yang sudah ada, perbarui setelahnya.
+  await muatKategoriModel();
+  renderTindakan();
+  renderTopik();
 }
 
 // ---------- Kelola Program ----------

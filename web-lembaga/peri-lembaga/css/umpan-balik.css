@@ -1,0 +1,363 @@
+/* =========================================================
+   PERI — Halaman Umpan Balik: penjelasan, kolaborasi, "Apa Kata Mereka".
+   Desain: Figma "Umpan Balik - Revisi 2" (node 196:202).
+   Formulir + kartu kontak memakai gaya lama di style.css (tidak diubah).
+   ========================================================= */
+#formulir,
+#kontak {
+  scroll-margin-top: calc(var(--navbar-h) + 16px);
+}
+
+.ub-eyebrow {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c5404c;
+}
+.ub-title {
+  margin: 0 0 18px;
+  font-size: 36px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--maroon);
+}
+.ub-lead {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+.ub-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 26px;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  background: #a3162b;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.ub-btn:hover {
+  background: #8a1224;
+}
+.ub-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.ub-btn.light {
+  background: #fff;
+  color: var(--maroon-deep);
+}
+.ub-btn.light:hover {
+  background: #fbeff3;
+}
+.ub-btn.ghost {
+  background: transparent;
+  border-color: #fff;
+  color: #fff;
+}
+.ub-btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+.ub-btn.outline {
+  background: #fff;
+  border-color: #a3162b;
+  color: #a3162b;
+}
+.ub-btn.outline:hover {
+  background: #fbeff3;
+}
+
+.ub-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #fbeff3;
+  color: var(--maroon-deep);
+}
+.ub-icon svg {
+  width: 24px;
+  height: 24px;
+}
+.ub-icon.solid {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--maroon-deep);
+  color: #fff;
+}
+
+/* ---------- 1. Penjelasan umpan balik ---------- */
+.ub-intro {
+  padding: 88px 0;
+  background: #fff;
+}
+.ub-intro .container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 465px;
+  gap: 56px;
+  align-items: center;
+}
+.ub-types {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 26px 0 30px;
+}
+.ub-type {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.ub-type h3 {
+  margin: 0 0 2px;
+  font-size: 17px;
+  color: var(--maroon);
+}
+.ub-type p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+.ub-cta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.ub-cta-row small {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.ub-photo {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  border-radius: 28px;
+  box-shadow: 0 10px 30px rgba(80, 15, 17, 0.14);
+}
+
+/* ---------- 2. Kolaborasi ---------- */
+.ub-collab {
+  padding: 80px 0;
+  background: #fbeff3;
+}
+.ub-head {
+  max-width: 760px;
+  margin: 0 auto 40px;
+  text-align: center;
+}
+.ub-collab-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.ub-collab-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 26px;
+  border: 1px solid #eadfe2;
+  border-radius: 20px;
+  background: #fff;
+}
+.ub-collab-card h3 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.3;
+  color: var(--maroon);
+}
+.ub-collab-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+.ub-collab-card a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--maroon-deep);
+  text-decoration: none;
+}
+.ub-collab-card a:hover {
+  text-decoration: underline;
+}
+.ub-collab-card a svg {
+  width: 16px;
+  height: 16px;
+}
+.ub-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 40px;
+  padding: 40px;
+  border-radius: 24px;
+  background: var(--maroon-deep);
+  color: #fff;
+}
+.ub-banner h3 {
+  margin: 0 0 8px;
+  font-size: 26px;
+  color: #fff;
+}
+.ub-banner p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+.ub-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* ---------- 3. Apa kata mereka ---------- */
+.ub-testi {
+  padding: 80px 0 40px;
+  background: #fff;
+}
+.ub-testi[hidden] {
+  display: none;
+}
+.ub-testi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.ub-testi-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 28px;
+  border: 1px solid #eadfe2;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.07);
+}
+.ub-testi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.ub-stars {
+  display: flex;
+  gap: 4px;
+  color: #a5822a;
+}
+.ub-stars svg {
+  width: 20px;
+  height: 20px;
+}
+.ub-stars .off {
+  color: #e6dee0;
+}
+.ub-sample {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #f3ebed;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.ub-quote {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--maroon);
+}
+.ub-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid #eadfe2;
+}
+.ub-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fbeff3;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--maroon-deep);
+}
+.ub-author b {
+  display: block;
+  font-size: 15px;
+  color: var(--maroon);
+}
+.ub-author span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.ub-testi-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 36px;
+}
+.ub-testi-more[hidden] {
+  display: none;
+}
+
+/* ---------- Responsif ---------- */
+@media (max-width: 1060px) {
+  .ub-collab-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 960px) {
+  .ub-intro .container {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .ub-photo {
+    height: 340px;
+  }
+  .ub-testi-grid {
+    grid-template-columns: 1fr;
+  }
+  .ub-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+@media (max-width: 560px) {
+  .ub-title {
+    font-size: 28px;
+  }
+  .ub-intro,
+  .ub-collab {
+    padding: 56px 0;
+  }
+  .ub-collab-grid {
+    grid-template-columns: 1fr;
+  }
+  .ub-banner {
+    padding: 28px 22px;
+  }
+}
