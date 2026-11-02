@@ -7,6 +7,9 @@
 
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/auth-modal.css" />
+    <link rel="stylesheet" href="css/beranda.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <script src="js/animations.js" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -54,102 +57,193 @@
         </div>
       </section>
 
-      <!-- MEWUJUDKAN KEMANDIRIAN + LANGKAH NYATA (satu kartu putih) -->
-      <section class="section" style="padding-bottom: 0">
+      <!-- TENTANG SINGKAT -->
+      <section class="br-about" aria-labelledby="br-tentang">
         <div class="container">
-          <div class="impact-card">
-            <div class="impact-inner">
-              <div class="impact-text">
-                <h2>Mewujudkan Kemandirian Perempuan Indonesia</h2>
-                <p>
-                  Perempuan Kreatif Indonesia (PERI) hadir sebagai wadah
-                  pemberdayaan yang berfokus pada penguatan mental, kemandirian
-                  finansial, dan inovasi. Kami percaya bahwa setiap perempuan
-                  Indonesia memiliki potensi luar biasa yang siap diwujudkan
-                  melalui kolaborasi, pendidikan, dan semangat berkarya bersama.
-                </p>
+          <div class="br-about-row">
+            <div class="br-about-text">
+              <span class="br-eyebrow">Tentang PERI</span>
+              <h2 id="br-tentang">Mewujudkan Kemandirian Perempuan Indonesia</h2>
+              <p>
+                Perempuan Kreatif Indonesia (PERI) hadir sebagai wadah
+                pemberdayaan yang berfokus pada penguatan mental, kemandirian
+                finansial, dan inovasi. Kami percaya bahwa setiap perempuan
+                Indonesia memiliki potensi luar biasa yang siap diwujudkan
+                melalui kolaborasi, pendidikan, dan semangat berkarya bersama.
+              </p>
+              <div class="br-facts">
+                <span class="br-fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Berdiri 21 April 2024</span>
+                <span class="br-fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Samarinda, Kalimantan Timur</span>
               </div>
-              <div class="impact-media">
-                <img
-                  src="assets/images/about-collage.jpg"
-                  alt="Kegiatan PERI"
-                />
-              </div>
+              <a href="tentang.html" class="br-pill">Selengkapnya Tentang Kami <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             </div>
+            <img class="br-about-photo" src="assets/images/about-collage.jpg" alt="Kegiatan PERI" />
+          </div>
 
-            <div class="langkah-box">
-              <div class="langkah-head">
-                <h2>Langkah Nyata Perempuan Kreatif Indonesia</h2>
-                <div class="impact-stats-row">
-                  <div class="stat-block">
-                    <div class="stat-num">500+</div>
-                    <div class="stat-label">Penerima Manfaat</div>
-                  </div>
-                  <div class="stat-block">
-                    <div class="stat-num">10+</div>
-                    <div class="stat-label">Program Kerja</div>
-                  </div>
-                </div>
-              </div>
-              <div class="mini-program-grid">
-                <div class="mini-program-card">
-                  <img
-                    src="assets/images/program-1.png"
-                    alt="Bangkit dan Berdaya"
-                  />
-                  <h3>Bangkit dan Berdaya</h3>
-                  <p>
-                    Menggabungkan pemulihan trauma, pengembangan diri dan
-                    peningkatan harapan.
-                  </p>
-                  <a href="program.html" class="btn-jelajahi-sm"
-                    >Daftar Sekarang <span>&rarr;</span></a
-                  >
-                </div>
-                <div class="mini-program-card">
-                  <img
-                    src="assets/images/program-2.png"
-                    alt="Bisnis Perempuan"
-                  />
-                  <h3>Inkubator Bisnis Perempuan</h3>
-                  <p>
-                    Mentoring dan pendampingan bisnis mikro untuk anggota
-                    komunitas
-                  </p>
-                  <a href="program.html" class="btn-jelajahi-sm"
-                    >Daftar Sekarang <span>&rarr;</span></a
-                  >
-                </div>
-                <div class="mini-program-card">
-                  <img
-                    src="assets/images/program-3.png"
-                    alt="Kelas Kreasi Mandiri"
-                  />
-                  <h3>Kelas Kreasi Mandiri</h3>
-                  <p>
-                    Sistem simpan pinjam berbasis komunitas untuk mendukung
-                    usaha kecil anggota
-                  </p>
-                  <a href="program.html" class="btn-jelajahi-sm"
-                    >Daftar Sekarang <span>&rarr;</span></a
-                  >
-                </div>
-                <div class="mini-program-card">
-                  <img
-                    src="assets/images/program-4.png"
-                    alt="Digital Skill Academy"
-                  />
-                  <h3>Digital Skill Academy</h3>
-                  <p>
-                    Pelatihan digital marketing, desain grafis, content creation
-                    untuk perempuan
-                  </p>
-                  <a href="program.html" class="btn-jelajahi-sm"
-                    >Daftar Sekarang <span>&rarr;</span></a
-                  >
-                </div>
-              </div>
+          <div class="br-vm">
+            <div class="br-vm-card">
+              <i></i>
+              <h3>Misi Kami</h3>
+              <p>
+                Menjadi pusat pemberdayaan masyarakat yang berkelanjutan melalui
+                sinergi kreativitas perempuan Indonesia di berbagai bidang, dan
+                mewujudkan perempuan yang mandiri, inovatif, sejahtera dan
+                berkeadilan.
+              </p>
             </div>
+            <div class="br-vm-card">
+              <i></i>
+              <h3>Visi Kami</h3>
+              <p>
+                Menyediakan ruang aman dan inklusif bagi perempuan untuk
+                mengekspresikan kreativitasnya.
+              </p>
+            </div>
+          </div>
+
+          <div class="br-stats">
+            <div class="br-stat"><b>500+</b><span>Penerima Manfaat</span></div>
+            <div class="br-stat"><b>10+</b><span>Program Kerja</span></div>
+            <div class="br-stat"><b>2024</b><span>Tahun Berdiri</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROGRAM KAMI -->
+      <section class="br-program" aria-labelledby="br-program">
+        <div class="container">
+          <div class="br-head">
+            <span class="br-eyebrow">Program Kerja</span>
+            <h2 class="br-title" id="br-program">Langkah Nyata Perempuan Kreatif Indonesia</h2>
+          </div>
+          <div class="br-program-grid">
+              <div class="br-program-card">
+                <img src="assets/images/program-1.png" alt="Bangkit dan Berdaya" />
+                <div class="br-program-body">
+                  <h3>Bangkit dan Berdaya</h3>
+                  <p>Menggabungkan pemulihan trauma, pengembangan diri dan peningkatan harapan.</p>
+                  <a href="program.html" class="br-program-btn">Jelajahi Program <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                </div>
+              </div>
+              <div class="br-program-card">
+                <img src="assets/images/program-2.png" alt="Inkubator Bisnis Perempuan" />
+                <div class="br-program-body">
+                  <h3>Inkubator Bisnis Perempuan</h3>
+                  <p>Mentoring dan pendampingan bisnis mikro untuk anggota komunitas</p>
+                  <a href="program.html" class="br-program-btn">Jelajahi Program <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                </div>
+              </div>
+              <div class="br-program-card">
+                <img src="assets/images/program-3.png" alt="Kelas Kreasi Mandiri" />
+                <div class="br-program-body">
+                  <h3>Kelas Kreasi Mandiri</h3>
+                  <p>Sistem simpan pinjam berbasis komunitas untuk mendukung usaha kecil anggota</p>
+                  <a href="program.html" class="br-program-btn">Jelajahi Program <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                </div>
+              </div>
+              <div class="br-program-card">
+                <img src="assets/images/program-4.png" alt="Digital Skill Academy" />
+                <div class="br-program-body">
+                  <h3>Digital Skill Academy</h3>
+                  <p>Pelatihan digital marketing, desain grafis, content creation untuk perempuan</p>
+                  <a href="program.html" class="br-program-btn">Jelajahi Program <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                </div>
+              </div>
+          </div>
+          <div class="br-action">
+            <a href="program.html" class="br-pill">Lihat Semua Program <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARA BERGABUNG -->
+      <section class="br-join" aria-labelledby="br-gabung">
+        <div class="container">
+          <div class="br-head">
+            <span class="br-eyebrow">Cara Bergabung</span>
+            <h2 class="br-title" id="br-gabung">Bergabung dalam 4 langkah</h2>
+            <p>Pendaftaran program PERI dilakukan langsung melalui website ini.</p>
+          </div>
+          <div class="br-steps">
+              <div class="br-step">
+                <div class="br-step-top">
+                  <span class="br-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                  <span class="br-step-no">01</span>
+                </div>
+                <h3>Buat akun atau masuk</h3>
+                <p>Daftar dengan email, lalu verifikasi akun Anda.</p>
+              </div>
+              <div class="br-step">
+                <div class="br-step-top">
+                  <span class="br-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+                  <span class="br-step-no">02</span>
+                </div>
+                <h3>Pilih program</h3>
+                <p>Temukan program yang sesuai dengan minat Anda.</p>
+              </div>
+              <div class="br-step">
+                <div class="br-step-top">
+                  <span class="br-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h8"/></svg></span>
+                  <span class="br-step-no">03</span>
+                </div>
+                <h3>Isi formulir</h3>
+                <p>Lengkapi formulir pendaftaran program.</p>
+              </div>
+              <div class="br-step">
+                <div class="br-step-top">
+                  <span class="br-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <span class="br-step-no">04</span>
+                </div>
+                <h3>Tunggu konfirmasi</h3>
+                <p>Tim PERI akan menghubungi Anda.</p>
+              </div>
+          </div>
+          <div class="br-action">
+            <a href="register.html" class="br-pill">Mulai Mendaftar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- CUPLIKAN DOKUMENTASI -->
+      <section class="br-gallery" aria-labelledby="br-jejak">
+        <div class="container">
+          <div class="br-head">
+            <span class="br-eyebrow">Dokumentasi</span>
+            <h2 class="br-title" id="br-jejak">Jejak Kegiatan Kami</h2>
+            <p>Sebagian kegiatan pemberdayaan yang telah dijalankan PERI bersama komunitas.</p>
+          </div>
+          <div class="br-gallery-grid">
+              <article class="br-photo-card">
+                <img src="assets/images/dok-1.png" alt="Self Healing Perempuan Kepala Keluarga" />
+                <div class="br-photo-body">
+                  <span>PROGRAM UTAMA</span>
+                  <h3>Self Healing Perempuan Kepala Keluarga</h3>
+                </div>
+              </article>
+              <article class="br-photo-card">
+                <img src="assets/images/dok-2.png" alt="Pelatihan Rencana Bisnis" />
+                <div class="br-photo-body">
+                  <span>PROGRAM UTAMA</span>
+                  <h3>Pelatihan Rencana Bisnis</h3>
+                </div>
+              </article>
+              <article class="br-photo-card">
+                <img src="assets/images/dok-3.png" alt="Pelatihan UMKM Kepala Keluarga (Foto Produk)" />
+                <div class="br-photo-body">
+                  <span>PROGRAM UTAMA</span>
+                  <h3>Pelatihan UMKM Kepala Keluarga (Foto Produk)</h3>
+                </div>
+              </article>
+              <article class="br-photo-card">
+                <img src="assets/images/dok-4.png" alt="Peningkatan Kapasitas UMKM Perempuan di Sebulu" />
+                <div class="br-photo-body">
+                  <span>PROGRAM UTAMA</span>
+                  <h3>Peningkatan Kapasitas UMKM Perempuan di Sebulu</h3>
+                </div>
+              </article>
+          </div>
+          <div class="br-action">
+            <a href="dokumentasi.html" class="br-pill maroon">Lihat Galeri Kegiatan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div>
         </div>
       </section>
