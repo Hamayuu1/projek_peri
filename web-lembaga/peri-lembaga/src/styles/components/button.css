@@ -1,0 +1,63 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: 10px 24px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: var(--fs-small);
+  line-height: 22px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.btn--primary {
+  background: var(--color-red);
+  color: var(--color-white);
+}
+.btn--primary:hover {
+  background: var(--color-red-hover);
+  box-shadow: 0 6px 16px rgba(224, 35, 46, 0.35);
+}
+
+.btn--outline {
+  background: var(--color-white);
+  border-color: var(--color-red);
+  color: var(--color-red);
+}
+.btn--outline:hover {
+  background: rgba(224, 35, 46, 0.08);
+}
+
+.btn--maroon {
+  background: var(--color-maroon);
+  color: var(--color-white);
+}
+.btn--gold {
+  background: var(--color-gold-button);
+  color: var(--color-white);
+  box-shadow: var(--shadow-button);
+}
+.btn--light {
+  background: var(--color-white);
+  color: var(--color-maroon);
+}
+.btn--ghost-light {
+  background: transparent;
+  border-color: var(--color-white);
+  color: var(--color-white);
+}
+
+/* Ukuran besar untuk ajakan utama */
+.btn--lg {
+  padding: 16px 40px;
+  font-weight: 600;
+  font-size: var(--fs-body);
+}

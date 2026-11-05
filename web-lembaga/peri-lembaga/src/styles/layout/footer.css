@@ -1,0 +1,55 @@
+.site-footer {
+  padding-block: var(--space-8) var(--space-4);
+  background: var(--color-surface);
+}
+
+/* Merek 4 kolom + empat grup tautan masing-masing 2 kolom = 12 kolom,
+   sehingga tepi kanan footer sejajar dengan margin konten. */
+.footer-brand {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+  color: var(--color-red);
+}
+.footer-brand img {
+  height: 37px;
+  width: auto;
+}
+
+.footer-head {
+  margin-bottom: var(--space-2);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-ink);
+}
+
+.footer-group ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.footer-group a {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-muted);
+  transition: color var(--dur-fast) var(--ease);
+}
+.footer-group a:hover {
+  color: var(--color-red);
+}
+
+.footer-bottom {
+  margin-top: var(--space-6);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-muted);
+}

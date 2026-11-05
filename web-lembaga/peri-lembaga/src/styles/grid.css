@@ -1,0 +1,53 @@
+/* =========================================================
+   Grid 12 kolom (desktop 1440)
+   kolom 78px, gutter 24px, margin 120px, konten 1200px
+   ========================================================= */
+
+/* Pembungkus konten: 1200px di tengah. Di layar < 1440 menyusut, margin minimal 24px. */
+.container {
+  width: min(var(--container), 100% - 2 * var(--grid-margin-min));
+  margin-inline: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  gap: var(--grid-gutter);
+}
+
+/* Perataan vertikal antar kolom */
+.grid--center {
+  align-items: center;
+}
+.grid--start {
+  align-items: start;
+}
+
+/* Rentang kolom: .col-6 = 6 dari 12 kolom.
+   Digabung dengan .start-N untuk memulai dari kolom tertentu,
+   mis. .start-3.col-8 = konten 8 kolom di tengah. */
+.col-1 { grid-column: var(--col-start, auto) / span 1; }
+.col-2 { grid-column: var(--col-start, auto) / span 2; }
+.col-3 { grid-column: var(--col-start, auto) / span 3; }
+.col-4 { grid-column: var(--col-start, auto) / span 4; }
+.col-5 { grid-column: var(--col-start, auto) / span 5; }
+.col-6 { grid-column: var(--col-start, auto) / span 6; }
+.col-7 { grid-column: var(--col-start, auto) / span 7; }
+.col-8 { grid-column: var(--col-start, auto) / span 8; }
+.col-9 { grid-column: var(--col-start, auto) / span 9; }
+.col-10 { grid-column: var(--col-start, auto) / span 10; }
+.col-11 { grid-column: var(--col-start, auto) / span 11; }
+.col-12 { grid-column: var(--col-start, auto) / span 12; }
+
+.start-1 { --col-start: 1; }
+.start-2 { --col-start: 2; }
+.start-3 { --col-start: 3; }
+.start-4 { --col-start: 4; }
+.start-5 { --col-start: 5; }
+.start-6 { --col-start: 6; }
+.start-7 { --col-start: 7; }
+
+/* Pola jadi: anak langsung otomatis mengisi kolom yang sama */
+.cols-2 > * { grid-column: span 6; } /* 6+6 */
+.cols-3 > * { grid-column: span 4; } /* 4+4+4 */
+.cols-4 > * { grid-column: span 3; } /* 3+3+3+3 */

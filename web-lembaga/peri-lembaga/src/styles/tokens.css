@@ -1,0 +1,80 @@
+/* =========================================================
+   Token desain PERI — satu-satunya tempat nilai desain ditulis.
+   File lain hanya memakai variabel ini.
+   ========================================================= */
+:root {
+  /* ---------- Warna ---------- */
+  --color-ink: #500f11; /* judul */
+  --color-maroon: #9d1e4a; /* blok utama, tombol utama seksi */
+  --color-red: #e0232e; /* tombol, tautan aktif */
+  --color-red-hover: #e33136;
+  --color-dark-red: #760000; /* latar gelap (testimoni) */
+  --color-gold: #a5822a;
+  --color-gold-light: #d9b863;
+  --color-gold-button: #c09535;
+  --color-eyebrow: #c5404c;
+  --color-text: #2a1012;
+  --color-muted: #6b5658;
+  --color-tint: #fbeff3; /* latar pink muda */
+  --color-cream: #faf6f0;
+  --color-surface: #f0f0f0; /* latar abu, footer */
+  --color-white: #ffffff;
+  --color-border: #d9cece;
+  --color-border-soft: #eadfe2;
+
+  /* ---------- Font ---------- */
+  --font-heading: "Poppins", "Segoe UI", Arial, sans-serif;
+  --font-body: "Roboto", "Segoe UI", Arial, sans-serif;
+  --font-display: "Tinos", "Times New Roman", serif; /* hanya judul hero (H1) */
+
+  /* ---------- Skala tipografi ---------- */
+  --fs-h1: 48px;
+  --lh-h1: 56px;
+  --fs-h2: 32px;
+  --lh-h2: 40px;
+  --fs-h3: 24px;
+  --lh-h3: 32px;
+  --fs-h4: 20px;
+  --lh-h4: 28px;
+  --fs-body: 16px;
+  --lh-body: 26px;
+  --fs-small: 14px; /* batas bawah teks isi */
+  --lh-small: 22px;
+  --fs-label: 12px; /* khusus eyebrow, lencana, keterangan singkat */
+  --lh-label: 18px;
+
+  /* ---------- Spasi (kelipatan 8) ---------- */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px; /* judul seksi ke isi */
+  --space-6: 48px;
+  --space-8: 64px; /* padding seksi pendukung */
+  --space-12: 96px; /* padding seksi utama */
+
+  /* ---------- Grid desktop 1440 ---------- */
+  --grid-columns: 12;
+  --grid-gutter: 24px;
+  --grid-margin: 120px;
+  --container: 1200px;
+  --grid-margin-min: 24px; /* margin saat layar lebih sempit dari 1440 */
+
+  /* ---------- Bentuk ---------- */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-card: 20px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --shadow-card: 0 4px 16px rgba(80, 15, 17, 0.08);
+  --shadow-raised: 0 8px 24px rgba(80, 15, 17, 0.18);
+  --shadow-button: 0 4px 2px rgba(0, 0, 0, 0.3);
+
+  /* ---------- Tata letak ---------- */
+  --navbar-h: 96px;
+  --section-py: var(--space-12);
+  --section-py-sm: var(--space-8);
+
+  /* ---------- Gerak ---------- */
+  --ease: ease-out;
+  --dur-fast: 0.15s;
+}
