@@ -101,3 +101,8 @@ button {
     scroll-behavior: auto;
   }
 }
+
+/* Atribut hidden selalu menang atas display bawaan komponen. */
+[hidden] {
+  display: none !important;
+}
