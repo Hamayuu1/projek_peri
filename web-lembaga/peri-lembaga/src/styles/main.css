@@ -7,5 +7,10 @@
 @import "./layout/footer.css";
 @import "./layout/section.css";
 @import "./components/button.css";
+@import "./components/card.css";
+@import "./components/cta-band.css";
 @import "./components/auth-modal.css";
 @import "./components/animations.css";
+
+/* CSS per halaman: kelasnya diawali nama halaman supaya tidak bertabrakan. */
+@import "./pages/beranda.css";

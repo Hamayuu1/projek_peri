@@ -61,3 +61,26 @@
   font-weight: 600;
   font-size: var(--fs-body);
 }
+
+/* Ikon panah di akhir tombol atau tautan, diwarnai dengan warna teks */
+.btn-arrow::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: var(--icon-arrow) center / contain no-repeat;
+  mask: var(--icon-arrow) center / contain no-repeat;
+}
+:root {
+  --icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+}
+
+/* Tombol penuh selebar kartu, teks di kiri dan panah di kanan */
+.btn--block {
+  width: 100%;
+  justify-content: space-between;
+}
+.btn--sm {
+  padding: 8px 16px;
+}

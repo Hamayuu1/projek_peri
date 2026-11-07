@@ -16,6 +16,9 @@
 }
 
 /* Perataan vertikal antar kolom */
+.grid--stretch {
+  align-items: stretch;
+}
 .grid--center {
   align-items: center;
 }

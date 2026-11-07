@@ -38,6 +38,8 @@
   --lh-h4: 28px;
   --fs-body: 16px;
   --lh-body: 26px;
+  --fs-lead: 18px; /* paragraf pembuka hero */
+  --lh-lead: 28px;
   --fs-small: 14px; /* batas bawah teks isi */
   --lh-small: 22px;
   --fs-label: 12px; /* khusus eyebrow, lencana, keterangan singkat */
