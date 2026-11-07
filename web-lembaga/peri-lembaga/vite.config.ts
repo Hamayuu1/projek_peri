@@ -2,6 +2,9 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite";
 
+// Modul rekomendasi ada di folder sejajar (web-lembaga/peri-rekomendasi).
+const REKOMENDASI_DIR = fileURLToPath(new URL("../peri-rekomendasi", import.meta.url));
+
 const PARTIALS_DIR = fileURLToPath(new URL("./src/partials/", import.meta.url));
 
 // Penanda di HTML:  <!-- @include navbar page="program" -->
@@ -36,8 +39,12 @@ function partials(): Plugin {
 // Situs multi-halaman: setiap file HTML di akar proyek menjadi satu titik masuk.
 export default defineConfig({
   plugins: [partials()],
+  resolve: {
+    alias: { "@rekomendasi": `${REKOMENDASI_DIR}/index.js` },
+  },
   server: {
     port: 5173,
+    fs: { allow: [".."] }, // izinkan membaca ../peri-rekomendasi saat dev
     open: "/beranda.html",
   },
   build: {
