@@ -9,8 +9,12 @@
 @import "./components/button.css";
 @import "./components/card.css";
 @import "./components/cta-band.css";
+@import "./components/page-hero.css";
+@import "./components/temukan-program.css";
+@import "./components/daftar-program.css";
 @import "./components/auth-modal.css";
 @import "./components/animations.css";
 
 /* CSS per halaman: kelasnya diawali nama halaman supaya tidak bertabrakan. */
 @import "./pages/beranda.css";
+@import "./pages/program.css";

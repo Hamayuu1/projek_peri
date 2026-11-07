@@ -1,0 +1,125 @@
+/* =========================================================
+   Program — grid 1440. Kelas diawali "pg-".
+   Desain: Figma "Program - Grid 1440".
+   Kelas wizard (tp-) dan pop-up (dp-) ada di components/.
+   ========================================================= */
+
+/* ---------- Bar pencarian: 8 + 4 kolom, menumpuk setengah tinggi di atas hero ---------- */
+.pg-search {
+  position: relative;
+  z-index: 2;
+  margin-top: calc(-1 * var(--space-4));
+}
+.pg-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+.pg-field input,
+.pg-field select {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--color-ink);
+}
+.pg-field select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: var(--space-4);
+  cursor: pointer;
+}
+.pg-field input:focus,
+.pg-field select:focus {
+  outline: none;
+}
+.pg-field:focus-within {
+  box-shadow: 0 0 0 2px var(--color-maroon);
+}
+.pg-field svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
+.pg-field select + svg {
+  position: absolute;
+  right: var(--space-3);
+}
+
+/* ---------- Program unggulan (5 + 7) ---------- */
+.pg-featured-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.pg-featured .media-fill {
+  min-height: 280px;
+}
+.pg-featured-text p {
+  color: var(--color-muted);
+}
+
+/* ---------- Daftar program (3+3+3+3) ---------- */
+.pg-empty {
+  margin-top: var(--space-4);
+  text-align: center;
+  color: var(--color-muted);
+}
+
+/* ---------- Ajakan "Temukan Program Anda" (7 + 5) ---------- */
+.pg-band-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.pg-band-text p {
+  color: var(--color-muted);
+}
+.pg-band .media-fill {
+  min-height: 280px;
+}
+
+/* ---------- Testimoni (4+4+4) ---------- */
+.pg-testi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+.pg-testi-avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-pill);
+  background: var(--color-tint);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-h4);
+  color: var(--color-maroon);
+}
+.pg-testi h3 {
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+}
+.pg-testi p {
+  color: var(--color-muted);
+}

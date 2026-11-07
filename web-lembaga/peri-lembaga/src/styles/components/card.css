@@ -32,3 +32,7 @@
 .card-body .btn {
   margin-top: auto;
 }
+.card-body h3 {
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+}

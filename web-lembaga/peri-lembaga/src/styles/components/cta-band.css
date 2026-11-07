@@ -18,3 +18,19 @@
 .cta-band .btn {
   margin-top: var(--space-1);
 }
+/* Label kecil dengan garis di kiri dan kanan, di atas judul pita */
+.cta-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-gold-light);
+}
+.cta-eyebrow::before,
+.cta-eyebrow::after {
+  content: "";
+  width: 40px;
+  height: 1px;
+  background: currentColor;
+}
