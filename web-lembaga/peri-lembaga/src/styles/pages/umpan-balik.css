@@ -1,0 +1,315 @@
+/* =========================================================
+   Umpan Balik (hubungi.html) — grid 1440. Kelas statis diawali "ub-".
+   Kartu "Apa Kata Mereka" dibuat oleh scripts/pages/umpan-balik.ts
+   dan memakai kelas "testi-". Desain: Figma "Umpan Balik - Grid 1440".
+   ========================================================= */
+
+/* Ikon dalam kotak: terang (tint) atau solid (maroon) */
+.ub-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--color-tint);
+  color: var(--color-maroon);
+}
+.ub-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.ub-icon--solid {
+  width: 48px;
+  height: 48px;
+  background: var(--color-maroon);
+  color: var(--color-white);
+}
+.ub-icon--solid svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ---------- Pengantar (7 + 5) ---------- */
+.ub-intro-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.ub-intro-text > p {
+  color: var(--color-muted);
+}
+.ub-types {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.ub-type {
+  display: flex;
+  gap: var(--space-2);
+}
+.ub-type h3 {
+  font-size: var(--fs-body);
+  line-height: 24px;
+}
+.ub-type p {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-muted);
+}
+.ub-cta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.ub-cta-row small {
+  font-size: var(--fs-small);
+  color: var(--color-muted);
+}
+
+/* ---------- Kolaborasi (3+3+3+3) ---------- */
+.ub-collab-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+}
+.ub-collab-card .ub-icon {
+  margin-bottom: var(--space-1);
+}
+.ub-collab-card h3 {
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+}
+.ub-collab-card p {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-muted);
+}
+/* Tautan di dasar kartu supaya sejajar antar kartu */
+.ub-collab-card a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: var(--space-1);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  color: var(--color-maroon);
+}
+.ub-collab-card a:hover {
+  color: var(--color-red);
+}
+
+/* Tombol di pita ajakan: dua tombol sebaris di kolom 4 */
+.ub-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* ---------- Apa Kata Mereka (4+4+4) — kartu dibuat oleh umpan-balik.ts ---------- */
+.testi-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-card);
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+}
+.testi-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.testi-stars {
+  display: flex;
+  gap: 4px;
+  color: var(--color-gold);
+}
+.testi-stars svg {
+  width: 16px;
+  height: 16px;
+}
+.testi-stars svg.off {
+  opacity: 0.25;
+}
+.testi-card__badge {
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: #f3ecee;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-label);
+  line-height: var(--lh-label);
+  color: var(--color-muted);
+}
+.testi-card__quote {
+  flex: 1;
+  color: var(--color-text);
+}
+.testi-card__author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border-soft);
+}
+.testi-card__avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--color-tint);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-label);
+  color: var(--color-maroon);
+}
+.testi-card__author b {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-ink);
+}
+.testi-card__author span {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-muted);
+}
+
+/* ---------- Kontak (5) dan formulir (7), kedua kartu sama tinggi ---------- */
+.ub-contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-maroon);
+  color: var(--color-white);
+}
+.ub-contact h2 {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+  color: var(--color-white);
+}
+.ub-contact > p {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: #ead7dc;
+}
+.ub-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.ub-contact-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.15);
+}
+.ub-contact-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.ub-contact-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: var(--fs-label);
+  line-height: var(--lh-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e8bfca;
+}
+.ub-contact-value {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-white);
+}
+.ub-social {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+.ub-social a {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.15);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-label);
+  color: var(--color-white);
+  transition: background var(--dur-fast) var(--ease);
+}
+.ub-social a:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.ub-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+}
+.ub-form-card h2 {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+}
+.ub-form-card > p {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-muted);
+}
+.ub-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.ub-form .btn {
+  align-self: flex-start;
+}
+.ub-success {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: #e8f5ec;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: #1c6b3a;
+}
+.ub-success b {
+  font-size: var(--fs-body);
+}
+.ub-error {
+  margin: 0;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: #b3261e;
+}

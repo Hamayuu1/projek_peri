@@ -9,6 +9,7 @@
 @import "./components/button.css";
 @import "./components/card.css";
 @import "./components/cta-band.css";
+@import "./components/form.css";
 @import "./components/page-hero.css";
 @import "./components/temukan-program.css";
 @import "./components/daftar-program.css";
@@ -20,3 +21,4 @@
 @import "./pages/program.css";
 @import "./pages/tentang.css";
 @import "./pages/dokumentasi.css";
+@import "./pages/umpan-balik.css";
