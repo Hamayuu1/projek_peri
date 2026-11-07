@@ -34,3 +34,16 @@
   height: 1px;
   background: currentColor;
 }
+
+/* Varian dua kolom (8 + 4): teks rata kiri dan tombol di kanan */
+.cta-band--split {
+  text-align: left;
+}
+.cta-band--split .cta-band-inner {
+  align-items: flex-start;
+}
+.cta-band-action {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
