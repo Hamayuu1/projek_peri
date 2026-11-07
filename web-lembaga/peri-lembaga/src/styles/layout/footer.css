@@ -1,30 +1,40 @@
+/* Footer: bagian atas putih (merek 3 + tiga grup 2 + kontak 3 = 12 kolom),
+   pita abu-abu di bawah untuk hak cipta. */
 .site-footer {
-  padding-block: var(--space-8) var(--space-4);
-  background: var(--color-surface);
+  background: var(--color-white);
+}
+.footer-main {
+  padding-block: var(--space-8);
 }
 
-/* Merek 4 kolom + empat grup tautan masing-masing 2 kolom = 12 kolom,
-   sehingga tepi kanan footer sejajar dengan margin konten. */
 .footer-brand {
   display: flex;
   align-items: flex-start;
   gap: var(--space-1);
-  font-family: var(--font-heading);
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: var(--fs-h4);
-  line-height: var(--lh-h4);
+  line-height: 1.15;
   color: var(--color-red);
 }
 .footer-brand img {
-  height: 37px;
+  height: 88px;
   width: auto;
+  /* Gambar logo punya ruang transparan di kiri (39 px) dan kanan (50 px)
+     dari lebar 168 px; dipangkas agar ikon rapat dengan tulisan dan
+     sejajar dengan tepi kolom. Skala: 88 / 156. */
+  margin-left: calc(-39 * 88px / 156);
+  margin-right: calc(-50 * 88px / 156 + var(--space-1));
+}
+.footer-brand span {
+  align-self: center;
 }
 
 .footer-head {
   margin-bottom: var(--space-2);
   font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: var(--fs-body);
   line-height: 24px;
   color: var(--color-ink);
 }
@@ -37,19 +47,48 @@
 .footer-group a {
   font-size: var(--fs-small);
   line-height: var(--lh-small);
-  color: var(--color-muted);
+  color: var(--color-ink);
   transition: color var(--dur-fast) var(--ease);
 }
 .footer-group a:hover {
   color: var(--color-red);
 }
 
-.footer-bottom {
-  margin-top: var(--space-6);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border);
-  text-align: center;
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.footer-icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--color-ink);
+}
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-style: normal;
   font-size: var(--fs-small);
   line-height: var(--lh-small);
-  color: var(--color-muted);
+  color: var(--color-ink);
+}
+.footer-contact p {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+.footer-contact .footer-icon {
+  margin-top: 3px; /* sejajar dengan baris pertama teks */
+}
+
+.footer-bottom {
+  padding-block: var(--space-3);
+  background: var(--color-surface);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-ink);
 }
