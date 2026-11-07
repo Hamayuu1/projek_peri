@@ -18,3 +18,4 @@
 /* CSS per halaman: kelasnya diawali nama halaman supaya tidak bertabrakan. */
 @import "./pages/beranda.css";
 @import "./pages/program.css";
+@import "./pages/tentang.css";

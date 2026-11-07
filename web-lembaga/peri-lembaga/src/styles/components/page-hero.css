@@ -41,3 +41,12 @@
   font-size: var(--fs-lead);
   line-height: var(--lh-lead);
 }
+
+/* Label kecil di atas judul hero (dipakai Tentang Kami dan Dokumentasi) */
+.page-hero .eyebrow {
+  color: var(--color-gold-light);
+  letter-spacing: 0.08em;
+  text-transform: none;
+  font-weight: 500;
+  font-size: var(--fs-small);
+}

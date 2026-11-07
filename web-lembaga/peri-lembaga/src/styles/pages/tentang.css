@@ -1,0 +1,138 @@
+/* =========================================================
+   Tentang Kami — grid 1440. Kelas diawali "ab-".
+   Desain: Figma "Tentang Kami - Grid 1440".
+   ========================================================= */
+
+/* ---------- Latar belakang (6 + 6), tinggi foto = tinggi teks ---------- */
+.ab-latar-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.ab-kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-eyebrow);
+}
+.ab-kicker::before {
+  content: "";
+  width: 32px;
+  height: 1px;
+  background: currentColor;
+}
+.ab-latar-text > p {
+  color: var(--color-text);
+}
+.ab-quote {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-cream);
+  text-align: center;
+}
+.ab-quote blockquote {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+  color: var(--color-ink);
+}
+.ab-quote figcaption {
+  margin-top: 4px;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: var(--fs-label);
+  line-height: var(--lh-label);
+  letter-spacing: 0.1em;
+  color: var(--color-muted);
+}
+
+/* ---------- Visi (6) dan Misi (6) di atas latar maroon ---------- */
+.ab-vm-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.ab-vm-col h2 {
+  color: var(--color-white);
+  text-align: center;
+}
+.ab-visi .media-fill {
+  flex: 1;
+  min-height: 240px;
+}
+.ab-visi p {
+  color: var(--color-white);
+}
+.ab-misi-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  counter-reset: misi;
+}
+.ab-misi-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 12px var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-text);
+}
+.ab-misi-item::before {
+  counter-increment: misi;
+  content: counter(misi) ".";
+  flex: none;
+  width: 24px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-body);
+  color: var(--color-red);
+}
+
+/* ---------- Struktur kepengurusan: 4+4+4 lalu 3+3+3+3, satu rasio foto (4:3) ---------- */
+.ab-org + .ab-org {
+  margin-top: var(--grid-gutter);
+}
+.ab-org-photo {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  object-fit: cover;
+}
+.ab-org-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-2);
+  text-align: center;
+}
+.ab-org-role {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-label);
+  line-height: var(--lh-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+.ab-org-name {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-ink);
+}
