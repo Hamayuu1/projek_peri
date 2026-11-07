@@ -1,0 +1,236 @@
+/* =========================================================
+   Beranda — grid 1440 (12 kolom). Desain: Figma "Beranda - Grid 1440".
+   Semua kelas diawali "br-".
+   ========================================================= */
+
+/* ---------- Hero: setinggi sisa layar, dibatasi 560–720px ---------- */
+.br-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: calc(100svh - var(--navbar-h));
+  min-height: 560px;
+  max-height: 720px;
+  overflow: hidden;
+  background: var(--color-maroon);
+  color: var(--color-white);
+}
+.br-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+.br-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.2) 60%, rgba(0, 0, 0, 0) 100%);
+}
+.br-hero .container {
+  position: relative;
+  z-index: 1;
+}
+.br-hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+/* Judul hero Beranda memakai Poppins (sesuai desain), bukan serif. */
+.br-hero h1 {
+  font-family: var(--font-heading);
+  color: var(--color-white);
+}
+.br-hero p {
+  max-width: 540px;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+}
+.br-hero .btn {
+  border-radius: var(--radius-sm);
+  background: var(--color-red);
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.br-hero .btn:hover {
+  background: var(--color-red-hover);
+}
+
+/* ---------- Tentang singkat (7 + 5) ---------- */
+.br-about-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.br-about-text h2 {
+  margin-top: calc(-1 * var(--space-1));
+}
+.br-about-text p {
+  color: var(--color-muted);
+}
+.br-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.br-fact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--color-tint);
+  color: var(--color-maroon);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+}
+.br-fact svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Misi dan Visi (6 + 6) dan Statistik (4 + 4 + 4) ---------- */
+.br-vm,
+.br-stats {
+  margin-top: var(--space-6);
+}
+.br-vm-card {
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--color-tint);
+}
+.br-vm-card::before {
+  content: "";
+  display: block;
+  width: 32px;
+  height: 3px;
+  margin-bottom: var(--space-2);
+  border-radius: 2px;
+  background: var(--color-gold);
+}
+.br-vm-card h3 {
+  margin-bottom: var(--space-1);
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+  color: var(--color-maroon);
+}
+.br-vm-card p {
+  color: var(--color-muted);
+}
+
+.br-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-4) var(--space-3);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-card);
+  background: var(--color-white);
+  text-align: center;
+}
+.br-stat b {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 48px;
+  color: var(--color-maroon);
+}
+.br-stat span {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-muted);
+}
+
+/* ---------- Program (3+3+3+3) ---------- */
+.br-program-card h3,
+.br-photo-card h3 {
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+}
+.br-program-card .card-body {
+  gap: var(--space-1);
+}
+.br-program-card .btn {
+  margin-top: auto;
+}
+
+/* ---------- Cara bergabung (3+3+3+3) ---------- */
+.br-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+}
+.br-step-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+.br-step-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--color-tint);
+  color: var(--color-maroon);
+}
+.br-step-icon svg {
+  width: 24px;
+  height: 24px;
+}
+.br-step-no {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+  color: var(--color-border);
+}
+.br-step h3 {
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+}
+.br-step p {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-muted);
+}
+
+/* ---------- Cuplikan dokumentasi (3+3+3+3) ---------- */
+.br-photo-card .card-body {
+  gap: 4px;
+}
+.br-photo-card .br-photo-label {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-label);
+  line-height: var(--lh-label);
+  letter-spacing: 0.08em;
+  color: var(--color-gold);
+}
+.br-photo-card h3 {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-ink);
+}
+
+/* ---------- Kemitraan: 6 logo, masing-masing 2 kolom ---------- */
+.br-partners img {
+  width: 120px;
+  height: 120px;
+  margin-inline: auto;
+  border-radius: var(--radius-card);
+  object-fit: cover;
+}

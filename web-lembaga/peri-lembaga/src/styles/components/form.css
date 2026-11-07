@@ -1,0 +1,51 @@
+/* Kolom formulir umum: label, input, textarea.
+   Dipakai formulir Umpan Balik; pop-up pendaftaran punya gaya sendiri (dp-). */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.field label {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-ink);
+}
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 12px var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-small);
+  color: var(--color-text);
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.field input {
+  height: 48px;
+}
+.field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+.field input::placeholder,
+.field textarea::placeholder {
+  color: #9a8a8c;
+}
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--color-maroon);
+  box-shadow: 0 0 0 3px rgba(157, 30, 74, 0.15);
+}
+
+/* Dua kolom sejajar (6 + 6) */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--grid-gutter);
+}

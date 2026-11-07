@@ -1,0 +1,49 @@
+/* Pita ajakan penuh lebar di dasar halaman: teks rata tengah selebar 8 kolom. */
+.cta-band {
+  text-align: center;
+  color: var(--color-white);
+}
+.cta-band-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.cta-band h2 {
+  color: var(--color-white);
+}
+.cta-band p {
+  color: #ead7dc;
+}
+.cta-band .btn {
+  margin-top: var(--space-1);
+}
+/* Label kecil dengan garis di kiri dan kanan, di atas judul pita */
+.cta-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-gold-light);
+}
+.cta-eyebrow::before,
+.cta-eyebrow::after {
+  content: "";
+  width: 40px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* Varian dua kolom (8 + 4): teks rata kiri dan tombol di kanan */
+.cta-band--split {
+  text-align: left;
+}
+.cta-band--split .cta-band-inner {
+  align-items: flex-start;
+}
+.cta-band-action {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}

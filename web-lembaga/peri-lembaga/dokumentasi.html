@@ -1,233 +1,131 @@
 <!doctype html>
 <html lang="id">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dokumentasi Kegiatan — Perempuan Kreatif Indonesia (PERI)</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/auth-modal.css" />
+    <title>Dokumentasi — Perempuan Kreatif Indonesia</title>
+    <meta name="description" content="Dokumentasi kegiatan Perempuan Kreatif Indonesia: pelatihan, pendampingan, dan gerakan sosial bersama komunitas di Samarinda." />
+    <link rel="icon" href="/src/assets/logo.svg" />
+    <script type="module" src="/src/scripts/main.ts"></script>
   </head>
-  <body>
-    <header class="site-header">
-      <div class="navbar">
-        <a href="beranda.html" class="navbar-logo">
-          <img src="assets/logo-peri.png" alt="Logo PERI" />
-          <span>Perempuan<br />Kreatif<br />Indonesia</span>
-        </a>
-        <nav class="navbar-links">
-          <a href="beranda.html">Beranda</a>
-          <a href="program.html">Program</a>
-          <a href="tentang.html">Tentang Kami</a>
-          <a href="dokumentasi.html" class="active">Dokumentasi</a>
-          <a href="hubungi.html">Umpan Balik</a>
-        </nav>
-        <div class="navbar-actions">
-          <a href="login.html" class="btn btn-outline">Masuk</a>
-          <a href="register.html" class="btn btn-primary">Daftar</a>
-        </div>
-        <button class="navbar-toggle" aria-label="Menu">&#9776;</button>
-      </div>
-    </header>
+  <body data-page="dokumentasi">
+    <!-- @include navbar page="dokumentasi" -->
 
     <main>
-      <!-- HERO FOTO -->
-      <section
-        class="page-banner-photo"
-        style="
-          background-image:
-            linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.45)),
-            url(&quot;assets/images/about-collage.jpg&quot;);
-        "
-      >
-        <div class="page-banner-content">
-          <h1>DOKUMENTASI KEGIATAN</h1>
-          <p>Perempuan Kreatif Indonesia</p>
+      <!-- Hero -->
+      <section class="page-hero">
+        <img class="page-hero-bg" src="/src/assets/images/about-collage.jpg" alt="" />
+        <div class="container">
+          <div class="page-hero-text" data-reveal>
+            <span class="eyebrow">Perempuan Kreatif Indonesia</span>
+            <h1>Dokumentasi Kegiatan</h1>
+          </div>
         </div>
       </section>
 
-      <div class="badge-pill-wrap">
-        <span class="badge-pill">PROGRAM UTAMA</span>
-      </div>
-
-      <!-- GRID DOKUMENTASI PROGRAM UTAMA -->
-      <section class="section" style="padding-top: 0">
+      <!-- Program utama (4+4+4) -->
+      <section class="section" aria-label="Dokumentasi program utama">
         <div class="container">
-          <div class="doc-grid">
-            <div class="doc-card">
-              <img
-                src="assets/images/dok-1.png"
-                alt="Self healing Perempuan Kepala Keluarga"
-              />
+          <div class="dk-badge-wrap" data-reveal>
+            <span class="dk-badge">PROGRAM UTAMA</span>
+          </div>
+          <div class="dk-grid grid">
+          <article class="card dk-card col-4" data-reveal>
+            <img class="card-media" src="/src/assets/images/dok-1.png" alt="Self Healing Perempuan Kepala Keluarga" />
+            <div class="card-body">
               <h3>Self Healing Perempuan Kepala Keluarga</h3>
             </div>
-            <div class="doc-card">
-              <img
-                src="assets/images/dok-2.png"
-                alt="Pelatihan Rencana Bisnis"
-              />
+          </article>
+          <article class="card dk-card col-4" data-reveal>
+            <img class="card-media" src="/src/assets/images/dok-2.png" alt="Pelatihan Rencana Bisnis" />
+            <div class="card-body">
               <h3>Pelatihan Rencana Bisnis</h3>
             </div>
-            <div class="doc-card">
-              <img
-                src="assets/images/dok-3.png"
-                alt="Pelatihan UMKM Kepala Keluarga (Poto Produk)"
-              />
-              <h3>Pelatihan UMKM Kepala Keluarga (Poto Produk)</h3>
+          </article>
+          <article class="card dk-card col-4" data-reveal>
+            <img class="card-media" src="/src/assets/images/dok-3.png" alt="Pelatihan UMKM Kepala Keluarga (Foto Produk)" />
+            <div class="card-body">
+              <h3>Pelatihan UMKM Kepala Keluarga (Foto Produk)</h3>
             </div>
-            <div class="doc-card">
-              <img
-                src="assets/images/dok-4.png"
-                alt="Peningkatan Kapasitas UMKM Perempuan di Sebulu"
-              />
+          </article>
+          <article class="card dk-card col-4" data-reveal>
+            <img class="card-media" src="/src/assets/images/dok-4.png" alt="Peningkatan Kapasitas UMKM Perempuan di Sebulu" />
+            <div class="card-body">
               <h3>Peningkatan Kapasitas UMKM Perempuan di Sebulu</h3>
             </div>
-            <div class="doc-card">
-              <img
-                src="assets/images/dok-1.png"
-                alt="Peningkatan Kapasitas PEKKA - Self Healing dan Purpose Of Life"
-              />
-              <h3>
-                Peningkatan Kapasitas PEKKA &mdash; Self Healing dan Purpose Of
-                Life
-              </h3>
+          </article>
+          <article class="card dk-card col-4" data-reveal>
+            <img class="card-media" src="/src/assets/images/dok-1.png" alt="Peningkatan Kapasitas PEKKA - Self Healing dan Purpose Of Life" />
+            <div class="card-body">
+              <h3>Peningkatan Kapasitas PEKKA &mdash; Self Healing dan Purpose Of Life</h3>
             </div>
-            <div class="doc-card">
-              <img
-                src="assets/images/dok-2.png"
-                alt="Pelatihan dan Pendampingan Program Pemberdayaan Santripreneurs bersama Baitulmal Munzalan Indonesia"
-              />
-              <h3>
-                Pelatihan dan Pendampingan Program Pemberdayaan Santripreneurs
-                bersama Baitulmal Munzalan Indonesia
-              </h3>
+          </article>
+          <article class="card dk-card col-4" data-reveal>
+            <img class="card-media" src="/src/assets/images/dok-2.png" alt="Pelatihan dan Pendampingan Program Pemberdayaan Santripreneurs bersama Baitulmal Munzalan Indonesia" />
+            <div class="card-body">
+              <h3>Pelatihan dan Pendampingan Program Pemberdayaan Santripreneurs bersama Baitulmal Munzalan Indonesia</h3>
+            </div>
+          </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gerakan sosial dan lingkungan (6 + 6) -->
+      <section class="section section--cream" aria-labelledby="dk-sosial">
+        <div class="container">
+          <div class="section-head" data-reveal>
+            <span class="eyebrow eyebrow--gold">Pendampingan</span>
+            <h2 id="dk-sosial">Program Gerakan Sosial dan Lingkungan</h2>
+          </div>
+          <div class="dk-cases">
+            <div class="grid grid--center">
+              <div class="dk-case-text col-6" data-reveal>
+                <h3>Pendampingan Anggota PEKKA di Lempake</h3>
+                <p>Pendampingan pada salah satu anggota PEKKA yang mengalami dampak isolasi sosial, sehingga sang ibu mengalami stres dan depresi, dan jatuh sakit. Anak tidak terperhatikan dan di dalam rumah penuh dengan sampah, di daerah Lempake.</p>
+              </div>
+              <div class="dk-collage col-6" data-reveal>
+                <img src="/src/assets/images/dok-3.png" alt="Dokumentasi pendampingan PEKKA" />
+                <img src="/src/assets/images/dok-4.png" alt="Dokumentasi pendampingan PEKKA" />
+              </div>
+            </div>
+            <div class="dk-case--flip grid grid--center">
+              <div class="dk-case-text col-6" data-reveal>
+                <h3>Pendampingan Siswa yang Diusir dari Sekolah</h3>
+                <p>Pendampingan siswa yang diusir oleh gurunya karena tidak punya HP, buku, dan tidak bisa membayar biaya sekolah.</p>
+              </div>
+              <div class="dk-media media-fill col-6" data-reveal>
+                <img src="/src/assets/images/dok-1.png" alt="Dokumentasi pendampingan siswa" />
+              </div>
+            </div>
+            <div class="grid grid--center">
+              <div class="dk-case-text col-6" data-reveal>
+                <h3>Pendampingan Korban Penculikan di Anggana</h3>
+                <p>Pendampingan korban penculikan &mdash; pacarnya dijadikan budak nafsu di Anggana (didampingi oleh wakil PERI bersama TRC).</p>
+              </div>
+              <div class="dk-media media-fill col-6" data-reveal>
+                <img src="/src/assets/images/dok-2.png" alt="Dokumentasi pendampingan korban" />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- PROGRAM GERAKAN SOSIAL & LINGKUNGAN -->
-      <section class="social-row">
+      <!-- Ajakan bergabung (8 + 4) -->
+      <section class="section section--maroon cta-band cta-band--split" aria-labelledby="dk-cta">
         <div class="container">
-          <div class="social-row-inner">
-            <div>
-              <h2>Program Gerakan Sosial dan Lingkungan</h2>
-              <p>
-                Pendampingan pada salah satu anggota PEKKA yang mengalami dampak
-                isolasi sosial, sehingga sang ibu mengalami stres dan depresi,
-                dan jatuh sakit. Anak tidak terperhatikan dan di dalam rumah
-                penuh dengan sampah, di daerah Lempake.
-              </p>
+          <div class="grid grid--center">
+            <div class="cta-band-inner col-8" data-reveal>
+              <h2 id="dk-cta">Bergabunglah</h2>
+              <p>Jadilah bagian dari komunitas perempuan kreatif yang saling mendukung, menginspirasi, dan membangun Indonesia bersama.</p>
             </div>
-            <div class="social-collage">
-              <img
-                src="assets/images/dok-3.png"
-                alt="Dokumentasi pendampingan PEKKA"
-                style="flex: 1"
-              />
-              <img
-                src="assets/images/dok-4.png"
-                alt="Dokumentasi pendampingan PEKKA"
-                style="flex: 1"
-              />
+            <div class="cta-band-action col-4" data-reveal>
+              <a href="program.html" class="btn btn--light btn--lg">Temukan Program</a>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="social-row reverse" style="background: #fff">
-        <div class="container">
-          <div class="social-row-inner">
-            <img
-              src="assets/images/dok-1.png"
-              alt="Dokumentasi pendampingan siswa"
-            />
-            <div>
-              <h2>Program Gerakan Sosial dan Lingkungan</h2>
-              <p>
-                Pendampingan siswa yang diusir oleh gurunya karena tidak punya
-                HP, buku, dan tidak bisa membayar biaya sekolah.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="social-row">
-        <div class="container">
-          <div class="social-row-inner">
-            <div>
-              <h2>Program Gerakan Sosial dan Lingkungan</h2>
-              <p>
-                Pendampingan korban penculikan — pacarnya dijadikan budak nafsu
-                di Anggana (didampingi oleh wakil PERI bersama TRC).
-              </p>
-            </div>
-            <img
-              src="assets/images/dok-2.png"
-              alt="Dokumentasi pendampingan korban"
-            />
-          </div>
-        </div>
-      </section>
-
-      <!-- COLLAB BANNER -->
-      <section class="section">
-        <div class="container">
-          <div class="collab-banner">
-            <div>
-              <h2>Bergabunglah</h2>
-              <p>
-                Jadilah bagian dari komunitas perempuan kreatif yang saling
-                mendukung, menginspirasi, dan membangun Indonesia bersama.
-              </p>
-            </div>
-            <a href="program.html" class="btn btn-primary">Temukan Program</a>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <div class="container">
-        <div class="footer-top">
-          <div class="footer-brand">
-            <img src="assets/logo.svg" alt="Logo PERI" />
-            <span>PERI</span>
-          </div>
-          <div class="footer-links-row">
-            <div class="footer-link-group">
-              <span class="footer-head">Tentang PERI</span>
-              <ul>
-                <li><a href="tentang.html">Profil Kami</a></li>
-                <li><a href="tentang.html">Misi dan Visi</a></li>
-                <li><a href="tentang.html">Kepengurusan</a></li>
-              </ul>
-            </div>
-            <div class="footer-link-group">
-              <span class="footer-head">Program Kami</span>
-              <ul>
-                <li><a href="program.html">Daftar Program</a></li>
-              </ul>
-            </div>
-            <div class="footer-link-group">
-              <span class="footer-head">Dokumentasi</span>
-              <ul>
-                <li><a href="dokumentasi.html">Galeri Kegiatan</a></li>
-              </ul>
-            </div>
-            <div class="footer-link-group">
-              <span class="footer-head">Hubungi Kami</span>
-              <ul>
-                <li><a href="hubungi.html">Umpan Balik</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          &copy; Copyright 2026 Perempuan Kreatif Indonesia
-        </div>
-      </div>
-    </footer>
-    <script src="js/auth-modal.js"></script>
+    <!-- @include footer -->
   </body>
 </html>

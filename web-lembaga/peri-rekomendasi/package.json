@@ -1,0 +1,13 @@
+{
+  "name": "peri-rekomendasi",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mesin rekomendasi program PERI (content-based filtering: Cosine dan Euclidean)",
+  "scripts": {
+    "test": "node tests/engine.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

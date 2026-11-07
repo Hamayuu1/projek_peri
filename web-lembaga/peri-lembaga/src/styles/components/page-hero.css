@@ -1,0 +1,52 @@
+/* Hero halaman dalam (Program, Tentang Kami, Dokumentasi, Umpan Balik):
+   foto latar dengan lapisan gelap, tinggi 384px, teks rata tengah. */
+.page-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 384px;
+  overflow: hidden;
+  background: var(--color-dark-red);
+  color: var(--color-white);
+  text-align: center;
+}
+.page-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+.page-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.6));
+}
+.page-hero-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.page-hero h1 {
+  color: var(--color-white);
+}
+.page-hero p {
+  max-width: 560px;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+}
+
+/* Label kecil di atas judul hero (dipakai Tentang Kami dan Dokumentasi) */
+.page-hero .eyebrow {
+  color: var(--color-gold-light);
+  letter-spacing: 0.08em;
+  text-transform: none;
+  font-weight: 500;
+  font-size: var(--fs-small);
+}

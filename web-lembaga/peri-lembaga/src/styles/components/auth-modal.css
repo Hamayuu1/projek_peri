@@ -87,7 +87,7 @@ body.auth-open {
 .auth-sil-l {
   left: -2px;
   opacity: 0.4;
-  background-image: url("../assets/auth/siluet-kiri.png");
+  background-image: url("../../assets/auth/siluet-kiri.png");
 }
 .auth-card-login .auth-sil-r {
   left: 170px;
@@ -97,7 +97,7 @@ body.auth-open {
 }
 .auth-sil-r {
   opacity: 0.25;
-  background-image: url("../assets/auth/siluet-kanan.png");
+  background-image: url("../../assets/auth/siluet-kanan.png");
 }
 
 .auth-title {

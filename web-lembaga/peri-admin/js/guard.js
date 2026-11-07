@@ -15,7 +15,25 @@
     location.replace(LEMBAGA);
   }
 
+  function keluar() {
+    fetch(API + "/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    })
+      .catch(function () {})
+      .then(tolak);
+  }
+
   function pasangKeluar(user) {
+    // Dashboard: profil admin + tombol Keluar ada di sidebar.
+    var profil = document.querySelector("[data-admin-keluar]");
+    if (profil) {
+      var huruf = document.getElementById("sp-avatar");
+      if (huruf) huruf.textContent = user.email.charAt(0).toUpperCase();
+      profil.title = "Keluar (" + user.email + ")";
+      profil.addEventListener("click", keluar);
+      return;
+    }
     var avatar = document.querySelector(".topbar .avatar");
     if (!avatar) return;
     avatar.textContent = user.email.charAt(0).toUpperCase();
@@ -25,14 +43,7 @@
     btn.className = "btn btn-sm";
     btn.textContent = "Keluar";
     btn.style.marginRight = "8px";
-    btn.addEventListener("click", function () {
-      fetch(API + "/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      })
-        .catch(function () {})
-        .then(tolak);
-    });
+    btn.addEventListener("click", keluar);
     var wrap = document.createElement("div");
     wrap.style.cssText = "display:flex;align-items:center";
     avatar.parentNode.insertBefore(wrap, avatar);

@@ -1,0 +1,75 @@
+/* =========================================================
+   Dokumentasi — grid 1440. Kelas diawali "dk-".
+   Desain: Figma "Dokumentasi - Grid 1440".
+   ========================================================= */
+
+/* ---------- Program utama: lencana + kartu 4+4+4 ---------- */
+.dk-badge-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+.dk-badge {
+  padding: 8px 24px;
+  border-radius: var(--radius-pill);
+  background: var(--color-maroon);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-label);
+  line-height: var(--lh-label);
+  letter-spacing: 0.1em;
+  color: var(--color-white);
+}
+/* Semua kartu, di semua baris, sama tinggi */
+.dk-grid {
+  grid-auto-rows: 1fr;
+}
+.dk-card h3 {
+  font-size: var(--fs-body);
+  line-height: 24px;
+  color: var(--color-ink);
+}
+
+/* ---------- Gerakan sosial: satu judul seksi, tiga kasus berselang-seling (6 + 6) ---------- */
+.dk-cases {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.dk-case-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.dk-case-text p {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+  color: var(--color-muted);
+}
+/* Tinggi media sama di ketiga kasus */
+.dk-media {
+  height: 320px;
+}
+.dk-media.media-fill {
+  min-height: 0;
+}
+.dk-collage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--grid-gutter);
+  height: 320px;
+}
+.dk-collage img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+  object-fit: cover;
+}
+/* Kasus genap: foto di kiri, teks di kanan */
+.dk-case--flip .dk-case-text {
+  order: 2;
+}
+.dk-case--flip .dk-media {
+  order: 1;
+}

@@ -1,0 +1,343 @@
+/* =========================================================
+   PERI Admin — komponen khusus Dashboard (desain Figma "Admin - Dashboard Revisi 2", node 200:209)
+   Tema (warna, font, sidebar) ada di style.css dan dipakai semua halaman admin.
+   ========================================================= */
+/* ---------- Konten ---------- */
+body[data-page="dashboard"] .main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+}
+.dash-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+body[data-page="dashboard"] .page-sub {
+  margin-top: 4px;
+  font-size: 14px;
+}
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 100px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.btn-pill:hover {
+  background: #86183f;
+}
+
+.dash-sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.dash-sec-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+.dash-sec-head span {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ---------- Perlu tindakan ---------- */
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.dash-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.action-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+}
+.action-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.action-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+}
+.action-icon svg {
+  width: 22px;
+  height: 22px;
+}
+.tone-amber {
+  background: #fdf1dc;
+  color: #92500f;
+}
+.tone-rose {
+  background: #fbeff3;
+  color: #9d1e4a;
+}
+.tone-gray {
+  background: #f3ebed;
+  color: #500f11;
+}
+.action-n {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 42px;
+}
+.action-title {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.action-hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+.action-cta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--brand);
+  text-decoration: none;
+}
+/* seluruh kartu bisa diklik, fokus keyboard tetap terlihat */
+.action-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+}
+.action-cta:focus-visible::after {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.action-card:hover {
+  border-color: #d9bcc7;
+}
+.action-cta svg,
+.link-arrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Tren & topik ---------- */
+.dash-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 376px;
+  gap: 20px;
+}
+.chart-card,
+.topic-card {
+  padding: 24px;
+}
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+.card-head p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--brand);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.link-arrow:hover {
+  text-decoration: underline;
+}
+
+.trend-stats {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px 40px;
+  margin: 18px 0;
+}
+.trend-stat b {
+  display: block;
+  font-size: 30px;
+  line-height: 34px;
+  font-weight: 700;
+}
+.trend-stat span {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+  padding: 5px 10px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.delta svg {
+  width: 14px;
+  height: 14px;
+}
+.delta.up {
+  background: #e6f3eb;
+  color: #2e7d4f;
+}
+.delta.down {
+  background: #fde9ea;
+  color: #b3141f;
+}
+.delta.flat {
+  background: #f3ebed;
+  color: var(--text-secondary);
+}
+.trend-stat-delta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  height: 200px;
+}
+.bar-col {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  height: 100%;
+}
+.bar-val {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.bar {
+  width: 100%;
+  max-width: 44px;
+  border-radius: 8px;
+  background: #e8c7d3;
+}
+.bar-col.now .bar {
+  background: var(--brand);
+}
+.bar-col.now .bar-val {
+  font-weight: 700;
+  color: var(--brand);
+}
+.bar-mon {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.bar-col.now .bar-mon {
+  font-weight: 500;
+  color: var(--text);
+}
+.empty-note {
+  margin: 0;
+  padding: 36px 0;
+  font-size: 14px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.topic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 18px 0 16px;
+}
+.topic-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  font-size: 14px;
+}
+.topic-row b {
+  font-weight: 700;
+}
+.topic-item.top .topic-row span {
+  font-weight: 500;
+}
+.topic-item.top .topic-row b {
+  color: var(--brand);
+}
+.track {
+  height: 8px;
+  border-radius: 4px;
+  background: #f3ebed;
+  overflow: hidden;
+}
+.track i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: #c97b97;
+}
+.topic-item.top .track i {
+  background: var(--brand);
+}
+.topic-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ---------- Responsif ---------- */
+@media (max-width: 1100px) {
+  .dash-row {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 900px) {
+  .action-grid {
+    grid-template-columns: 1fr;
+  }
+  body[data-page="dashboard"] .main {
+    padding: 20px 16px;
+  }
+}
