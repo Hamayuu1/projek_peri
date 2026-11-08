@@ -7,8 +7,7 @@ import { authApi } from "../services/api";
 import type { AuthView, User } from "../types";
 
 const ADMIN_URL: string =
-  import.meta.env.VITE_ADMIN_URL ??
-  `${location.protocol}//${location.hostname}:5500/peri-admin/dashboard.html`;
+  import.meta.env.VITE_ADMIN_URL ?? "/peri-admin/dashboard.html";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
