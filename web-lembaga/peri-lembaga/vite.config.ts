@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite";
 
 const ADMIN_DIR = fileURLToPath(new URL("../peri-admin/", import.meta.url));
+const REKOMENDASI_DIR = fileURLToPath(new URL("../peri-rekomendasi", import.meta.url));
 const PARTIALS_DIR = fileURLToPath(new URL("./src/partials/", import.meta.url));
 
 // Penanda di HTML:  <!-- @include navbar page="program" -->
@@ -71,7 +72,12 @@ function adminPanel(): Plugin {
 // Situs multi-halaman: setiap file HTML di akar proyek menjadi satu titik masuk.
 export default defineConfig({
   plugins: [partials(), adminPanel()],
+  resolve: {
+    alias: { "@rekomendasi": `${REKOMENDASI_DIR}/index.js` },
+  },
   server: {
+    // folder ../peri-rekomendasi dan ../peri-admin berada di luar akar proyek
+    fs: { allow: [".."] },
     port: 5173,
     open: "/beranda.html",
   },

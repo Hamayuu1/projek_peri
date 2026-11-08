@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "paths": { "@rekomendasi": ["../peri-rekomendasi/index"] },
     "lib": [
       "ES2022",
       "DOM",
@@ -13,9 +14,6 @@
       "node"
     ],
     "strict": true,
-    "paths": {
-      "@rekomendasi": ["../peri-rekomendasi/index"]
-    },
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
