@@ -7,7 +7,11 @@ import { authApi } from "../services/api";
 import type { AuthView, User } from "../types";
 
 const ADMIN_URL: string =
+<<<<<<< HEAD
   import.meta.env.VITE_ADMIN_URL ?? "../peri-admin/dashboard.html";
+=======
+  import.meta.env.VITE_ADMIN_URL ?? "/peri-admin/dashboard.html";
+>>>>>>> web-lembaga
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
