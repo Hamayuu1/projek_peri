@@ -1,0 +1,10 @@
+fastapi==0.162.0
+uvicorn==0.54.0
+sqlalchemy==2.1.6
+pydantic==2.14.2
+scikit-learn==1.7.2
+pandas==2.3.2
+joblib==1.5.2
+Sastrawi==1.0.1
+python-multipart==0.0.20
+pytest==8.4.2

@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Local application data and generated model artifacts
+peri.db
+ml/artifacts/
+
+# Test and environment files
+.pytest_cache/
+.env

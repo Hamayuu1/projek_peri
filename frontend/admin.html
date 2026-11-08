@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fffaf8" />
+    <title>Area Admin | PERI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/metrics-ui.js" defer></script>
+    <script src="/admin.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Kembali ke dashboard PERI">
+          <span class="brand-mark" aria-hidden="true">p</span>
+          <span><strong>PERI</strong><small>Perempuan Kreatif Indonesia</small></span>
+        </a>
+        <a class="admin-back-link" href="/">← Kembali ke dashboard</a>
+      </header>
+      <main>
+        <section class="intro admin-intro">
+          <div><p class="eyebrow">RUANG PENGELOLAAN DATA</p><h1>Area admin</h1>
+            <p class="intro-copy">Kelola data evaluasi dan perbarui model secara bertanggung jawab.</p></div>
+          <div class="intro-art" aria-hidden="true"><span class="art-sun"></span><span class="art-stem"></span><span class="art-leaf leaf-one"></span><span class="art-leaf leaf-two"></span><span class="art-leaf leaf-three"></span></div>
+        </section>
+
+        <section class="admin-access card" aria-labelledby="tokenTitle">
+          <div><p class="eyebrow">AKSES TERLINDUNGI</p><h2 id="tokenTitle">Token admin</h2>
+            <p class="section-copy">Token hanya digunakan untuk permintaan pada halaman ini dan tidak disimpan di browser.</p></div>
+          <label class="form-label admin-token-label" for="adminToken">X-Admin-Token
+            <input id="adminToken" type="password" autocomplete="off" spellcheck="false" placeholder="Masukkan token admin" />
+          </label>
+        </section>
+
+        <div id="adminNotice" class="notice hidden" role="status" aria-live="polite"></div>
+        <div class="admin-grid">
+          <section class="card admin-card" aria-labelledby="importTitle">
+            <div class="admin-card-heading"><span class="admin-icon" aria-hidden="true">⇧</span><div><p class="eyebrow">TAMBAHKAN DATA</p><h2 id="importTitle">Impor CSV</h2></div></div>
+            <p class="admin-description">Unggah data berlabel dalam format CSV. Kolom akan diperiksa sebelum data dimasukkan.</p>
+            <form id="importForm">
+              <label id="dropZone" class="drop-zone" for="csvFile">
+                <input id="csvFile" type="file" accept=".csv,text/csv" class="sr-only" />
+                <span class="drop-icon" aria-hidden="true">↥</span>
+                <strong id="fileName">Pilih atau letakkan file CSV di sini</strong>
+                <small>Format .csv · batas ukuran mengikuti konfigurasi server</small>
+              </label>
+              <button id="importButton" type="submit" class="button button-primary admin-action">Impor data</button>
+            </form>
+            <div id="importReport" class="admin-report hidden" aria-live="polite"></div>
+          </section>
+
+          <section class="card admin-card" aria-labelledby="retrainTitle">
+            <div class="admin-card-heading"><span class="admin-icon teal-icon" aria-hidden="true">↻</span><div><p class="eyebrow">PERBARUI PEMBELAJARAN</p><h2 id="retrainTitle">Latih ulang model</h2></div></div>
+            <p class="admin-description">Model akan dievaluasi ulang dengan data berlabel yang tersedia. Proses ini memperbarui artifact model dan metrik.</p>
+            <div class="admin-caution"><strong>Sebelum melanjutkan</strong><span>Pastikan data impor memiliki label yang cukup untuk setiap kelas.</span></div>
+            <button id="retrainButton" type="button" class="button button-primary admin-action">Latih ulang model <span aria-hidden="true">→</span></button>
+          </section>
+
+          <section class="card admin-card danger-admin-card" aria-labelledby="deleteDemoTitle">
+            <div class="admin-card-heading"><span class="admin-icon rose-icon" aria-hidden="true">⌫</span><div><p class="eyebrow">BERSIHKAN DATA CONTOH</p><h2 id="deleteDemoTitle">Hapus data demo</h2></div></div>
+            <p class="admin-description">Menghapus ulasan yang ditandai sebagai data demo. Data evaluasi peserta lainnya tidak akan dihapus.</p>
+            <div class="admin-caution danger-caution"><strong>Tindakan ini tidak dapat dibatalkan.</strong><span>Anda akan diminta mengonfirmasi sebelum permintaan dikirim.</span></div>
+            <button id="deleteDemoButton" type="button" class="button danger-button">Hapus Data Demo</button>
+          </section>
+        </div>
+
+        <section id="retrainResults" class="admin-metrics-section hidden" aria-labelledby="retrainResultsTitle">
+          <div class="section-heading"><div><p class="eyebrow">HASIL PEMBARUAN</p><h2 id="retrainResultsTitle">Evaluasi model terbaru</h2>
+            <p class="section-copy">Hasil evaluasi dan confusion matrix dari proses latih ulang.</p></div></div>
+          <div id="adminMetricsDashboard"></div>
+        </section>
+      </main>
+      <footer class="footer"><span class="brand-mark small" aria-hidden="true">p</span><span>PERI · Area pengelolaan terbatas.</span></footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fffaf8" />
+    <title>Evaluasi Program | PERI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/metrics-ui.js" defer></script>
+    <script src="/method-ui.js" defer></script>
+    <script src="/analysis-ui.js" defer></script>
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="PERI, ke Ringkasan">
+          <span class="brand-mark" aria-hidden="true">p</span>
+          <span>
+            <strong>PERI</strong>
+            <small>Perempuan Kreatif Indonesia</small>
+          </span>
+        </a>
+        <div class="header-meta">
+          <span id="demoBadge" class="demo-badge hidden">
+            <span aria-hidden="true">●</span> Data Contoh (Demo)
+          </span>
+          <span class="header-note"><span class="live-dot"></span> Ruang evaluasi</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="intro">
+          <div>
+            <p class="eyebrow">DENGARKAN · PAHAMI · TUMBUH BERSAMA</p>
+            <h1>Setiap pengalaman<br class="mobile-break" /> berarti.</h1>
+            <p class="intro-copy">
+              Ruang untuk memahami dampak program dan terus menghadirkan
+              pendampingan yang lebih bermakna bagi perempuan.
+            </p>
+          </div>
+          <div class="intro-art" aria-hidden="true">
+            <span class="art-sun"></span>
+            <span class="art-stem"></span>
+            <span class="art-leaf leaf-one"></span>
+            <span class="art-leaf leaf-two"></span>
+            <span class="art-leaf leaf-three"></span>
+          </div>
+        </section>
+
+        <div id="globalNotice" class="notice hidden" role="status" aria-live="polite"></div>
+        <nav class="tabs" aria-label="Navigasi dashboard">
+          <button class="tab active" type="button" data-tab="overview">Ringkasan</button>
+          <button class="tab" type="button" data-tab="detail">Detail Program</button>
+          <button class="tab" type="button" data-tab="method">Metode &amp; Evaluasi</button>
+          <button class="tab" type="button" data-tab="submit">Kirim Evaluasi</button>
+        </nav>
+
+        <section id="overviewPanel" class="panel active" aria-labelledby="overviewTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">GAMBARAN DAMPAK</p>
+              <h2 id="overviewTitle">Ringkasan evaluasi</h2>
+              <p class="section-copy">Suara peserta membantu kami melihat hal yang sudah baik dan yang masih bisa ditingkatkan.</p>
+            </div>
+            <label class="model-picker">
+              <span>Model analisis</span>
+              <select id="overviewModel" aria-label="Pilih model analisis sentimen">
+                <option value="ensemble">Ensemble</option>
+                <option value="nb">Naive Bayes</option>
+                <option value="svm">SVM</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="overviewLoading" class="kpi-grid" aria-label="Memuat ringkasan">
+            <div class="skeleton kpi-skeleton"></div><div class="skeleton kpi-skeleton"></div><div class="skeleton kpi-skeleton"></div>
+          </div>
+          <div id="kpiGrid" class="kpi-grid hidden"></div>
+          <div id="overviewEmpty" class="empty-state hidden">
+            <span class="empty-icon" aria-hidden="true">♡</span>
+            <h3>Belum ada ulasan</h3>
+            <p>Data evaluasi akan muncul di sini setelah peserta berbagi pengalaman.</p>
+            <button type="button" class="button button-primary" data-open-tab="submit">Kirim evaluasi pertama</button>
+          </div>
+          <div id="overviewError" class="error-state hidden" role="alert"></div>
+
+          <div class="program-heading">
+            <div>
+              <p class="eyebrow">CERITA DI BALIK ANGKA</p>
+              <h3>Performa setiap program</h3>
+            </div>
+            <span id="programCount" class="muted-caption"></span>
+          </div>
+          <div id="programCards" class="program-grid"></div>
+        </section>
+
+        <section id="detailPanel" class="panel" aria-labelledby="detailTitle">
+          <div class="section-heading detail-title-row">
+            <div>
+              <p class="eyebrow">MENGENAL LEBIH DEKAT</p>
+              <h2 id="detailTitle">Detail program</h2>
+              <p id="detailDescription" class="section-copy">Pilih program untuk melihat cerita dan evaluasinya.</p>
+            </div>
+            <label class="model-picker">
+              <span>Program</span>
+              <select id="detailProgramSelect" aria-label="Pilih program"></select>
+            </label>
+          </div>
+          <div id="detailLoading" class="chart-grid hidden" aria-label="Memuat detail program">
+            <div class="skeleton chart-skeleton"></div><div class="skeleton chart-skeleton"></div>
+          </div>
+          <div id="detailError" class="error-state hidden" role="alert"></div>
+          <div id="detailContent">
+            <div class="chart-grid">
+              <article class="card chart-card radar-card">
+                <div class="card-heading">
+                  <div><p class="eyebrow">KUALITAS LAYANAN</p><h3>Kepuasan per aspek</h3></div>
+                  <span class="chart-caption">Skala 0–5</span>
+                </div>
+                <div class="chart-wrap radar-wrap">
+                  <canvas id="radarChart" role="img" aria-label="Grafik radar rating dan persentase sentimen positif per aspek"></canvas>
+                </div>
+                <p class="chart-footnote">Persentase positif dinormalisasi ke skala 0–5 agar dapat dibandingkan.</p>
+              </article>
+              <article class="card chart-card">
+                <div class="card-heading">
+                  <div><p class="eyebrow">SUARA PESERTA</p><h3>Distribusi sentimen</h3></div>
+                </div>
+                <div class="chart-wrap donut-wrap">
+                  <canvas id="detailDonut" role="img" aria-label="Diagram donat distribusi sentimen program"></canvas>
+                </div>
+                <div id="detailLegend" class="sentiment-legend"></div>
+              </article>
+              <article class="card chart-card trend-card">
+                <div class="card-heading">
+                  <div><p class="eyebrow">PERJALANAN DARI WAKTU KE WAKTU</p><h3>Tren bulanan</h3></div>
+                </div>
+                <div class="chart-wrap trend-wrap">
+                  <canvas id="trendChart" role="img" aria-label="Grafik garis tren sentimen bulanan"></canvas>
+                </div>
+              </article>
+              <article class="card insight-card">
+                <div class="card-heading">
+                  <div><p class="eyebrow">CATATAN UNTUK BERTUMBUH</p><h3>Insight otomatis</h3></div>
+                  <span class="insight-spark" aria-hidden="true">✦</span>
+                </div>
+                <ul id="insightList" class="insight-list"></ul>
+              </article>
+            </div>
+
+            <section class="reviews-section">
+              <div class="reviews-heading">
+                <div><p class="eyebrow">SUARA MEREKA</p><h3>Daftar komentar</h3></div>
+                <span id="reviewCount" class="review-count"></span>
+              </div>
+              <div class="filter-bar">
+                <label class="search-field">
+                  <span class="sr-only">Cari komentar atau nama</span>
+                  <span aria-hidden="true">⌕</span>
+                  <input id="searchFilter" type="search" placeholder="Cari komentar atau nama..." />
+                </label>
+                <label class="filter-field"><span class="sr-only">Filter sentimen</span>
+                  <select id="sentimentFilter" aria-label="Filter berdasarkan sentimen">
+                    <option value="">Semua sentimen</option><option value="positif">Positif</option><option value="netral">Netral</option><option value="negatif">Negatif</option>
+                  </select>
+                </label>
+                <label class="filter-field"><span class="sr-only">Filter aspek</span>
+                  <select id="aspectFilter" aria-label="Filter berdasarkan aspek"><option value="">Semua aspek</option></select>
+                </label>
+              </div>
+              <div id="reviewsLoading" class="review-list hidden" aria-label="Memuat komentar">
+                <div class="skeleton review-skeleton"></div><div class="skeleton review-skeleton"></div>
+              </div>
+              <div id="reviewsEmpty" class="empty-inline hidden">Belum ada komentar yang cocok dengan filter ini.</div>
+              <div id="reviewList" class="review-list"></div>
+              <div id="reviewsError" class="error-state hidden" role="alert"></div>
+              <button id="loadMoreButton" type="button" class="button button-secondary hidden">Muat lebih banyak</button>
+            </section>
+          </div>
+        </section>
+
+        <section id="methodPanel" class="panel" aria-labelledby="methodTitle">
+          <div class="section-heading">
+            <div><p class="eyebrow">TRANSPARANSI PROSES</p><h2 id="methodTitle">Metode &amp; Evaluasi</h2>
+              <p class="section-copy">Memahami cara model bekerja membantu kita membaca hasil dengan lebih bijak.</p></div>
+          </div>
+          <section class="card method-flow-card" aria-labelledby="flowTitle">
+            <div class="card-heading"><div><p class="eyebrow">DARI CERITA MENJADI PEMAHAMAN</p><h3 id="flowTitle">Alur analisis sentimen</h3></div>
+              <span class="chart-caption">Arah pemrosesan →</span></div>
+            <div class="flow-scroll">
+              <div class="flow-diagram" aria-label="Diagram alur analisis sentimen" role="list">
+                <button class="flow-node" type="button" role="listitem" title="Komentar peserta menjadi masukan awal, tanpa mengubah maksudnya."><span class="flow-icon">✎</span><strong>Data teks</strong><small>Suara peserta</small></button>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <button class="flow-node preprocessing-node" type="button" role="listitem" title="Teks dirapikan: huruf diseragamkan, simbol dibersihkan, kata dipisahkan, kata umum disaring, lalu kata dikembalikan ke bentuk dasarnya."><span class="flow-icon">⌕</span><strong>Preprocessing</strong><small>Case folding · cleaning<br />tokenizing · stopword · stemming</small></button>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <button class="flow-node tfidf-node" type="button" role="listitem" title="TF-IDF memberi bobot pada kata yang membantu membedakan tema dan sentimen dalam komentar."><span class="flow-icon">▤</span><strong>TF-IDF</strong><small>Bobot kata penting</small></button>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="parallel-flow" role="group" aria-label="Dua model menganalisis secara paralel">
+                  <button class="flow-node model-node" type="button" title="Naive Bayes memperkirakan sentimen dari pola kata yang pernah dipelajari."><span class="flow-icon">N</span><strong>Naive Bayes</strong><small>Prediksi probabilitas</small></button>
+                  <button class="flow-node model-node" type="button" title="SVM mencari batas pembeda terbaik antar kelompok sentimen."><span class="flow-icon">S</span><strong>SVM</strong><small>Prediksi probabilitas</small></button>
+                </div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <button class="flow-node voting-node" type="button" title="Soft Voting merata-ratakan probabilitas dari Naive Bayes dan SVM untuk menghasilkan prediksi gabungan."><span class="flow-icon">⅓</span><strong>Soft Voting</strong><small>Rata-rata probabilitas</small></button>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <button class="flow-node result-node" type="button" title="Hasil akhir berupa sentimen yang paling mungkin: positif, netral, atau negatif."><span class="flow-icon">♡</span><strong>Sentimen</strong><small>Positif · netral · negatif</small></button>
+              </div>
+            </div>
+            <p class="flow-hint">Arahkan kursor atau fokuskan tiap tahap untuk melihat penjelasannya.</p>
+          </section>
+
+          <div class="method-heading"><div><p class="eyebrow">PENGUKURAN KINERJA</p><h3>Perbandingan model</h3></div><div class="method-heading-actions"><span class="method-caption">Evaluasi stratified k-fold</span><button id="methodRefreshButton" type="button" class="button button-secondary refresh-button">Muat ulang</button></div></div>
+          <div id="methodLoading" class="method-loading" aria-label="Memuat metrik evaluasi"><div class="skeleton chart-skeleton"></div><div class="skeleton chart-skeleton"></div></div>
+          <div id="methodError" class="error-state hidden" role="alert"></div>
+          <div id="methodMetrics" class="method-metrics hidden"></div>
+          <section class="card top-words-section" aria-labelledby="topWordsTitle">
+            <div class="card-heading"><div><p class="eyebrow">POLA KATA DALAM DATA LATIH</p><h3 id="topWordsTitle">Kata yang paling berpengaruh</h3></div></div>
+            <p class="method-explainer">Sepuluh kata teratas per kelas berdasarkan bobot fitur model. Ini adalah petunjuk pola, bukan penentu tunggal sebuah sentimen.</p>
+            <div id="topWordsLoading" class="skeleton word-skeleton" aria-label="Memuat kata teratas"></div>
+            <div id="topWordsError" class="error-state hidden" role="alert"></div>
+            <div id="topWordsGrid" class="top-words-grid"></div>
+          </section>
+
+          <section class="analysis-section" aria-labelledby="analysisTitle">
+            <div class="analysis-heading"><div><p class="eyebrow">TRANSPARAN DAN MUDAH DICOBA</p><h3 id="analysisTitle">Coba analisis komentar</h3>
+              <p class="section-copy">Lihat bagaimana komentar diproses dan bagaimana setiap model mempertimbangkan hasilnya.</p></div></div>
+            <article class="card analysis-card">
+              <div class="example-heading"><strong>Mulai dari contoh</strong><span>atau tulis komentar sendiri</span></div>
+              <div class="example-buttons">
+                <button type="button" class="example-button positive-example" data-example="positive">Contoh positif <span aria-hidden="true">↗</span></button>
+                <button type="button" class="example-button neutral-example" data-example="neutral">Contoh campuran <span aria-hidden="true">↗</span></button>
+                <button type="button" class="example-button negative-example" data-example="negative">Contoh negatif <span aria-hidden="true">↗</span></button>
+              </div>
+              <form id="analysisForm" class="analysis-form">
+                <label class="form-label" for="analysisText">Komentar yang ingin dianalisis</label>
+                <textarea id="analysisText" maxlength="10000" rows="4" required placeholder="Contoh: Pendampingnya ramah, tetapi waktu konsultasi terasa kurang..."></textarea>
+                <div class="analysis-submit-row"><span class="form-hint">Hasil ini adalah bantuan analisis, bukan pengganti konteks manusia.</span>
+                  <button id="analysisButton" class="button button-primary" type="submit">Analisis komentar <span aria-hidden="true">→</span></button></div>
+              </form>
+              <div id="analysisLoading" class="analysis-loading hidden" aria-live="polite"><span class="loading-spinner" aria-hidden="true"></span>Membaca komentar Anda…</div>
+              <div id="analysisError" class="error-state hidden" role="alert"></div>
+              <div id="analysisResults" class="analysis-results hidden" aria-live="polite"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="submitPanel" class="panel" aria-labelledby="submitTitle">
+          <div class="section-heading">
+            <div><p class="eyebrow">CERITAKAN PENGALAMAN ANDA</p><h2 id="submitTitle">Kirim evaluasi</h2>
+              <p class="section-copy">Masukan Anda kami jaga dan gunakan untuk membuat program lebih baik.</p></div>
+          </div>
+          <div id="submitDemoNote" class="demo-note hidden"><span aria-hidden="true">✦</span><span>Anda sedang mengisi <strong>data contoh (demo)</strong>. Masukan ini akan ditandai sebagai data demo.</span></div>
+          <div id="formNotice" class="notice hidden" role="status" aria-live="polite"></div>
+          <div class="form-layout">
+            <form id="reviewForm" class="card review-form">
+              <div class="form-fields">
+                <label class="form-label">Nama peserta
+                  <input id="namaPeserta" name="nama_peserta" type="text" maxlength="150" autocomplete="name" required placeholder="Nama Anda" />
+                </label>
+                <label class="form-label">Program yang diikuti
+                  <select id="formProgramSelect" name="program_id" required><option value="">Memuat program...</option></select>
+                </label>
+                <fieldset class="rating-fieldset">
+                  <legend>Bagaimana pengalaman Anda di setiap aspek?</legend>
+                  <div id="ratingFields" class="rating-grid"></div>
+                </fieldset>
+                <label class="form-label">Aspek yang paling berkaitan dengan komentar
+                  <select id="aspekTerkait" name="aspek_terkait" required><option value="">Pilih aspek</option></select>
+                </label>
+                <label class="form-label">Cerita dan masukan Anda
+                  <textarea id="komentar" name="komentar" rows="5" maxlength="10000" required placeholder="Apa yang paling berkesan? Apa yang bisa kami tingkatkan?"></textarea>
+                </label>
+                <button id="submitButton" type="submit" class="button button-primary submit-button">Kirim evaluasi <span aria-hidden="true">→</span></button>
+              </div>
+            </form>
+            <aside class="form-aside">
+              <div class="aside-mark" aria-hidden="true">“</div>
+              <h3>Suara Anda berarti.</h3>
+              <p>Setiap masukan membantu kami memahami kebutuhan peserta dengan lebih baik. Terima kasih telah tumbuh bersama PERI.</p>
+              <div class="aside-signature">Dengan hangat,<br /><strong>Tim PERI</strong></div>
+            </aside>
+          </div>
+          <div id="predictionResults" class="prediction-results hidden" aria-live="polite"></div>
+        </section>
+      </main>
+      <footer class="footer"><span class="brand-mark small" aria-hidden="true">p</span><span>PERI · Mendengar dengan hati, bertumbuh bersama.</span><a class="admin-link" href="/admin.html">Area admin</a></footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,68 @@
+[
+  {
+    "program": "Self Healing Perempuan Kepala Keluarga",
+    "rating_dasar": {
+      "fasilitas": 3.2,
+      "pengajar": 4.5,
+      "materi": 4.2,
+      "pelaksanaan": 4.0,
+      "pelayanan": 4.5,
+      "manfaat": 4.7
+    }
+  },
+  {
+    "program": "Pelatihan Rencana Bisnis",
+    "rating_dasar": {
+      "fasilitas": 3.5,
+      "pengajar": 4.3,
+      "materi": 4.6,
+      "pelaksanaan": 3.8,
+      "pelayanan": 4.0,
+      "manfaat": 4.5
+    }
+  },
+  {
+    "program": "Digital Skill Academy",
+    "rating_dasar": {
+      "fasilitas": 2.8,
+      "pengajar": 4.4,
+      "materi": 4.8,
+      "pelaksanaan": 3.9,
+      "pelayanan": 4.1,
+      "manfaat": 4.6
+    }
+  },
+  {
+    "program": "Sertifikasi BNSP",
+    "rating_dasar": {
+      "fasilitas": 3.7,
+      "pengajar": 4.6,
+      "materi": 4.5,
+      "pelaksanaan": 3.5,
+      "pelayanan": 3.9,
+      "manfaat": 4.6
+    }
+  },
+  {
+    "program": "Pendampingan Pemasaran Digital",
+    "rating_dasar": {
+      "fasilitas": 3.0,
+      "pengajar": 4.2,
+      "materi": 4.3,
+      "pelaksanaan": 4.1,
+      "pelayanan": 4.4,
+      "manfaat": 4.7
+    }
+  },
+  {
+    "program": "Kelas TikTok",
+    "rating_dasar": {
+      "fasilitas": 3.1,
+      "pengajar": 4.1,
+      "materi": 4.5,
+      "pelaksanaan": 4.0,
+      "pelayanan": 4.0,
+      "manfaat": 4.3
+    }
+  }
+]
