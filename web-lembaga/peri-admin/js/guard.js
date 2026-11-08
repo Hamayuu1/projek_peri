@@ -5,7 +5,7 @@
 (function () {
   "use strict";
   var API = "http://" + (location.hostname || "127.0.0.1") + ":5001";
-  var LEMBAGA = "../peri-lembaga/beranda.html";
+  var LEMBAGA = "http://" + (location.hostname || "localhost") + ":5173/beranda.html";
 
   var hide = document.createElement("style");
   hide.textContent = "html{visibility:hidden}";
@@ -42,9 +42,10 @@
     btn.type = "button";
     btn.className = "btn btn-sm";
     btn.textContent = "Keluar";
+    btn.style.marginRight = "8px";
     btn.addEventListener("click", keluar);
     var wrap = document.createElement("div");
-    wrap.className = "topbar-actions";
+    wrap.style.cssText = "display:flex;align-items:center";
     avatar.parentNode.insertBefore(wrap, avatar);
     wrap.appendChild(btn);
     wrap.appendChild(avatar);
