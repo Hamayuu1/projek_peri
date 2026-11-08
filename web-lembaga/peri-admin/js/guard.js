@@ -42,10 +42,9 @@
     btn.type = "button";
     btn.className = "btn btn-sm";
     btn.textContent = "Keluar";
-    btn.style.marginRight = "8px";
     btn.addEventListener("click", keluar);
     var wrap = document.createElement("div");
-    wrap.style.cssText = "display:flex;align-items:center";
+    wrap.className = "topbar-actions";
     avatar.parentNode.insertBefore(wrap, avatar);
     wrap.appendChild(btn);
     wrap.appendChild(avatar);

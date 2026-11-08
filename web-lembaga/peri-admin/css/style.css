@@ -1,4 +1,10 @@
 :root {
+  /* Grid admin (desktop 1440): sidebar 240 + konten 1104 px = 12 kolom x 70 px + 11 gutter x 24 px.
+     Pada layar lebih lebar, konten dibatasi 1200 px dan berada di tengah. */
+  --sidebar-w: 240px;
+  --gutter: 24px;
+  --content-pad: 48px;
+  --container: 1200px;
   --brand: #9d1e4a;
   --brand-dark: #9d1e4a;
   --brand-tint: #fbeff3;
@@ -46,7 +52,7 @@ a {
   position: sticky;
   top: 0;
   align-self: flex-start;
-  width: 260px;
+  width: var(--sidebar-w);
   height: 100vh;
   padding: 25px 17px 17px;
   overflow-y: auto;
@@ -81,7 +87,7 @@ a {
 .nav-label {
   margin: 0 0 6px;
   padding: 0 12px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--text-muted);
@@ -187,8 +193,31 @@ a {
 /* Main content */
 .main {
   flex: 1;
-  padding: 32px;
+  padding-block: 32px;
+  padding-inline: max(
+    var(--content-pad),
+    calc((100vw - var(--sidebar-w) - var(--container)) / 2)
+  );
   min-width: 0;
+}
+
+/* Grid 12 kolom untuk isi halaman admin */
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gutter);
+}
+.col-4 {
+  grid-column: span 4;
+}
+.col-6 {
+  grid-column: span 6;
+}
+.col-8 {
+  grid-column: span 8;
+}
+.col-12 {
+  grid-column: span 12;
 }
 .topbar {
   display: flex;
@@ -204,7 +233,7 @@ a {
   margin: 0;
 }
 .page-sub {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
   margin: 2px 0 0;
 }
@@ -222,7 +251,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   flex-shrink: 0;
 }
@@ -230,8 +259,8 @@ a {
 /* Stat cards */
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 x 4 kolom */
+  gap: var(--gutter);
   margin-bottom: 1.5rem;
 }
 .stat-card {
@@ -241,7 +270,7 @@ a {
   padding: 1rem 1.1rem;
 }
 .stat-label {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
   margin: 0 0 4px;
 }
@@ -261,7 +290,7 @@ a {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 14px;
 }
 thead th {
   text-align: left;
@@ -287,7 +316,7 @@ tbody tr:last-child td {
 
 /* Badges */
 .badge {
-  font-size: 11px;
+  font-size: 12px;
   padding: 2px 9px;
   border-radius: 100px;
   display: inline-block;
@@ -331,7 +360,7 @@ tbody tr:last-child td {
 
 /* Buttons */
 .btn {
-  font-size: 13px;
+  font-size: 14px;
   padding: 7px 14px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -356,7 +385,7 @@ tbody tr:last-child td {
 }
 .btn-sm {
   padding: 5px 10px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .btn-ghost {
   border-color: transparent;
@@ -374,6 +403,14 @@ tbody tr:last-child td {
 }
 
 /* Toolbar */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+}
+.topbar-actions .btn {
+  margin-right: 8px;
+}
+
 .toolbar {
   display: flex;
   gap: 10px;
@@ -391,7 +428,7 @@ input[type="date"],
 input[type="number"],
 select,
 textarea {
-  font-size: 13px;
+  font-size: 14px;
   padding: 8px 10px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -451,7 +488,7 @@ textarea {
 }
 .error-text {
   color: var(--danger);
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 4px;
   display: none;
 }
@@ -467,7 +504,7 @@ textarea {
   transform: translateX(-50%) translateY(10px);
   background: var(--text);
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   padding: 10px 18px;
   border-radius: 100px;
   opacity: 0;
@@ -486,7 +523,7 @@ textarea {
   padding: 2.5rem 1rem;
   text-align: center;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .row-actions {
@@ -518,14 +555,14 @@ textarea {
 }
 .gb-name {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
 }
 .gb-meta {
   font-size: 12px;
   color: var(--text-muted);
 }
 .gb-message {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text);
   line-height: 1.5;
   margin: 0 0 8px;
@@ -572,7 +609,7 @@ textarea {
   margin: 0 0 10px;
 }
 .tag {
-  font-size: 11px;
+  font-size: 12px;
   padding: 2px 9px;
   border-radius: 100px;
   border: 1px solid var(--border);
