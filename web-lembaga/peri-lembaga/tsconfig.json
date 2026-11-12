@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "jsx": "react-jsx",
     "paths": { "@rekomendasi": ["../peri-rekomendasi/index"] },
     "lib": [
       "ES2022",

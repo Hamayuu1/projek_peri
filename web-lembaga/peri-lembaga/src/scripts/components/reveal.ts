@@ -14,8 +14,8 @@ function jeda(urutan: number): string {
 }
 
 /** Hindari animasi ganda: buang elemen yang berada di dalam kandidat lain. */
-function kumpulkan(): HTMLElement[] {
-  const semua = Array.from(document.querySelectorAll<HTMLElement>(SELECTOR));
+function kumpulkan(lingkup: ParentNode): HTMLElement[] {
+  const semua = Array.from(lingkup.querySelectorAll<HTMLElement>(SELECTOR));
   return semua.filter((el) => !semua.some((o) => o !== el && o.contains(el)));
 }
 
@@ -31,7 +31,8 @@ function tampilkan(el: HTMLElement, urutan: number): void {
   el.classList.add("is-visible");
 }
 
-export function initReveal(): void {
+/** `lingkup` membatasi pencarian elemen (dipakai komponen React); bawaannya seluruh halaman. */
+export function initReveal(lingkup: ParentNode = document): void {
   if (!("IntersectionObserver" in window)) return; // biarkan semua tampil normal
   const root = document.documentElement;
   root.classList.add("anim-ready");
@@ -41,7 +42,7 @@ export function initReveal(): void {
   const lebar = window.innerWidth || root.clientWidth;
 
   // Item karusel/baris geser yang berada di luar layar secara horizontal dibiarkan apa adanya.
-  const target = kumpulkan().filter((el) => {
+  const target = kumpulkan(lingkup).filter((el) => {
     const r = el.getBoundingClientRect();
     const tampak = Math.min(r.right, lebar) - Math.max(r.left, 0);
     return tampak >= Math.min(r.width, lebar) * 0.5;

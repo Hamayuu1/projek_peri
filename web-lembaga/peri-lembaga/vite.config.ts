@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
+import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
 const ADMIN_DIR = fileURLToPath(new URL("../peri-admin/", import.meta.url));
@@ -71,7 +72,7 @@ function adminPanel(): Plugin {
 
 // Situs multi-halaman: setiap file HTML di akar proyek menjadi satu titik masuk.
 export default defineConfig({
-  plugins: [partials(), adminPanel()],
+  plugins: [react(), partials(), adminPanel()],
   resolve: {
     alias: { "@rekomendasi": `${REKOMENDASI_DIR}/index.js` },
   },

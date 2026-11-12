@@ -4,6 +4,7 @@ import "../styles/main.css";
 import { initAuthModal } from "./components/auth-modal";
 import { initPageTransition } from "./components/page-transition";
 import { initReveal } from "./components/reveal";
+import { initReact } from "../react/mount";
 
 type ModulHalaman = { init: () => void };
 
@@ -15,6 +16,8 @@ const HALAMAN: Record<string, () => Promise<ModulHalaman>> = {
 
 async function mulai(): Promise<void> {
   initAuthModal();
+  // Komponen React ("pulau") pada elemen [data-react]; tidak melakukan apa pun bila tidak ada.
+  void initReact();
   const muat = HALAMAN[document.body.dataset.page ?? ""];
   if (muat) (await muat()).init();
   // Setelah skrip halaman, agar kartu yang dibuatnya ikut dianimasikan.
