@@ -1,0 +1,95 @@
+/* =========================================================
+   Fondasi responsif (tahap M0)
+   Desktop (>1024px) tidak diubah sama sekali.
+   Tablet  : <= 1024px
+   Mobile  : <= 640px
+   File ini hanya menimpa token dan kolom grid. Aturan khusus
+   komponen/halaman ditulis di file masing-masing (tahap M1-M4).
+   ========================================================= */
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1024px) {
+  :root {
+    --fs-h1: 40px;
+    --lh-h1: 48px;
+    --fs-h2: 28px;
+    --lh-h2: 36px;
+    --fs-h3: 22px;
+    --lh-h3: 30px;
+
+    --section-py: var(--space-8); /* 64px */
+    --section-py-sm: var(--space-6); /* 48px */
+    --grid-margin-min: 32px;
+  }
+
+  /* Kolom 3 dan 4 (kartu berderet) jadi 2 per baris; sisi lebar bertumpuk. */
+  .col-3,
+  .col-4 {
+    grid-column: auto / span 6;
+  }
+  .col-5,
+  .col-6,
+  .col-7,
+  .col-8,
+  .col-9,
+  .col-10,
+  .col-11,
+  .col-12 {
+    grid-column: auto / span 12;
+  }
+  .col-2 {
+    grid-column: auto / span 4;
+  }
+  .cols-3 > *,
+  .cols-4 > * {
+    grid-column: span 6;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 640px) {
+  :root {
+    --fs-h1: 32px;
+    --lh-h1: 40px;
+    --fs-h2: 24px;
+    --lh-h2: 32px;
+    --fs-h3: 20px;
+    --lh-h3: 28px;
+    --fs-h4: 18px;
+    --lh-h4: 26px;
+    --fs-lead: 16px;
+    --lh-lead: 26px;
+
+    --section-py: var(--space-6); /* 48px */
+    --section-py-sm: var(--space-5); /* 40px */
+    --grid-gutter: 16px;
+    --grid-margin-min: 16px;
+  }
+
+  .col-1,
+  .col-3,
+  .col-4,
+  .col-5,
+  .col-6,
+  .col-7,
+  .col-8,
+  .col-9,
+  .col-10,
+  .col-11,
+  .col-12 {
+    grid-column: auto / span 12;
+  }
+  .col-2 {
+    grid-column: auto / span 6;
+  }
+  .cols-2 > *,
+  .cols-3 > *,
+  .cols-4 > * {
+    grid-column: span 12;
+  }
+
+  /* Judul seksi: jarak ke isi lebih rapat */
+  .section-head {
+    margin-bottom: var(--space-4);
+  }
+}

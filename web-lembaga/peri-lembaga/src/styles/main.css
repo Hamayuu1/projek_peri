@@ -3,6 +3,7 @@
 @import "./tokens.css";
 @import "./base.css";
 @import "./grid.css";
+@import "./responsive.css";
 @import "./layout/navbar.css";
 @import "./layout/footer.css";
 @import "./layout/section.css";
