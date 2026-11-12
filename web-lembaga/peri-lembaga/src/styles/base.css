@@ -120,6 +120,7 @@ button {
 }
 /* Wadah komponen React tidak ikut membentuk tata letak: isinya langsung
    menjadi anak elemen di atasnya (grid/flex halaman tetap berlaku). */
-[data-react] {
+[data-react],
+.react-wadah {
   display: contents;
 }

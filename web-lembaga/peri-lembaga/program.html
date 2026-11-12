@@ -23,140 +23,8 @@
         </div>
       </section>
 
-      <!-- Pencarian dan filter (8 + 4) -->
-      <div class="container pg-search">
-        <div class="grid" data-reveal>
-          <label class="pg-field col-8">
-            <span class="visually-hidden">Cari program</span>
-            <input type="text" id="search-program" placeholder="Cari Program" autocomplete="off" />
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-          </label>
-          <label class="pg-field col-4">
-            <span class="visually-hidden">Kategori program</span>
-            <select id="filter-kategori">
-              <option value="">Semua Kategori</option>
-              <option value="pelatihan">Pelatihan &amp; Pendidikan</option>
-              <option value="bisnis">Ekonomi &amp; Bisnis</option>
-              <option value="kesehatan">Kesehatan &amp; Psikososial</option>
-              <option value="komunitas">Komunitas &amp; Sosial</option>
-            </select>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
-          </label>
-        </div>
-      </div>
-
-      <!-- Program unggulan (5 + 7) -->
-      <section class="section section--sm pg-featured" aria-labelledby="pg-unggulan">
-        <div class="container">
-          <div class="grid grid--center">
-            <div class="media-fill col-5" data-reveal>
-              <img src="/src/assets/images/program-1.png" alt="Bangkit dan Berdaya" />
-            </div>
-            <div class="pg-featured-text col-7" data-reveal>
-              <span class="eyebrow">Program Unggulan Kami</span>
-              <h2 id="pg-unggulan">Bangkit dan Berdaya</h2>
-              <p>Menggabungkan pemulihan trauma, pengembangan diri, dan peningkatan harapan. Ikuti program ini bersama komunitas PERI di Samarinda.</p>
-              <button type="button" class="btn btn--primary btn-arrow" data-daftar-program data-daftar-nama="Bangkit dan Berdaya">Daftar Program</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Daftar program (3+3+3+3) -->
-      <section class="section section--surface" aria-labelledby="pg-program">
-        <div class="container">
-          <div class="section-head" data-reveal>
-            <span class="eyebrow">Program Kami</span>
-            <h2 id="pg-program">Mewujudkan Perempuan Mandiri dan Berdaya Saing</h2>
-          </div>
-          <div class="grid" id="program-grid">
-          <article class="card col-3" data-program-card data-nama="Bangkit dan Berdaya" data-kategori="kesehatan" data-reveal>
-            <img class="card-media" src="/src/assets/images/program-1.png" alt="Bangkit dan Berdaya" />
-            <div class="card-body">
-              <h3>Bangkit dan Berdaya</h3>
-              <p data-program-desc>Menggabungkan pemulihan trauma, pengembangan diri, dan peningkatan harapan.</p>
-              <button type="button" class="btn btn--primary btn--block btn--sm btn-arrow" data-daftar-program>Daftar Program</button>
-            </div>
-          </article>
-          <article class="card col-3" data-program-card data-nama="Inkubator Bisnis Perempuan" data-kategori="bisnis" data-reveal>
-            <img class="card-media" src="/src/assets/images/program-2.png" alt="Inkubator Bisnis Perempuan" />
-            <div class="card-body">
-              <h3>Inkubator Bisnis Perempuan</h3>
-              <p data-program-desc>Mentoring dan pendampingan bisnis mikro untuk anggota komunitas.</p>
-              <button type="button" class="btn btn--primary btn--block btn--sm btn-arrow" data-daftar-program>Daftar Program</button>
-            </div>
-          </article>
-          <article class="card col-3" data-program-card data-nama="Kelas Kreasi Mandiri" data-kategori="bisnis" data-reveal>
-            <img class="card-media" src="/src/assets/images/program-3.png" alt="Kelas Kreasi Mandiri" />
-            <div class="card-body">
-              <h3>Kelas Kreasi Mandiri</h3>
-              <p data-program-desc>Sistem simpan pinjam berbasis komunitas untuk mendukung usaha kecil anggota.</p>
-              <button type="button" class="btn btn--primary btn--block btn--sm btn-arrow" data-daftar-program>Daftar Program</button>
-            </div>
-          </article>
-          <article class="card col-3" data-program-card data-nama="Digital Skill Academy" data-kategori="pelatihan" data-reveal>
-            <img class="card-media" src="/src/assets/images/program-4.png" alt="Digital Skill Academy" />
-            <div class="card-body">
-              <h3>Digital Skill Academy</h3>
-              <p data-program-desc>Pelatihan digital marketing, desain grafis, dan content creation untuk perempuan.</p>
-              <button type="button" class="btn btn--primary btn--block btn--sm btn-arrow" data-daftar-program>Daftar Program</button>
-            </div>
-          </article>
-          <article class="card col-3" data-program-card data-nama="Ruang Temu &amp; Kolaborasi" data-kategori="komunitas" data-reveal>
-            <img class="card-media" src="/src/assets/images/program-1.png" alt="Ruang Temu &amp; Kolaborasi" />
-            <div class="card-body">
-              <h3>Ruang Temu &amp; Kolaborasi</h3>
-              <p data-program-desc>Sesi diskusi, sharing, dan networking antaranggota dan komunitas lain.</p>
-              <button type="button" class="btn btn--primary btn--block btn--sm btn-arrow" data-daftar-program>Daftar Program</button>
-            </div>
-          </article>
-          <article class="card col-3" data-program-card data-nama="Perempuan Sehat &amp; Bahagia" data-kategori="kesehatan" data-reveal>
-            <img class="card-media" src="/src/assets/images/program-2.png" alt="Perempuan Sehat &amp; Bahagia" />
-            <div class="card-body">
-              <h3>Perempuan Sehat &amp; Bahagia</h3>
-              <p data-program-desc>Program edukasi kesehatan, parenting, mental health, dan kesehatan reproduksi.</p>
-              <button type="button" class="btn btn--primary btn--block btn--sm btn-arrow" data-daftar-program>Daftar Program</button>
-            </div>
-          </article>
-          <article class="card col-3" data-program-card data-nama="Beasiswa Kreatifitas Anak Perempuan" data-kategori="pelatihan" data-reveal>
-            <img class="card-media" src="/src/assets/images/program-3.png" alt="Beasiswa Kreatifitas Anak Perempuan" />
-            <div class="card-body">
-              <h3>Beasiswa Kreatifitas Anak Perempuan</h3>
-              <p data-program-desc>Bantuan pendidikan dan pelatihan untuk anak perempuan dari keluarga tidak mampu.</p>
-              <button type="button" class="btn btn--primary btn--block btn--sm btn-arrow" data-daftar-program>Daftar Program</button>
-            </div>
-          </article>
-          <article class="card col-3" data-program-card data-nama="Podcast Suara Perempuan" data-kategori="komunitas" data-reveal>
-            <img class="card-media" src="/src/assets/images/program-4.png" alt="Podcast Suara Perempuan" />
-            <div class="card-body">
-              <h3>Podcast Suara Perempuan</h3>
-              <p data-program-desc>Platform berbagi cerita inspiratif, edukatif, dan aspiratif untuk perempuan.</p>
-              <button type="button" class="btn btn--primary btn--block btn--sm btn-arrow" data-daftar-program>Daftar Program</button>
-            </div>
-          </article>
-          <article class="card col-3" data-program-card data-nama="Festival Perempuan Kreatif" data-kategori="komunitas" data-lebih data-reveal>
-            <img class="card-media" src="/src/assets/images/program-3.png" alt="Festival Perempuan Kreatif" />
-            <div class="card-body">
-              <h3>Festival Perempuan Kreatif</h3>
-              <p data-program-desc>Event pameran, talkshow, dan workshop terbuka untuk masyarakat umum.</p>
-              <button type="button" class="btn btn--primary btn--block btn--sm btn-arrow" data-daftar-program>Daftar Program</button>
-            </div>
-          </article>
-          <article class="card col-3" data-program-card data-nama="Gerakan Sosial &amp; Lingkungan" data-kategori="komunitas" data-lebih data-reveal>
-            <img class="card-media" src="/src/assets/images/program-4.png" alt="Gerakan Sosial &amp; Lingkungan" />
-            <div class="card-body">
-              <h3>Gerakan Sosial &amp; Lingkungan</h3>
-              <p data-program-desc>Aksi sosial, daur ulang, dan kegiatan lingkungan berbasis komunitas.</p>
-              <button type="button" class="btn btn--primary btn--block btn--sm btn-arrow" data-daftar-program>Daftar Program</button>
-            </div>
-          </article>
-          </div>
-          <p class="pg-empty" id="program-empty" hidden>Tidak ada program yang cocok dengan pencarian Anda.</p>
-          <div class="section-action">
-            <button type="button" class="btn btn--primary btn-arrow" data-program-lebih>Lihat Program Lainnya</button>
-          </div>
-        </div>
-      </section>
+      <!-- Pencarian, program unggulan, dan daftar program: komponen React src/react/islands/KatalogProgram.tsx -->
+      <div data-react="KatalogProgram"></div>
 
       <!-- Temukan program (7 + 5) -->
       <section class="section pg-band" aria-labelledby="pg-temukan">
@@ -215,6 +83,9 @@
         </div>
       </section>
     </main>
+
+    <!-- Pop-up Daftar Program: komponen React src/react/islands/DaftarProgram.tsx -->
+    <div data-react="DaftarProgram"></div>
 
     <!-- @include footer -->
   </body>
