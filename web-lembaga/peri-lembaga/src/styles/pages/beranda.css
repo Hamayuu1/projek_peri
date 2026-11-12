@@ -234,3 +234,42 @@
   border-radius: var(--radius-card);
   object-fit: cover;
 }
+
+/* ---------- Tablet dan mobile ---------- */
+@media (max-width: 1024px) {
+  .br-hero {
+    min-height: 480px;
+  }
+  .br-vm,
+  .br-stats {
+    margin-top: var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  /* Hero: tinggi mengikuti isi, lapisan gelap rata supaya teks tetap terbaca */
+  .br-hero {
+    height: auto;
+    min-height: 420px;
+    max-height: none;
+    padding-block: var(--space-8);
+  }
+  .br-hero::after {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+  }
+  .br-hero .btn {
+    width: 100%;
+  }
+
+  .br-vm-card {
+    padding: var(--space-3);
+  }
+  .br-stat b {
+    font-size: 32px;
+    line-height: 40px;
+  }
+  .br-partners img {
+    width: 96px;
+    height: 96px;
+  }
+}

@@ -136,3 +136,35 @@
   line-height: var(--lh-small);
   color: var(--color-ink);
 }
+
+/* ---------- Tablet dan mobile ---------- */
+@media (max-width: 1024px) {
+  /* Kartu pengurus dua per baris; kartu ganjil terakhir di tengah */
+  .ab-org > .col-3,
+  .ab-org > .col-4 {
+    grid-column: auto / span 6;
+  }
+  .ab-org > :last-child:nth-child(odd) {
+    grid-column: 4 / span 6;
+  }
+}
+
+@media (max-width: 640px) {
+  .ab-quote {
+    padding: var(--space-2);
+  }
+  .ab-visi .media-fill {
+    min-height: 200px;
+  }
+  .ab-misi-item {
+    padding: 12px var(--space-2);
+  }
+  /* Tetap dua kartu per baris supaya daftar pengurus tidak terlalu panjang */
+  .ab-org-info {
+    padding: var(--space-1);
+  }
+  .ab-org-name {
+    font-size: var(--fs-label);
+    line-height: var(--lh-label);
+  }
+}

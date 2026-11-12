@@ -47,3 +47,21 @@
   justify-content: flex-end;
   align-items: center;
 }
+
+/* ---------- Tablet dan mobile ---------- */
+@media (max-width: 1024px) {
+  /* Varian dua kolom: tombol pindah ke bawah teks, rata kiri */
+  .cta-band-action {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .cta-eyebrow::before,
+  .cta-eyebrow::after {
+    width: 24px;
+  }
+  .cta-band .btn {
+    width: 100%;
+  }
+}

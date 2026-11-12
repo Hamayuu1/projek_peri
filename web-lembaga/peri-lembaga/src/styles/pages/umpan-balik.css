@@ -313,3 +313,43 @@
   line-height: var(--lh-small);
   color: #b3261e;
 }
+
+/* ---------- Tablet dan mobile ---------- */
+@media (max-width: 1024px) {
+  .ub-contact,
+  .ub-form-card {
+    padding: var(--space-4);
+  }
+  .ub-banner-actions {
+    justify-content: flex-start;
+  }
+  /* Tiga testimoni: dua baris, kartu ketiga di tengah */
+  #testi-grid > :last-child:nth-child(odd) {
+    grid-column: 4 / span 6;
+  }
+}
+
+@media (max-width: 640px) {
+  .ub-contact,
+  .ub-form-card {
+    padding: var(--space-3) var(--space-2);
+  }
+  .ub-cta-row {
+    flex-wrap: wrap;
+  }
+  .ub-banner-actions .btn,
+  .ub-form .btn {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  /* Teks panjang (email, alamat) tidak boleh melebar keluar kartu */
+  .ub-contact-item > div {
+    min-width: 0;
+  }
+  .ub-contact-value {
+    overflow-wrap: anywhere;
+  }
+  #testi-grid > :last-child:nth-child(odd) {
+    grid-column: auto / span 12;
+  }
+}
