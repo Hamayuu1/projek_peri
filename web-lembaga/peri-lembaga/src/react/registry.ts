@@ -12,6 +12,7 @@ export const PULAU: Record<string, Pulau> = {
   NavbarAksi: () => import("./islands/NavbarAksi"),
   KatalogProgram: () => import("./islands/KatalogProgram"),
   DaftarProgram: () => import("./islands/DaftarProgram"),
+  TemukanProgram: () => import("./islands/TemukanProgram"),
   // Tambahkan komponen baru di sini, misalnya:
   // PopupAuth: () => import("./islands/PopupAuth"),
 };
