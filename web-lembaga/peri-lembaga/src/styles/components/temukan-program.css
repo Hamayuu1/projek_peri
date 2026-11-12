@@ -415,3 +415,97 @@ body.tp-open {
   padding: 13px 30px;
   font-size: 16px;
 }
+
+/* ---------- Tablet dan mobile ---------- */
+@media (max-width: 1024px) {
+  .tp-results {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .tp-page {
+    padding: 24px 16px 56px;
+  }
+  .tp-title {
+    margin-bottom: 20px;
+    font-size: 28px;
+  }
+  .tp-input {
+    font-size: 16px; /* cegah iOS memperbesar halaman saat kolom difokuskan */
+  }
+
+  /* Penanda langkah: hanya langkah aktif yang menampilkan nama */
+  .tp-steps {
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .tp-steps li {
+    font-size: 15px;
+  }
+  .tp-steps li:not(.active) .tp-label {
+    display: none;
+  }
+
+  .tp-card {
+    padding: 20px 16px;
+    border-radius: 20px;
+  }
+  .tp-options {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .tp-actions,
+  .tp-actions--center {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .tp-actions .tp-btn {
+    width: 100%;
+  }
+
+  /* Hasil rekomendasi */
+  .tp-eyebrow2 {
+    margin: 0 0 16px;
+    font-size: 14px;
+  }
+  .tp-main {
+    padding: 20px 16px;
+  }
+  .tp-main-top {
+    flex-direction: column-reverse; /* foto di atas teks */
+    gap: 16px;
+  }
+  .tp-main-top img {
+    width: 100%;
+    max-width: 100%;
+  }
+  .tp-main .tp-eyebrow {
+    font-size: 16px;
+  }
+  .tp-main h3 {
+    font-size: 24px;
+  }
+  .tp-main-text p,
+  .tp-reason,
+  .tp-checks li {
+    font-size: 16px;
+  }
+  .tp-checks {
+    grid-template-columns: 1fr;
+  }
+  .tp-main-act {
+    text-align: center;
+  }
+  .tp-main-act .tp-btn {
+    width: 100%;
+  }
+  .tp-other-title {
+    margin: 32px 0 16px;
+    font-size: 24px;
+  }
+  .tp-results {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

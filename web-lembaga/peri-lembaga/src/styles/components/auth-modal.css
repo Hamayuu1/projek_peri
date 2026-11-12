@@ -282,3 +282,25 @@ body.auth-open {
 .auth-card input:focus-visible {
   outline: none;
 }
+
+/* ---------- Mobile ----------
+   Kartu berukuran tetap (347 px) mengikuti koordinat Figma, jadi di layar
+   sempit seluruh kartu diperkecil dengan zoom supaya tidak terpotong. */
+@media (max-width: 640px) {
+  .auth-field input {
+    font-size: 16px; /* cegah iOS memperbesar halaman saat kolom difokuskan */
+  }
+}
+@media (max-width: 380px) {
+  .auth-overlay {
+    padding: 8px;
+  }
+  .auth-card {
+    zoom: 0.92;
+  }
+}
+@media (max-width: 340px) {
+  .auth-card {
+    zoom: 0.84;
+  }
+}

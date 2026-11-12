@@ -400,3 +400,42 @@ body.dp-open {
   opacity: 0.6;
   cursor: wait;
 }
+
+/* ---------- Mobile: pop-up naik dari bawah seperti lembar ---------- */
+@media (max-width: 640px) {
+  .dp-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .dp-modal {
+    width: 100%;
+    max-height: 92dvh;
+    margin: 0;
+    overflow-y: auto;
+    border-radius: 24px 24px 0 0;
+  }
+  .dp-head {
+    padding: 18px 20px 14px;
+  }
+  .dp-title {
+    font-size: 22px;
+  }
+  .dp-body {
+    padding: 0 20px;
+  }
+  .dp-input input,
+  .dp-input select {
+    font-size: 16px; /* cegah iOS memperbesar halaman saat kolom difokuskan */
+  }
+  .dp-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    padding: 16px 20px 20px;
+  }
+  .dp-btn {
+    justify-content: center;
+  }
+  .dp-program {
+    align-items: flex-start;
+  }
+}
