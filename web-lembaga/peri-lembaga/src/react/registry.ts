@@ -9,6 +9,7 @@ export const PULAU: Record<string, Pulau> = {
   Testimoni: () => import("./islands/Testimoni"),
   FormUmpanBalik: () => import("./islands/FormUmpanBalik"),
   NavbarAksi: () => import("./islands/NavbarAksi"),
+  NavbarMenu: () => import("./islands/NavbarMenu"),
   KatalogProgram: () => import("./islands/KatalogProgram"),
   DaftarProgram: () => import("./islands/DaftarProgram"),
   TemukanProgram: () => import("./islands/TemukanProgram"),
