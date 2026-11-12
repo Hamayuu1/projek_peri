@@ -121,20 +121,8 @@
         </div>
       </section>
 
-      <!-- Apa kata mereka (4+4+4). Kartunya dibuat oleh scripts/pages/umpan-balik.ts -->
-      <section class="section section--surface" id="apa-kata-mereka" aria-labelledby="ub-testi">
-        <div class="container">
-          <div class="section-head" data-reveal>
-            <span class="eyebrow">Umpan Balik dari Pengguna</span>
-            <h2 id="ub-testi">Apa Kata Mereka tentang PERI</h2>
-            <p>Pengalaman peserta dan pengunjung. Hanya umpan balik yang sudah ditinjau dan disetujui admin yang ditampilkan di sini.</p>
-          </div>
-          <div class="grid cols-3" id="testi-grid"></div>
-          <div class="section-action" id="testi-more" hidden>
-            <button type="button" class="btn btn--outline" id="testi-toggle" aria-expanded="false">Lihat Semua Umpan Balik</button>
-          </div>
-        </div>
-      </section>
+      <!-- Apa kata mereka (4+4+4): komponen React src/react/islands/Testimoni.tsx -->
+      <div data-react="Testimoni"></div>
 
       <!-- Kontak (5) dan formulir (7) -->
       <section class="section" id="formulir" aria-label="Kontak dan formulir umpan balik">
@@ -180,28 +168,8 @@
             <div class="ub-form-card col-7" data-reveal>
               <h2>Kirim Umpan Balik</h2>
               <p>Isi formulir berikut, tim kami akan membaca dan menindaklanjuti pesanmu.</p>
-              <div id="form-success" class="ub-success" hidden>
-                <b aria-hidden="true">&#10003;</b>
-                <span>Terima kasih! Pesanmu sudah kami terima dan akan segera kami tindaklanjuti.</span>
-              </div>
-              <p id="form-error" class="ub-error" role="alert" hidden></p>
-              <form id="feedback-form" class="ub-form" novalidate>
-                <div class="field-row">
-                  <div class="field">
-                    <label for="fb-nama">Nama Lengkap</label>
-                    <input type="text" id="fb-nama" name="nama" placeholder="Nama kamu" autocomplete="name" required />
-                  </div>
-                  <div class="field">
-                    <label for="fb-email">Email</label>
-                    <input type="email" id="fb-email" name="email" placeholder="nama@email.com" autocomplete="email" required />
-                  </div>
-                </div>
-                <div class="field">
-                  <label for="fb-pesan">Pesan</label>
-                  <textarea id="fb-pesan" name="pesan" placeholder="Tulis pesan kamu di sini..." required></textarea>
-                </div>
-                <button type="submit" class="btn btn--primary btn--lg">Kirim Pesan</button>
-              </form>
+              <!-- Formulir: komponen React src/react/islands/FormUmpanBalik.tsx -->
+              <div data-react="FormUmpanBalik"></div>
             </div>
           </div>
         </div>

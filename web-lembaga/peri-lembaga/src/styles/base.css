@@ -118,3 +118,8 @@ button {
   white-space: nowrap;
   border: 0;
 }
+/* Wadah komponen React tidak ikut membentuk tata letak: isinya langsung
+   menjadi anak elemen di atasnya (grid/flex halaman tetap berlaku). */
+[data-react] {
+  display: contents;
+}
