@@ -1,6 +1,6 @@
 /* =========================================================
    Wizard "Temukan Program Anda" (3 langkah + hasil rekomendasi).
-   Skrip: scripts/pages/program/temukan-program.ts. Kelas berawalan "tp-".
+   Komponen: react/islands/TemukanProgram.tsx. Kelas berawalan "tp-".
    Desain: Figma node 166:371 / 167:263 / 168:536. Desktop dahulu; responsif menyusul.
    ========================================================= */
 

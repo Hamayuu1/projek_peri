@@ -1,6 +1,6 @@
 /* =========================================================
    Umpan Balik (hubungi.html) — grid 1440. Kelas statis diawali "ub-".
-   Kartu "Apa Kata Mereka" dibuat oleh scripts/pages/umpan-balik.ts
+   Kartu "Apa Kata Mereka" dibuat oleh react/islands/Testimoni.tsx
    dan memakai kelas "testi-". Desain: Figma "Umpan Balik - Grid 1440".
    ========================================================= */
 
@@ -114,7 +114,7 @@
   gap: 12px;
 }
 
-/* ---------- Apa Kata Mereka (4+4+4) — kartu dibuat oleh umpan-balik.ts ---------- */
+/* ---------- Apa Kata Mereka (4+4+4) — kartu dibuat oleh Testimoni.tsx ---------- */
 .testi-card {
   display: flex;
   flex-direction: column;

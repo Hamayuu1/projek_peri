@@ -6,13 +6,11 @@ import type { ComponentType } from "react";
 export type Pulau = () => Promise<{ default: ComponentType<any> }>;
 
 export const PULAU: Record<string, Pulau> = {
-  ContohPulau: () => import("./islands/ContohPulau"),
   Testimoni: () => import("./islands/Testimoni"),
   FormUmpanBalik: () => import("./islands/FormUmpanBalik"),
   NavbarAksi: () => import("./islands/NavbarAksi"),
   KatalogProgram: () => import("./islands/KatalogProgram"),
   DaftarProgram: () => import("./islands/DaftarProgram"),
   TemukanProgram: () => import("./islands/TemukanProgram"),
-  // Tambahkan komponen baru di sini, misalnya:
-  // PopupAuth: () => import("./islands/PopupAuth"),
+  // Tambahkan komponen baru di sini.
 };
