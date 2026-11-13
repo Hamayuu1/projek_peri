@@ -257,9 +257,6 @@
   .br-hero::after {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
   }
-  .br-hero .btn {
-    width: 100%;
-  }
 
   .br-vm-card {
     padding: var(--space-3);

@@ -337,11 +337,6 @@
   .ub-cta-row {
     flex-wrap: wrap;
   }
-  .ub-banner-actions .btn,
-  .ub-form .btn {
-    flex: 1 1 100%;
-    width: 100%;
-  }
   /* Teks panjang (email, alamat) tidak boleh melebar keluar kartu */
   .ub-contact-item > div {
     min-width: 0;

@@ -147,10 +147,6 @@
   .pg-band .media-fill {
     min-height: 220px;
   }
-  .pg-featured-text .btn,
-  .pg-band-text .btn {
-    width: 100%;
-  }
   .pg-testi {
     padding: var(--space-3) var(--space-2);
   }
