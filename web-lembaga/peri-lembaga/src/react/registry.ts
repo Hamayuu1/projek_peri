@@ -13,5 +13,6 @@ export const PULAU: Record<string, Pulau> = {
   KatalogProgram: () => import("./islands/KatalogProgram"),
   DaftarProgram: () => import("./islands/DaftarProgram"),
   TemukanProgram: () => import("./islands/TemukanProgram"),
+  Aksesibilitas: () => import("./islands/Aksesibilitas"),
   // Tambahkan komponen baru di sini.
 };
