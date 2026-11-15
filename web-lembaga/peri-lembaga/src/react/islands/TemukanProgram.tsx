@@ -11,7 +11,6 @@ import { keDaftarProgram, PROGRAM } from "../data/program";
    Desain: Figma node 166:371 (Profil), 167:263 (Preferensi), 168:536 (Tujuan).
    Kelas CSS sama dengan versi lama (styles/components/temukan-program.css). */
 
-type JenisOpsi = "kerja" | "ekonomi" | "topik" | "tujuan";
 type IdGalat = "usia" | "kerja" | "ekonomi" | "topik" | "tujuan";
 
 interface Jawaban {
