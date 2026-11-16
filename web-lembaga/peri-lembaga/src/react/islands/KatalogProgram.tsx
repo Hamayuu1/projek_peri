@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import gambarUnggulan from "../../assets/images/program-1.png";
 import { Tombol } from "../components/Tombol";
-import { KATEGORI, PROGRAM, type ProgramKatalog } from "../data/program";
+import { KATEGORI, usePrograms, type ProgramKatalog } from "../data/program";
 import { useReveal } from "../hooks/useReveal";
 
 /* Halaman Program: kolom pencarian dan filter, program unggulan, dan daftar program.
@@ -39,6 +39,7 @@ export default function KatalogProgram() {
   const [kategori, setKategori] = useState("");
   const [semua, setSemua] = useState(false);
   useReveal(wadah);
+  const { daftar: PROGRAM, siap } = usePrograms();
 
   const kunci = kata.trim().toLowerCase();
   const menyaring = kunci !== "" || kategori !== "";
@@ -112,15 +113,15 @@ export default function KatalogProgram() {
             <span className="eyebrow">Program Kami</span>
             <h2 id="pg-program">Mewujudkan Perempuan Mandiri dan Berdaya Saing</h2>
           </div>
-          <div className="grid" id="program-grid">
-            {PROGRAM.map((p) => (
+          <div className="grid" id="program-grid" aria-busy={!siap}>
+            {siap && PROGRAM.map((p) => (
               <KartuProgram key={p.nama} p={p} tersembunyi={!lolos(p) || (!semua && !menyaring && !!p.lebih)} />
             ))}
           </div>
-          <p className="pg-empty" id="program-empty" hidden={adaCocok}>
-            Tidak ada program yang cocok dengan pencarian Anda.
+          <p className="pg-empty" id="program-empty" hidden={adaCocok || !siap}>
+            {PROGRAM.length === 0 ? "Belum ada program yang tersedia." : "Tidak ada program yang cocok dengan pencarian Anda."}
           </p>
-          <div className="section-action" hidden={semua || menyaring}>
+          <div className="section-action" hidden={semua || menyaring || !PROGRAM.some((p) => p.lebih)}>
             <Tombol className="btn-arrow" data-program-lebih="" onClick={() => setSemua(true)}>
               Lihat Program Lainnya
             </Tombol>

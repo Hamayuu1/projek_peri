@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNod
 import { createPortal } from "react-dom";
 import { authApi, kirimPendaftaranProgram } from "../../scripts/services/api";
 import type { ProgramInfo, RingkasanPendaftaran, User } from "../../scripts/types";
-import { cariProgram, keDaftarProgram, PROGRAM } from "../data/program";
+import { cariProgram, keDaftarProgram, usePrograms } from "../data/program";
 
 /* Pop-up Pendaftaran Program (Figma node 160:169, 160:342, 160:418).
    Dipicu tombol [data-daftar-program] di mana pun pada halaman (kartu program, program
@@ -106,6 +106,7 @@ function Popup({ info, user, tampilan, ringkasan, onTutup, onLain, onTampilan, o
   const [nama, setNama] = useState("");
   const [email, setEmail] = useState(user?.email ?? "");
   const [wa, setWa] = useState("");
+  const { daftar: PROGRAM } = usePrograms();
   const [program, setProgram] = useState(info.nama);
   const [setuju, setSetuju] = useState(false);
   const [galat, setGalat] = useState<Galat>({});
@@ -329,6 +330,7 @@ function Popup({ info, user, tampilan, ringkasan, onTutup, onLain, onTampilan, o
 }
 
 export default function DaftarProgram() {
+  usePrograms(); // memuat katalog sejak halaman dibuka
   const [terbuka, setTerbuka] = useState<{ info: ProgramInfo; user: User | null } | null>(null);
   const [tampilan, setTampilan] = useState<Tampilan>("form");
   const [ringkasan, setRingkasan] = useState<RingkasanPendaftaran | null>(null);

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { createPortal } from "react-dom";
 import { rekomendasikan, type HasilProgram, type Profil } from "@rekomendasi";
 import type { ProgramInfo } from "../../scripts/types";
-import { keDaftarProgram, PROGRAM } from "../data/program";
+import { daftarSaatIni, keDaftarProgram, usePrograms } from "../data/program";
 
 /* Wizard "Temukan Program Anda": 3 langkah isian + hasil rekomendasi.
    Dibuka oleh tombol [data-temukan-program] di halaman Program.
@@ -89,7 +89,7 @@ function hitung(s: Jawaban): Rekomendasi[] {
   const daftar: Rekomendasi[] = [];
   for (const h of hasil) {
     if (h.score <= 0) continue;
-    const p = PROGRAM.find((k) => k.nama === h.program_name);
+    const p = daftarSaatIni().find((k) => k.nama === h.program_name);
     if (p) daftar.push({ p, hasil: h, persen: Math.round(h.score * 100) });
   }
   return daftar.slice(0, 4); // 1 utama + hingga 3 program lain
@@ -386,6 +386,7 @@ function Wizard({ atas, onTutup }: WizardProps) {
 }
 
 export default function TemukanProgram() {
+  usePrograms(); // memuat katalog sejak halaman dibuka
   const [atas, setAtas] = useState<number | null>(null); // null = tertutup; angka = posisi atas pop-up
   const fokusTerakhir = useRef<HTMLElement | null>(null);
   const popupLain = useRef(false);
