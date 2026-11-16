@@ -402,15 +402,17 @@ def register():
     return jsonify({"user": user}), 201
 
 
-@app.post("/api/auth/login")
-def login():
+def _proses_login(khusus_admin: bool):
+    """Login bersama. Pintu publik menolak akun admin, pintu admin menolak selain admin.
+    Pesan galat dibuat sama agar tidak membocorkan jenis akun."""
     data = data_json()
     email = bersihkan_email(data.get("email"))
     sandi = data.get("password")
     if not email or not isinstance(sandi, str) or not sandi:
         return galat("Email atau kata sandi salah.", 401)
 
-    kunci = ("login", request.remote_addr or "?", email)
+    pintu = "admin" if khusus_admin else "publik"
+    kunci = (f"login-{pintu}", request.remote_addr or "?", email)
     tunggu = _sisa_tunggu(kunci, LOGIN_MAKS_GAGAL, LOGIN_KUNCI)
     if tunggu:
         return galat(f"Terlalu banyak percobaan gagal. Coba lagi dalam {tunggu // 60 + 1} menit.", 429)
@@ -419,7 +421,8 @@ def login():
         cur.execute("SELECT id, email, role, password_hash FROM users WHERE email=%s", (email,))
         baris = cur.fetchone()
         cocok = check_password_hash(baris["password_hash"] if baris else HASH_PALSU, sandi)
-        if not baris or not cocok:
+        peran_sesuai = bool(baris) and ((baris["role"] == "admin") == khusus_admin)
+        if not baris or not cocok or not peran_sesuai:
             _catat(kunci)
             return galat("Email atau kata sandi salah.", 401)
         cur.execute("UPDATE users SET last_login=%s WHERE id=%s", (sekarang(), baris["id"]))
@@ -428,6 +431,18 @@ def login():
     user = user_publik(baris)
     masuk_sesi(user)
     return jsonify({"user": user})
+
+
+@app.post("/api/auth/login")
+def login():
+    """Pintu login web lembaga (publik). Akun admin tidak bisa masuk lewat sini."""
+    return _proses_login(khusus_admin=False)
+
+
+@app.post("/api/admin/login")
+def login_admin():
+    """Pintu login khusus panel admin. Hanya akun ber-role 'admin' yang diterima."""
+    return _proses_login(khusus_admin=True)
 
 
 @app.post("/api/auth/logout")
@@ -439,7 +454,7 @@ def logout():
 @app.get("/api/auth/me")
 def saya():
     user = user_saat_ini()
-    if not user:
+    if not user or user["role"] == "admin":   # sesi admin tidak dikenali web publik
         return galat("Belum masuk.", 401)
     return jsonify({"user": user_publik(user)})
 

@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import type { AuthView } from "../../scripts/types";
 import AuthModal from "../components/AuthModal";
 import { useAuth } from "../hooks/useAuth";
-import { ADMIN_URL } from "../lib/config";
 
 // Tombol di kanan navbar (Masuk/Daftar atau Panel Admin/Keluar) sekaligus pemilik pop-up login.
 // Dipasang sekali di partial navbar, sehingga berlaku di semua halaman.
@@ -53,11 +52,6 @@ export default function NavbarAksi() {
     <>
       {user ? (
         <>
-          {user.role === "admin" && (
-            <a href={ADMIN_URL} className="btn btn--primary">
-              Panel Admin
-            </a>
-          )}
           <a
             href="#"
             className="btn btn--outline"

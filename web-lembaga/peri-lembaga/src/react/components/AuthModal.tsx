@@ -3,7 +3,6 @@ import logoUrl from "../../assets/auth/logo-peri.png";
 import logoFallbackUrl from "../../assets/logo.svg";
 import { authApi } from "../../scripts/services/api";
 import type { AuthView, User } from "../../scripts/types";
-import { ADMIN_URL } from "../lib/config";
 
 /* Pop-up Masuk dan Daftar. Tata letak mengalir (bukan koordinat tetap) dan memakai
    token desain situs; gayanya ada di styles/components/auth-modal.css. */
@@ -154,12 +153,8 @@ export default function AuthModal({ tampilan, onUbahTampilan, onTutup }: Props) 
     wadah.current?.querySelector<HTMLInputElement>(`.auth-card[data-view="${tampilan}"] input`)?.focus();
   }, [tampilan]);
 
-  /** Setelah login atau registrasi: admin ke panel admin, pendaftar tetap di situs. */
+  /** Setelah login atau registrasi: pop-up ditutup, pendaftar tetap di situs. */
   const selesai = (user: User): void => {
-    if (user.role === "admin") {
-      location.href = ADMIN_URL;
-      return;
-    }
     onTutup();
     // Memberi tahu bagian lain (navbar, pop-up Daftar Program) bahwa login berhasil.
     document.dispatchEvent(new CustomEvent<User>("peri:login", { detail: user }));

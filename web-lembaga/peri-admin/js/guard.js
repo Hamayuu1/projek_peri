@@ -1,18 +1,18 @@
 /* Penjaga akses halaman admin.
    Hanya akun ber-role 'admin' yang boleh melihat halaman ini.
-   Belum masuk / bukan admin / server auth mati -> dialihkan ke web lembaga.
+   Belum masuk / bukan admin / server auth mati -> dialihkan ke halaman login admin.
    Dimuat di <head> sebelum konten tampil. */
 (function () {
   "use strict";
   var API = "http://" + (location.hostname || "127.0.0.1") + ":5001";
-  var LEMBAGA = "http://" + (location.hostname || "localhost") + ":5173/beranda.html";
+  var LOGIN = "login.html";
 
   var hide = document.createElement("style");
   hide.textContent = "html{visibility:hidden}";
   document.head.appendChild(hide);
 
   function tolak() {
-    location.replace(LEMBAGA);
+    location.replace(LOGIN);
   }
 
   function keluar() {
