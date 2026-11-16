@@ -10,6 +10,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/kelola-program.css" />
     <script src="js/guard.js"></script>
   </head>
   <body data-page="kelola-program">
@@ -177,7 +178,9 @@
             <table>
               <thead>
                 <tr>
+                  <th>Foto</th>
                   <th>Nama program</th>
+                  <th>Kategori</th>
                   <th>Tujuan</th>
                   <th>Periode</th>
                   <th>Pendaftar</th>
@@ -204,10 +207,21 @@
           />
         </div>
         <div class="field">
+          <label for="input-kategori">Kategori</label>
+          <select id="input-kategori">
+            <option value="">Pilih kategori</option>
+            <option value="pelatihan">Pelatihan &amp; Pendidikan</option>
+            <option value="bisnis">Ekonomi &amp; Bisnis</option>
+            <option value="kesehatan">Kesehatan &amp; Psikososial</option>
+            <option value="komunitas">Komunitas &amp; Sosial</option>
+          </select>
+        </div>
+        <div class="field">
           <label for="input-tujuan">Tujuan</label>
           <input
             type="text"
             id="input-tujuan"
+            maxlength="300"
             placeholder="Adaptasi teknologi & inovasi"
           />
         </div>
@@ -221,6 +235,20 @@
             <option>Tahunan</option>
           </select>
         </div>
+        <div class="field">
+          <label for="input-foto">Foto program</label>
+          <div class="foto-box">
+            <img id="foto-pratinjau" class="foto-pratinjau" alt="Pratinjau foto program" hidden />
+            <span id="foto-kosong" class="foto-kosong">Belum ada foto (memakai gambar bawaan situs)</span>
+          </div>
+          <input type="file" id="input-foto" accept="image/jpeg,image/png,image/webp" />
+          <small class="foto-bantuan">JPG, PNG, atau WebP, maksimal 2 MB.</small>
+          <button type="button" class="btn btn-sm" id="btn-hapus-foto" hidden>Hapus foto</button>
+        </div>
+        <label class="cek-lebih">
+          <input type="checkbox" id="input-lebih" />
+          Sembunyikan di balik tombol "Lihat Program Lainnya"
+        </label>
         <p class="error-text" id="program-error">
           Nama program dan tujuan wajib diisi.
         </p>

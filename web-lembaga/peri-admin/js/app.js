@@ -47,7 +47,7 @@ function kinerjaRowHtml(program, rank, topId) {
       ${rankCell}
       <td>
         <div class="name-cell">
-          <span>${program.nama}</span>
+          <span>${esc(program.nama)}</span>
           ${isTop ? '<span class="badge">Terbanyak</span>' : ""}
         </div>
       </td>
@@ -114,6 +114,7 @@ let pendaftarApiAktif = false;
 
 // Ambil pendaftar asli dari database. Gagal (server mati / bukan admin) -> daftar dikosongkan.
 async function muatPendaftarApi() {
+  await muatProgramApi();
   try {
     const r = await fetch(API_BASE + "/api/pendaftaran-program", {
       credentials: "include",
@@ -144,6 +145,52 @@ function hitungPendaftar() {
   programs.forEach((p) => {
     p.pendaftar = registrants.filter((r) => r.program === p.nama).length;
   });
+}
+
+// ---------- Daftar program (API peri-backend) ----------
+
+let programApiAktif = false;
+let programApiJanji = null;
+const KATEGORI_PROGRAM_LABEL = {
+  pelatihan: "Pelatihan & Pendidikan",
+  bisnis: "Ekonomi & Bisnis",
+  kesehatan: "Kesehatan & Psikososial",
+  komunitas: "Komunitas & Sosial",
+};
+
+// Ambil daftar program dari database. "penyelesaian" dan "kepuasan" masih data contoh
+// (dipertahankan dari data.js berdasarkan nama); program baru dimulai dari 0.
+// Gagal (server mati) -> daftar bawaan di data.js tetap dipakai.
+function muatProgramApi(paksa) {
+  if (programApiJanji && !paksa) return programApiJanji;
+  programApiJanji = (async () => {
+    try {
+      const r = await fetch(API_BASE + "/api/program", { credentials: "include" });
+      if (!r.ok) throw new Error("API " + r.status);
+      const { program } = await r.json();
+      const contoh = new Map(programs.map((p) => [p.nama, p]));
+      programs = program.map((p) => {
+        const lama = contoh.get(p.nama);
+        return {
+          id: p.id,
+          nama: p.nama,
+          tujuan: p.deskripsi,
+          kategori: p.kategori,
+          periode: p.periode,
+          gambar: p.gambar,
+          lebih: p.lebih,
+          pendaftar: 0,
+          penyelesaian: lama ? lama.penyelesaian : 0,
+          kepuasan: lama ? lama.kepuasan : 0,
+        };
+      });
+      programApiAktif = true;
+    } catch (e) {
+      programApiAktif = false;
+    }
+    hitungPendaftar();
+  })();
+  return programApiJanji;
 }
 
 // ---------- Dashboard ----------
@@ -378,13 +425,40 @@ async function initDashboard() {
 // ---------- Kelola Program ----------
 
 let editingProgramId = null;
+let fotoDipilih = null; // File yang dipilih di form (belum diunggah)
+let hapusFotoSaatSimpan = false;
+const FOTO_MAKS = 2 * 1024 * 1024;
+const FOTO_TIPE = ["image/jpeg", "image/png", "image/webp"];
+
+// Panggilan API program. Mengembalikan { ok, status, data }.
+async function panggilProgram(jalur, opsi) {
+  try {
+    const r = await fetch(API_BASE + jalur, { credentials: "include", ...opsi });
+    const data = await r.json().catch(() => ({}));
+    if (r.status === 401 || r.status === 403) {
+      location.replace("login.html");
+    }
+    return { ok: r.ok, status: r.status, data };
+  } catch (e) {
+    return { ok: false, status: 0, data: { error: "Server tidak dapat dihubungi. Pastikan backend sudah berjalan." } };
+  }
+}
+
+function fotoUrl(p) {
+  return p.gambar ? API_BASE + p.gambar : "";
+}
 
 function programRowHtml(p) {
+  const foto = p.gambar
+    ? `<img class="program-thumb" src="${esc(fotoUrl(p))}" alt="Foto ${esc(p.nama)}" />`
+    : `<span class="program-thumb program-thumb--kosong" title="Memakai gambar bawaan situs">Bawaan</span>`;
   return `
     <tr data-id="${p.id}">
-      <td>${p.nama}</td>
-      <td>${p.tujuan}</td>
-      <td>${p.periode}</td>
+      <td>${foto}</td>
+      <td>${esc(p.nama)}</td>
+      <td>${esc(KATEGORI_PROGRAM_LABEL[p.kategori] || "-")}</td>
+      <td>${esc(p.tujuan)}</td>
+      <td>${esc(p.periode)}</td>
       <td>${p.pendaftar}</td>
       <td>
         <div class="row-actions">
@@ -398,8 +472,12 @@ function programRowHtml(p) {
 function renderProgramTable() {
   const body = document.getElementById("program-body");
   if (!body) return;
+  if (!programApiAktif) {
+    body.innerHTML = `<tr><td colspan="7"><div class="empty">Daftar program tidak dapat dimuat dari server. Pastikan backend (port 5001) berjalan, lalu muat ulang halaman.</div></td></tr>`;
+    return;
+  }
   if (programs.length === 0) {
-    body.innerHTML = `<tr><td colspan="5"><div class="empty">Belum ada program. Klik "Tambah program" untuk menambahkan.</div></td></tr>`;
+    body.innerHTML = `<tr><td colspan="7"><div class="empty">Belum ada program. Klik "Tambah program" untuk menambahkan.</div></td></tr>`;
     return;
   }
   body.innerHTML = programs.map(programRowHtml).join("");
@@ -419,82 +497,153 @@ function renderProgramTable() {
     );
 }
 
+function tampilkanPratinjau(url) {
+  const img = document.getElementById("foto-pratinjau");
+  const kosong = document.getElementById("foto-kosong");
+  const hapus = document.getElementById("btn-hapus-foto");
+  if (url) {
+    img.src = url;
+    img.hidden = false;
+    kosong.hidden = true;
+  } else {
+    img.removeAttribute("src");
+    img.hidden = true;
+    kosong.hidden = false;
+  }
+  hapus.hidden = !url;
+}
+
+function tampilkanGalat(pesan) {
+  const error = document.getElementById("program-error");
+  error.textContent = pesan;
+  error.classList.add("show");
+}
+
 function openProgramModal(id) {
   editingProgramId = id || null;
+  fotoDipilih = null;
+  hapusFotoSaatSimpan = false;
   const modal = document.getElementById("program-modal");
   const title = document.getElementById("program-modal-title");
   const nama = document.getElementById("input-nama");
+  const kategori = document.getElementById("input-kategori");
   const tujuan = document.getElementById("input-tujuan");
   const periode = document.getElementById("input-periode");
+  const lebih = document.getElementById("input-lebih");
+  const berkas = document.getElementById("input-foto");
   const error = document.getElementById("program-error");
   error.classList.remove("show");
+  berkas.value = "";
 
   if (id) {
     const p = getProgramById(id);
     title.textContent = "Ubah program";
     nama.value = p.nama;
+    nama.disabled = true; // nama dikunci: pendaftaran dicocokkan lewat nama program
+    kategori.value = p.kategori;
     tujuan.value = p.tujuan;
     periode.value = p.periode;
+    lebih.checked = !!p.lebih;
+    tampilkanPratinjau(fotoUrl(p));
   } else {
     title.textContent = "Tambah program";
+    nama.disabled = false;
     nama.value = "";
+    kategori.value = "";
     tujuan.value = "";
     periode.value = "Bulanan";
+    lebih.checked = false;
+    tampilkanPratinjau("");
   }
   modal.classList.add("open");
-  nama.focus();
+  (id ? tujuan : nama).focus();
 }
 
 function closeProgramModal() {
   document.getElementById("program-modal").classList.remove("open");
 }
 
-function saveProgram() {
-  const nama = document.getElementById("input-nama").value.trim();
-  const tujuan = document.getElementById("input-tujuan").value.trim();
-  const periode = document.getElementById("input-periode").value;
-  const error = document.getElementById("program-error");
-
-  if (!nama || !tujuan) {
-    error.textContent = "Nama program dan tujuan wajib diisi.";
-    error.classList.add("show");
-    return;
+function saatFotoDipilih() {
+  const berkas = document.getElementById("input-foto").files[0];
+  if (!berkas) return;
+  if (!FOTO_TIPE.includes(berkas.type)) {
+    document.getElementById("input-foto").value = "";
+    return tampilkanGalat("Format foto harus JPG, PNG, atau WebP.");
   }
-
-  if (editingProgramId) {
-    const p = getProgramById(editingProgramId);
-    p.nama = nama;
-    p.tujuan = tujuan;
-    p.periode = periode;
-    showToast("Program diperbarui");
-  } else {
-    const newId = programs.length
-      ? Math.max(...programs.map((p) => p.id)) + 1
-      : 1;
-    programs.push({
-      id: newId,
-      nama,
-      tujuan,
-      periode,
-      pendaftar: 0,
-      penyelesaian: 0,
-      kepuasan: 0,
-    });
-    showToast("Program ditambahkan");
+  if (berkas.size > FOTO_MAKS) {
+    document.getElementById("input-foto").value = "";
+    return tampilkanGalat("Ukuran foto maksimal 2 MB.");
   }
-  closeProgramModal();
-  renderProgramTable();
+  document.getElementById("program-error").classList.remove("show");
+  fotoDipilih = berkas;
+  hapusFotoSaatSimpan = false;
+  tampilkanPratinjau(URL.createObjectURL(berkas));
 }
 
-function deleteProgram(id) {
+function saatHapusFoto() {
+  fotoDipilih = null;
+  document.getElementById("input-foto").value = "";
+  // Foto yang sudah tersimpan di server baru dihapus ketika Simpan ditekan.
+  hapusFotoSaatSimpan = true;
+  tampilkanPratinjau("");
+}
+
+async function saveProgram() {
+  const nama = document.getElementById("input-nama").value.trim();
+  const kategori = document.getElementById("input-kategori").value;
+  const tujuan = document.getElementById("input-tujuan").value.trim();
+  const periode = document.getElementById("input-periode").value;
+  const lebih = document.getElementById("input-lebih").checked;
+  const tombol = document.getElementById("btn-simpan-program");
+
+  if (!nama || !tujuan) return tampilkanGalat("Nama program dan tujuan wajib diisi.");
+  if (!kategori) return tampilkanGalat("Pilih kategori program.");
+
+  tombol.disabled = true;
+  const badan = JSON.stringify({ nama, kategori, deskripsi: tujuan, periode, lebih });
+  const header = { "Content-Type": "application/json" };
+  const simpan = editingProgramId
+    ? await panggilProgram("/api/program/" + editingProgramId, { method: "PUT", headers: header, body: badan })
+    : await panggilProgram("/api/program", { method: "POST", headers: header, body: badan });
+  if (!simpan.ok) {
+    tombol.disabled = false;
+    return tampilkanGalat(simpan.data.error || "Program gagal disimpan.");
+  }
+
+  const id = simpan.data.program.id;
+  let galatFoto = "";
+  if (fotoDipilih) {
+    const form = new FormData();
+    form.append("foto", fotoDipilih);
+    const unggah = await panggilProgram("/api/program/" + id + "/foto", { method: "POST", body: form });
+    if (!unggah.ok) galatFoto = unggah.data.error || "Foto gagal diunggah.";
+  } else if (hapusFotoSaatSimpan && editingProgramId) {
+    await panggilProgram("/api/program/" + id + "/foto", { method: "DELETE" });
+  }
+
+  await muatProgramApi(true);
+  renderProgramTable();
+  tombol.disabled = false;
+  if (galatFoto) {
+    // Program sudah tersimpan; hanya fotonya yang gagal. Form dibuka lagi pada program itu.
+    openProgramModal(id);
+    return tampilkanGalat("Program tersimpan, tetapi " + galatFoto);
+  }
+  closeProgramModal();
+  showToast(editingProgramId ? "Program diperbarui" : "Program ditambahkan");
+}
+
+async function deleteProgram(id) {
   const p = getProgramById(id);
   if (
     !confirm(
-      `Hapus program "${p.nama}"? Data pendaftar pada program ini tidak akan ikut terhapus.`,
+      `Hapus program "${p.nama}"? Program akan hilang dari situs publik. Data pendaftar pada program ini tidak ikut terhapus.`,
     )
   )
     return;
-  programs = programs.filter((p) => p.id !== id);
+  const hasil = await panggilProgram("/api/program/" + id, { method: "DELETE" });
+  if (!hasil.ok) return showToast(hasil.data.error || "Program gagal dihapus");
+  await muatProgramApi(true);
   renderProgramTable();
   showToast("Program dihapus");
 }
@@ -511,6 +660,8 @@ async function initKelolaProgram() {
   document
     .getElementById("btn-simpan-program")
     .addEventListener("click", saveProgram);
+  document.getElementById("input-foto").addEventListener("change", saatFotoDipilih);
+  document.getElementById("btn-hapus-foto").addEventListener("click", saatHapusFoto);
   document.getElementById("program-modal").addEventListener("click", (e) => {
     if (e.target.id === "program-modal") closeProgramModal();
   });
@@ -661,6 +812,7 @@ function exportCsv() {
 }
 
 async function initPendaftar() {
+  await muatProgramApi();
   populateProgramFilter();
   await muatPendaftarApi();
   renderRegistrantTable();
