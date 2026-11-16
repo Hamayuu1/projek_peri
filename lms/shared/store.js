@@ -2,7 +2,7 @@
   'use strict';
   var SEED = {
     peserta: [
-      { id: 'p1', pw: 'contoh123', nama: 'Aditya Setiawan Sahir', email: 'aditya@contoh.id' },
+      { id: 'p1', pw: 'peserta123', nama: 'Aditya Setiawan Sahir', email: 'peserta@gmail.com' },
       { id: 'p2', pw: 'contoh123', nama: 'Sari Wulandari', email: 'sari@contoh.id' },
       { id: 'p3', pw: 'contoh123', nama: 'Dewi Lestari', email: 'dewi@contoh.id' },
       { id: 'p4', pw: 'contoh123', nama: 'Rina Marlina', email: 'rina@contoh.id' },

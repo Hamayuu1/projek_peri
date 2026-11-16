@@ -8,7 +8,7 @@
   var WARNA = ['c1', 'c2', 'c3', 'c4'];
   var IKON = { Digital: '&#128722;', Usaha: '&#128188;', Kriya: '&#129525;', Keuangan: '&#128176;', Kepemimpinan: '&#127775;' };
   var db = Store.load();
-  var S = { prog: null, a1: null, a2: null, selDay: TODAY, tab: 'ringkasan', tug: null, cat: 'Semua', q: '', joinTab: 'kode', jmsg: '', jval: '', dark: false, notif: true };
+  var S = { prog: null, a1: null, a2: null, selDay: TODAY, dwOff: 0, dwSel: null, tab: 'ringkasan', tug: null, cat: 'Semua', q: '', joinTab: 'kode', jmsg: '', jval: '', dark: false, notif: true };
   var cur = 'login';
   var PAGES = ['login', 'beranda', 'kelas', 'kdetail', 'program', 'jadwal', 'sesi', 'materi', 'progres', 'sertifikat'];
 
@@ -27,6 +27,15 @@
   function iso(d) { function z(n) { return n < 10 ? '0' + n : '' + n; } return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()); }
   function tgl(s, long) { if (!s) return '-'; var d = dt(s); return (long ? HARIF[d.getDay()] + ', ' : '') + d.getDate() + ' ' + BULAN[d.getMonth()] + (long === 2 ? ' ' + d.getFullYear() : ''); }
   function week() { var d = dt(TODAY), off = (d.getDay() + 6) % 7, r = []; for (var i = 0; i < 7; i++) { var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() - off + i); r.push(iso(x)); } return r; }
+
+  /* ---------- kalender drawer dan sertifikat ---------- */
+  function weekOf(off) {
+    var d = dt(TODAY), o = (d.getDay() + 6) % 7, r = [];
+    for (var i = 0; i < 7; i++) r.push(iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() - o + i + off * 7)));
+    return r;
+  }
+  function namaSert(p) { var u = user(), n = p.namaSert && u && p.namaSert[u.id]; return n || (u ? u.nama : ''); }
+  function fitCert() { if (window.Cert) setTimeout(function () { requestAnimationFrame(function () { Cert.fit($('sertifikat')); }); }, 0); }
 
   /* ---------- data peserta ---------- */
   function mine() { var id = pid(); return db.programs.filter(function (p) { return p.peserta.indexOf(id) >= 0; }); }
@@ -96,7 +105,7 @@
   /* ---------- login ---------- */
   function rLogin() {
     $('login').style.paddingTop = '60px';
-    $('login').innerHTML = '<div style="text-align:center;margin-bottom:22px"><img src="' + (window.LOGO || '') + '" alt="PERI" style="height:84px"><div class="big" style="font-size:26px;font-weight:600;margin-top:6px">E-Learning PERI</div><p class="m sm">Perempuan Kreatif Indonesia</p></div><div class="card"><h2>Masuk</h2><form data-form="login"><label>Email</label><input class="in" name="email" value="aditya@contoh.id" autocomplete="username"><label>Kata sandi</label><input class="in" name="pw" type="password" value="contoh123" autocomplete="current-password"><div class="err" id="lerr"></div><br><button class="btn w">Masuk</button></form></div><p class="m sm" style="text-align:center">Akun contoh: aditya@contoh.id / contoh123</p>';
+    $('login').innerHTML = '<div style="text-align:center;margin-bottom:22px"><img src="' + (window.LOGO || '') + '" alt="PERI" style="height:84px"><div class="big" style="font-size:26px;font-weight:600;margin-top:6px">E-Learning PERI</div><p class="m sm">Perempuan Kreatif Indonesia</p></div><div class="card"><h2>Masuk</h2><form data-form="login"><label>Email</label><input class="in" name="email" autocomplete="username"><label>Kata sandi</label><div class="pw"><input class="in" name="pw" type="password" autocomplete="current-password"><button type="button" class="eye" aria-label="Tampilkan kata sandi" aria-pressed="false"><svg class="o1" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg class="o2" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div><div class="err" id="lerr"></div><br><button class="btn w">Masuk</button></form></div>';
   }
   function doLogin(f) {
     var em = f.elements.email.value.trim().toLowerCase(), pw = f.elements.pw.value, e = $('lerr');
@@ -268,9 +277,13 @@
     var p = cp(); if (!p) { $('sertifikat').innerHTML = kosong('Sertifikat'); return; }
     var u = user();
     if (selesai(p)) {
-      $('sertifikat').innerHTML = '<h1 style="margin-bottom:12px">Sertifikat</h1>' + pSel() + '<div class="card"><span class="chip">Tersedia</span><div id="certArea"><div class="cert2"><small>Sertifikat penyelesaian</small><h2>Perempuan Kreatif Indonesia</h2><div class="sm m">diberikan kepada</div><div class="nm">' + esc(u.nama) + '</div><div class="sm m">atas keberhasilan menyelesaikan program</div><div style="font-weight:600;margin:6px 0;color:#0E4F55">' + esc(p.nama) + '</div><div class="sm m">' + esc(p.angkatan) + ' &middot; ' + tgl(TODAY, 2) + '</div></div></div><button class="btn w" data-a="cetak">Unduh sertifikat (PDF)</button><p class="m sm" style="margin-top:8px;text-align:center">Pilih "Simpan sebagai PDF" pada jendela cetak.</p></div>';
+      var t = p.sertif, nm = namaSert(p), ada = window.Cert && Cert.ok(t);
+      $('sertifikat').innerHTML = '<h1 style="margin-bottom:12px">Sertifikat</h1>' + pSel() + '<div class="card"><span class="chip">Tersedia</span><div class="fld2"><label for="sn">Nama lengkap di sertifikat</label><input class="in" id="sn" maxlength="60" autocomplete="name" value="' + esc(nm) + '"><p class="m sm">Tulis nama lengkap Anda. Sertifikat langsung menyesuaikan.</p></div><div id="certArea">' + (ada ? Cert.html(t, nm) : '<div class="cert2"><small>Sertifikat penyelesaian</small><h2>Perempuan Kreatif Indonesia</h2><div class="sm m">diberikan kepada</div><div class="nm" id="cnm">' + esc(nm) + '</div><div class="sm m">atas keberhasilan menyelesaikan program</div><div style="font-weight:600;margin:6px 0;color:#C8202A">' + esc(p.nama) + '</div><div class="sm m">' + esc(p.angkatan) + ' &middot; ' + tgl(TODAY, 2) + '</div></div>') + '</div><button class="btn w" data-a="cetak">Unduh sertifikat (PDF)</button>' + (ada ? '<button class="btn o w" style="margin-top:8px" data-a="unduh-png">Unduh gambar (PNG)</button>' : '') + '<p class="m sm" style="margin-top:8px;text-align:center">Pilih "Simpan sebagai PDF" pada jendela cetak.</p></div>';
+      fitCert();
     } else {
-      $('sertifikat').innerHTML = '<h1 style="margin-bottom:12px">Sertifikat</h1>' + pSel() + '<div class="card"><span class="chip y">&#9888; Belum tersedia</span><div class="cert">Pratinjau sertifikat<br>' + esc(p.nama) + '</div><p class="m sm" style="margin-bottom:12px">Sertifikat dapat diunduh setelah pengurus menandai Anda telah menyelesaikan program.</p><button class="btn d w" disabled>Unduh sertifikat (PDF)</button></div>';
+      var t0 = p.sertif, pr = window.Cert && Cert.ok(t0);
+      $('sertifikat').innerHTML = '<h1 style="margin-bottom:12px">Sertifikat</h1>' + pSel() + '<div class="card"><span class="chip y">&#9888; Belum tersedia</span><div class="warn" style="margin:14px 0 10px;cursor:default"><b>Sertifikat belum tersedia</b><br>' + (pct(p) < 100 ? 'Anda masih dalam progres pelatihan. Tersisa ' + (100 - pct(p)) + '% lagi untuk melanjutkan.' : 'Progres Anda sudah 100%. Sertifikat akan tersedia setelah pengurus menandai Anda selesai.') + '</div><div class="bar"><i style="width:' + pct(p) + '%"></i></div><div class="m sm" style="margin:6px 0 14px">Progres Anda ' + pct(p) + '%</div><button class="btn d w" disabled>Unduh sertifikat (PDF)</button></div>';
+      fitCert();
     }
   }
 
@@ -279,12 +292,16 @@
   function rDrawer() {
     var u = user(); if (!u) return;
     var wk = week();
-    var days = wk.map(function (d, i) { return '<div class="' + (d === TODAY ? 'td ' : '') + (evOn(d).length ? 'ev' : '') + '">' + HARI[(i + 1) % 7] + '<b>' + dt(d).getDate() + '</b><i></i></div>'; }).join('');
-    var evs = []; wk.forEach(function (d) { evOn(d).forEach(function (x) { evs.push({ d: d, x: x }); }); });
+    wk = weekOf(S.dwOff);
+    var days = wk.map(function (d, i) { return '<button class="' + (d === TODAY ? 'td ' : '') + (d === S.dwSel ? 'sel ' : '') + (evOn(d).length ? 'ev' : '') + '" data-a="dw-hari" data-x="' + d + '" aria-pressed="' + (d === S.dwSel) + '">' + HARI[(i + 1) % 7] + '<b>' + dt(d).getDate() + '</b><i></i></button>'; }).join('');
+    var a0 = dt(wk[0]), a1 = dt(wk[6]);
+    var rentang = a0.getDate() + (a0.getMonth() !== a1.getMonth() ? ' ' + BULAN[a0.getMonth()] : '') + ' - ' + a1.getDate() + ' ' + BULAN[a1.getMonth()] + ' ' + a1.getFullYear();
+    var dwh = '<div class="dwh"><button data-a="dw-prev" aria-label="Minggu sebelumnya">&lsaquo;</button><span>' + rentang + '</span><button data-a="dw-next" aria-label="Minggu berikutnya">&rsaquo;</button></div>' + (S.dwOff !== 0 || S.dwSel ? '<button class="dwt" data-a="dw-today">Kembali ke minggu ini</button>' : '');
+    var evs = []; (S.dwSel ? [S.dwSel] : wk).forEach(function (d) { evOn(d).forEach(function (x) { evs.push({ d: d, x: x }); }); });
     var el = evs.map(function (e) { return '<div class="de" data-a="go" data-p="kdetail" data-x="' + e.x.p.id + '"><span class="tg">' + (e.d === TODAY ? 'Hari ini' : HARI[dt(e.d).getDay()] + ' ' + dt(e.d).getDate()) + '</span><span style="flex:1">' + esc(e.x.p.nama) + '<br><span style="opacity:.8;font-size:11.5px">Sesi ' + e.x.s.no + ' &middot; ' + jamLabel(e.x.s) + '</span></span></div>'; }).join('');
     function it(i, l, p) { return '<button class="dl' + (cur === p ? ' on' : '') + '" data-a="go" data-p="' + p + '">' + IC[i] + l + '</button>'; }
     $('drawer').innerHTML = '<div class="dh"><button class="x" data-a="tutup-menu" aria-label="Tutup menu">&times;</button><div class="av2"><svg width="44" height="44" viewBox="0 0 24 24" fill="#9AA"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.400 3.600-7 8-7s8 2.600 8 7z"/></svg></div><b>' + esc(u.nama) + '</b><small>' + esc(u.email) + '</small><span class="chip">Peserta aktif</span><button class="lo" data-a="keluar">Keluar</button></div>' +
-      '<div class="ds"><h4>Jadwal kelas minggu ini</h4><div class="dw">' + days + '</div>' + (el || '<div class="de" style="opacity:.8">Tidak ada kelas minggu ini</div>') + '</div><div class="dsep"></div>' +
+      '<div class="ds"><h4>' + (S.dwOff ? 'Jadwal kelas' : 'Jadwal kelas minggu ini') + '</h4>' + dwh + '<div class="dw">' + days + '</div>' + (el || '<div class="de" style="opacity:.8">' + (S.dwSel ? 'Tidak ada kelas pada ' + tgl(S.dwSel, 1) : 'Tidak ada kelas minggu ini') + '</div>') + '</div><div class="dsep"></div>' +
       '<div class="ds"><h4>Halaman</h4>' + it('home', 'Beranda', 'beranda') + it('kelas', 'Kelas', 'kelas') + it('cal', 'Jadwal', 'jadwal') + it('chart', 'Progres', 'progres') + it('cert', 'Sertifikat', 'sertifikat') + it('book', 'Materi', 'materi') + it('book', 'Program baru', 'program') + '</div><div class="dsep"></div>' +
       '<div class="ds"><h4>Pengaturan</h4><button class="dl" data-a="tg" data-x="notif">' + IC.bell + 'Notifikasi<span class="sw ' + (S.notif ? 'on' : '') + '"></span></button><button class="dl" data-a="tg" data-x="dark">' + IC.moon + 'Mode gelap<span class="sw ' + (S.dark ? 'on' : '') + '"></span></button><button class="dl" data-a="info" data-x="bahasa">' + IC.lang + 'Bahasa<span class="r">Indonesia</span></button></div><div class="dsep"></div>' +
       '<div class="ds"><h4>Bantuan</h4><button class="dl" data-a="info" data-x="pusat">' + IC.help + 'Pusat bantuan</button><button class="dl" data-a="info" data-x="faq">' + IC.help + 'FAQ</button><button class="dl" data-a="info" data-x="syarat">' + IC.doc + 'Syarat &amp; ketentuan</button><button class="dl" data-a="info" data-x="hubungi">' + IC.chat + 'Hubungi kami</button></div>' +
@@ -348,8 +365,18 @@
       save(); closeSheet(); rProgram(); toast('Pendaftaran dibatalkan');
     },
     'pilih-prog': function (el) { S.prog = el.value; show(cur); },
-    'cetak': function () { window.print(); },
+    'cetak': function () {
+      var p = cp(), t = p && p.sertif, st = $('pgs');
+      if (!st) { st = document.createElement('style'); st.id = 'pgs'; document.head.appendChild(st); }
+      st.textContent = window.Cert && Cert.ok(t) ? '@page{size:' + ((t.w || 1) >= (t.h || 1) ? 'landscape' : 'portrait') + ';margin:0}' : '';
+      window.print();
+    },
+    'unduh-png': function () { var p = cp(), t = p && p.sertif; if (!window.Cert || !Cert.ok(t)) return; Cert.png(t, namaSert(p), 'sertifikat-' + p.id + '.png'); },
     'tutup-menu': function () { drawer(0); },
+    'dw-prev': function () { S.dwOff--; S.dwSel = null; rDrawer(); },
+    'dw-next': function () { S.dwOff++; S.dwSel = null; rDrawer(); },
+    'dw-today': function () { S.dwOff = 0; S.dwSel = null; rDrawer(); },
+    'dw-hari': function (el) { var d = el.getAttribute('data-x'); S.dwSel = S.dwSel === d ? null : d; rDrawer(); },
     'keluar': keluar,
     'tg': function (el) { var k = el.getAttribute('data-x'); S[k] = !S[k]; setPref(); rDrawer(); toast(k === 'notif' ? (S.notif ? 'Notifikasi diaktifkan' : 'Notifikasi dimatikan') : (S.dark ? 'Mode gelap aktif' : 'Mode terang aktif')); },
     'info': function (el) { drawer(0); info(el.getAttribute('data-x')); },
@@ -367,6 +394,15 @@
   });
   document.addEventListener('input', function (e) {
     if (e.target.id === 'cari') { S.q = e.target.value; var pos = e.target.selectionStart; rProgram(); var i = $('cari'); if (i) { i.focus(); i.setSelectionRange(pos, pos); } }
+  });
+  /* nama di sertifikat mengikuti isian peserta */
+  document.addEventListener('input', function (e) {
+    if (!e.target || e.target.id !== 'sn') return;
+    var p = cp(), u = user(); if (!p || !u) return;
+    p.namaSert = p.namaSert || {}; p.namaSert[u.id] = e.target.value.replace(/\s{2,}/g, ' ').trim();
+    save();
+    var nm = namaSert(p), t = p.sertif, c = $('cnm');
+    if (window.Cert && Cert.ok(t)) Cert.apply($('certArea'), t, nm); else if (c) c.textContent = nm;
   });
   document.addEventListener('submit', function (e) { var f = e.target; if (f.getAttribute('data-form') === 'login') { e.preventDefault(); doLogin(f); } });
   window.addEventListener('popstate', function () { var r = parse(); S.a1 = r.a || null; S.a2 = r.b || null; show(r.p || 'beranda'); });

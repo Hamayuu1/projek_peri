@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var KEY = 'peri_admin_v1';
+  var KEY = window.Store.KEY;
   var AUTH = 'peri_admin_login';
   var TODAY = '2026-10-06';
   var WEEK_START = '2026-10-05';
@@ -62,6 +62,7 @@
     materi: ['Kelola Materi', 'Unggah materi untuk tiap sesi.'],
     kehadiran: ['Catat Kehadiran', 'Tandai peserta yang hadir pada sebuah sesi.'],
     rekap: ['Rekap Progres', 'Pantau progres peserta dan tandai yang sudah selesai.'],
+    sertifikat: ['Sertifikat', 'Unggah template sertifikat. Nama peserta ditulis otomatis.'],
     pendaftaran: ['Pendaftaran', 'Setujui atau tolak peserta yang mendaftar ke program.']
   };
   function route() { var h = location.hash.replace('#/', ''); return ROUTES[h] ? h : 'dashboard'; }
@@ -73,13 +74,13 @@
     var r = route();
     var nav = Object.keys(ROUTES).map(function (k) {
       var bd = k === 'pendaftaran' && menunggu().length ? '<span class="bd">' + menunggu().length + '</span>' : '';
-      return '<a href="#/' + k + '" class="' + (k === r ? 'on' : '') + '">' + ROUTES[k][0] + bd + '</a>';
+      return '<a href="#/' + k + '" class="' + (k === r ? 'on' : '') + '">' + (window.ICONS && window.ICONS[k] ? window.ICONS[k] : '') + '<span>' + ROUTES[k][0] + '</span>' + bd + '</a>';
     }).join('');
-    root.innerHTML = '<div class="app"><aside class="side"><div class="brand"><div class="lg">P</div><div>E-Learning PERI<small>Panel pengurus</small></div></div><nav class="nav">' + nav + '</nav><div class="who"><b>Pengurus PERI</b>admin@contoh.id<br><button class="btn o s" style="margin-top:8px" data-act="keluar">Keluar</button></div></aside><main class="main"><div class="top"><div><h1>' + ROUTES[r][0] + '</h1><p class="sub">' + ROUTES[r][1] + '</p></div><div id="topact"></div></div>' + VIEWS[r]() + '</main></div>';
+    root.innerHTML = '<div class="app"><header class="mbar"><button class="burger" data-act="menu" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 6h18v2.5H3zM3 10.8h18v2.5H3zM3 15.6h18v2.5H3z"/></svg></button><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI</div></div></header><div class="scrim" data-act="menu-tutup"></div><aside class="side"><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI<small>Panel pengurus</small></div></div><nav class="nav">' + nav + '</nav><div class="who"><b>Pengurus PERI</b>admin@gmail.com<br><button class="btn o s" style="margin-top:8px" data-act="keluar">Keluar</button></div></aside><main class="main"><div class="top"><div><h1>' + ROUTES[r][0] + '</h1><p class="sub">' + ROUTES[r][1] + '</p></div><div id="topact"></div></div>' + VIEWS[r]() + '</main></div>';
     window.scrollTo(0, 0);
   }
   function viewLogin() {
-    return '<div class="login"><div class="card"><div class="brand"><div class="lg">P</div><div>E-Learning PERI<small>Panel pengurus</small></div></div><h2 style="text-align:center;margin:10px 0 16px">Masuk</h2><form data-form="login"><div class="fld"><label>Email</label><input name="email" value="admin@contoh.id" autocomplete="username"></div><div class="fld"><label>Kata sandi</label><input name="pw" type="password" value="admin123" autocomplete="current-password"></div><div class="err" id="lerr"></div><button class="btn" style="width:100%;margin-top:10px;padding:10px">Masuk</button></form><p class="sub" style="margin-top:12px;text-align:center">Akun contoh: admin@contoh.id / admin123</p></div></div>';
+    return '<div class="login"><div class="card"><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI<small>Panel pengurus</small></div></div><h2 style="text-align:center;margin:10px 0 16px">Masuk</h2><form data-form="login"><div class="fld"><label>Email</label><input name="email" autocomplete="username"></div><div class="fld"><label>Kata sandi</label><div class="pw"><input name="pw" type="password" autocomplete="current-password"><button type="button" class="eye" aria-label="Tampilkan kata sandi" aria-pressed="false"><svg class="o1" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg class="o2" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div></div><div class="err" id="lerr"></div><button class="btn" style="width:100%;margin-top:10px;padding:10px">Masuk</button></form></div></div>';
   }
 
   var VIEWS = {};
@@ -186,6 +187,50 @@
     return '<div class="tabs">' + tabs + '</div><div class="card"><div class="tw"><table><thead><tr><th>Peserta</th><th>Program</th><th>Tanggal daftar</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="4" class="empty">Tidak ada data</td></tr>') + '</tbody></table></div></div>';
   };
 
+  /* ---------- sertifikat ---------- */
+  if (window.ICONS) window.ICONS.sertifikat = '<svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M8.5 13.2 7 22l5-3 5 3-1.5-8.800"/></svg>';
+  var SAMPLE = 'Nama Lengkap Peserta';
+  function sertSave() {
+    try { localStorage.setItem(KEY, JSON.stringify(db)); return true; }
+    catch (e) { toast('Penyimpanan browser penuh. Gunakan gambar yang lebih kecil.'); return false; }
+  }
+  function sertApply() {
+    var p = curProg(), t = p && p.sertif, box = $('#sertPrev');
+    if (!t || !box) return;
+    Cert.apply(box, t, ui.sertNama || SAMPLE);
+    var o = $('#sertSz'); if (o) o.textContent = Cert.conf(t).size.toFixed(1);
+  }
+  function sertFile(el, ganti) {
+    var f = el.files && el.files[0]; if (!f) return;
+    var p = curProg(), lama = p.sertif;
+    Cert.prep(f, function (r) {
+      var c = Cert.conf(lama);
+      p.sertif = { img: r.img, w: r.w, h: r.h, x: c.x, y: c.y, size: c.size, color: c.color, weight: c.weight, caps: c.caps };
+      if (!sertSave()) { p.sertif = lama; return; }
+      render(); toast('Template sertifikat tersimpan');
+    }, function (m) { toast(m); });
+    el.value = '';
+  }
+  VIEWS.sertifikat = function () {
+    var p = curProg();
+    if (!p) return '<div class="card empty">Belum ada program.</div>';
+    var t = p.sertif;
+    if (!Cert.ok(t)) {
+      return progSelect() + '<div class="card"><h2>Template sertifikat</h2><p class="sub" style="margin:6px 0 12px">Belum ada template untuk <b>' + esc(p.nama) + '</b>. Unggah gambar sertifikat kosong (JPG atau PNG). Nama lengkap peserta akan ditulis otomatis pada posisi yang Anda atur.</p><label class="btn" style="display:inline-block;cursor:pointer">Unggah template<input type="file" accept="image/png,image/jpeg,image/webp" data-act="sert-file" hidden></label><p class="sub" style="margin-top:10px">Disarankan gambar lanskap (misalnya 1600 x 1131 piksel) dengan ruang nama dibiarkan kosong.</p></div>';
+    }
+    var c = Cert.conf(t);
+    var opsi = [[400, 'Normal'], [500, 'Sedang'], [600, 'Tebal']].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === c.weight ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('');
+    return progSelect() +
+      '<div class="sertg"><div class="card"><div class="hd"><div><h2>Pratinjau</h2><span class="sub">Klik atau seret pada gambar untuk menentukan posisi nama.</span></div></div><div id="sertPrev" class="cx-edit">' + Cert.html(t, ui.sertNama || SAMPLE) + '</div></div>' +
+      '<div class="card sertc"><h2 style="margin-bottom:10px">Pengaturan nama</h2>' +
+      '<div class="fld"><label>Nama contoh (untuk menguji nama panjang)</label><input data-sert="nama" maxlength="60" value="' + esc(ui.sertNama || '') + '" placeholder="' + SAMPLE + '"></div>' +
+      '<div class="fld"><label>Ukuran huruf: <b id="sertSz">' + c.size.toFixed(1) + '</b></label><input type="range" min="2" max="10" step="0.1" value="' + c.size + '" data-sert="size"></div>' +
+      '<div class="row2"><div class="fld"><label>Warna</label><input type="color" value="' + c.color + '" data-sert="color"></div><div class="fld"><label>Ketebalan</label><select data-sert="weight">' + opsi + '</select></div></div>' +
+      '<label class="chk"><input type="checkbox" data-sert="caps"' + (c.caps ? ' checked' : '') + '> Huruf kapital semua</label>' +
+      '<div class="acts" style="margin-top:12px"><button type="button" class="btn o s" data-act="sert-tengah">Tengahkan nama</button><label class="btn o s" style="cursor:pointer">Ganti template<input type="file" accept="image/png,image/jpeg,image/webp" data-act="sert-file" hidden></label><button type="button" class="btn r s" data-act="sert-hapus">Hapus template</button></div>' +
+      '<p class="sub" style="margin-top:12px">Tersimpan otomatis. Peserta yang sudah ditandai selesai di Rekap Progres (' + p.selesai.length + ' orang) akan melihat sertifikat ini dengan nama lengkap yang mereka isi.</p></div></div>';
+  };
+
   /* ---------- modal ---------- */
   function openModal(judul, isi, tombol, onSubmit, danger) {
     var m = $('#modal');
@@ -236,15 +281,26 @@
     'pilih-prog': function (el) { ui.prog = el.value; ui.sesi = null; ui.q = ''; render(); },
     'pilih-sesi': function (el) { ui.sesi = el.value; render(); },
     'keluar': function () { setLogin(false); render(); },
+    'menu': function () { var ap = $('.app'); if (ap) ap.classList.toggle('open'); },
+    'menu-tutup': function () { var ap = $('.app'); if (ap) ap.classList.remove('open'); },
     'tutup': closeModal,
     'ke-materi': function (el) { ui.prog = el.getAttribute('data-id'); },
     'cari': function (el) { ui.q = el.value; var pos = el.selectionStart; render(); var i = $('input[data-act="cari"]'); if (i) { i.focus(); i.setSelectionRange(pos, pos); } },
     'tab-daftar': function (el) { ui.daftarTab = el.getAttribute('data-id'); render(); },
+    'sert-file': function (el) { sertFile(el); },
+    'sert-tengah': function () { var p = curProg(); if (!p || !p.sertif) return; p.sertif.x = 50; sertApply(); sertSave(); },
+    'sert-hapus': function () {
+      var p = curProg();
+      openModal('Hapus template sertifikat?', '<p>Template untuk <b>' + esc(p.nama) + '</b> akan dihapus. Peserta akan melihat sertifikat bawaan sampai template baru diunggah.</p>', 'Ya, hapus', function () {
+        delete p.sertif; sertSave(); closeModal(); render(); toast('Template dihapus');
+      }, true);
+    },
 
     'tambah-prog': function () {
       openModal('Tambah program', formProg(), 'Simpan', function (f) {
         var d = bacaProg(f); if (!d) return;
         d.id = uid('prg'); d.peserta = []; d.selesai = []; d.sesi = [];
+        d.kode = uid('K').toUpperCase().slice(0, 10); d.fas = 'Tim fasilitator PERI'; d.desc = d.tujuan; d.ann = ''; d.tugas = []; d.kumpul = {};
         db.programs.push(d); ui.prog = d.id; save(); closeModal(); render(); toast('Program ditambahkan');
       });
     },
@@ -369,13 +425,49 @@
     if (k === 'login') {
       var em = val(f, 'email'), pw = val(f, 'pw'), er = $('#lerr');
       if (!em || !pw) { er.textContent = 'Email dan kata sandi wajib diisi.'; return; }
-      if (em !== 'admin@contoh.id' || pw !== 'admin123') { er.textContent = 'Email atau kata sandi salah.'; return; }
+      if (em !== 'admin@gmail.com' || pw !== 'admin123') { er.textContent = 'Email atau kata sandi salah.'; return; }
       setLogin(true); location.hash = '#/dashboard'; render(); return;
     }
     var m = $('#modal'); if (m._submit) m._submit(f);
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('#modal').hidden) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { var ap = $('.app'); if (ap) ap.classList.remove('open'); } });
+  document.addEventListener('click', function (e) { if (e.target.closest('.nav a')) { var ap = $('.app'); if (ap) ap.classList.remove('open'); } });
   $('#modal').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
+  /* sertifikat: ubah pengaturan, seret posisi nama, sinkron antar tab */
+  function sertUbah(e, simpan) {
+    var n = e.target.getAttribute && e.target.getAttribute('data-sert'); if (!n) return;
+    var p = curProg(), t = p && p.sertif; if (!t) return;
+    var v = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    if (n === 'nama') ui.sertNama = v;
+    else if (n === 'size') t.size = Math.min(10, Math.max(2, +v || 5));
+    else if (n === 'color') t.color = /^#[0-9a-f]{6}$/i.test(v) ? v : '#222222';
+    else if (n === 'weight') t.weight = +v || 600;
+    else if (n === 'caps') t.caps = !!v;
+    sertApply(); if (simpan && n !== 'nama') sertSave();
+  }
+  document.addEventListener('input', function (e) { sertUbah(e, false); });
+  document.addEventListener('change', function (e) { sertUbah(e, true); });
+  var geser = false;
+  function sertPos(e) {
+    var p = curProg(), t = p && p.sertif, b = $('#sertPrev .certx'); if (!t || !b) return;
+    var r = b.getBoundingClientRect();
+    t.x = Math.round(Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100)) * 10) / 10;
+    t.y = Math.round(Math.min(100, Math.max(0, (e.clientY - r.top) / r.height * 100)) * 10) / 10;
+    sertApply();
+  }
+  document.addEventListener('pointerdown', function (e) { if (e.target.closest && e.target.closest('#sertPrev')) { geser = true; sertPos(e); } });
+  document.addEventListener('pointermove', function (e) { if (geser) sertPos(e); });
+  function sertLepas() { if (geser) { geser = false; sertSave(); } }
+  document.addEventListener('pointerup', sertLepas);
+  document.addEventListener('pointercancel', sertLepas);
+  window.addEventListener('storage', function (e) {
+    if (e.key !== KEY || !loggedIn() || !$('#modal').hidden) return;
+    db = load();
+    var a = document.activeElement;
+    if (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) return;
+    render();
+  });
   window.addEventListener('hashchange', render);
   render();
 })();
