@@ -110,10 +110,23 @@
     p.tugas = x.tugas || []; p.kumpul = x.kumpul || {};
   });
 
+  var BASE = '2026-10-06';
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  var _n = new Date(), NOW = _n.getFullYear() + '-' + pad(_n.getMonth() + 1) + '-' + pad(_n.getDate());
+  function utc(s) { var p = s.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]); }
+  var SHIFT = Math.round(Math.round((utc(NOW) - utc(BASE)) / 864e5) / 7) * 7;
+  function sh(s) {
+    var m = /^(\d{4}-\d{2}-\d{2})(.*)$/.exec(s); if (!m) return s;
+    var d = new Date(utc(m[1]) + SHIFT * 864e5);
+    return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) + m[2];
+  }
+  function walk(o) { for (var k in o) { if (!Object.prototype.hasOwnProperty.call(o, k)) continue; var v = o[k]; if (typeof v === 'string') o[k] = sh(v); else if (v && typeof v === 'object') walk(v); } }
+  walk(SEED); SEED._seed = 2;
+  try { var _raw = localStorage.getItem('peri_lms_v1'); if (_raw && JSON.parse(_raw)._seed !== 2) localStorage.removeItem('peri_lms_v1'); } catch (e) {}
   window.SEED = SEED;
   window.Store = {
     KEY: 'peri_lms_v1',
-    TODAY: '2026-10-06',
+    TODAY: NOW,
     load: function () {
       try { var s = localStorage.getItem('peri_lms_v1'); if (s) return JSON.parse(s); } catch (e) {}
       return JSON.parse(JSON.stringify(SEED));

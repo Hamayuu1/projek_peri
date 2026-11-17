@@ -389,6 +389,8 @@
     'setuju': function (el) {
       var r = db.pendaftaran.filter(function (x) { return x.id === el.getAttribute('data-id'); })[0], p = prog(r.prog);
       if (p.peserta.length >= p.kuota) { toast('Kuota ' + p.nama + ' sudah penuh.'); return; }
+      var lain = db.programs.filter(function (x) { return x.id !== p.id && x.peserta.indexOf(r.pid) >= 0 && x.selesai.indexOf(r.pid) < 0 && x.sesi.length && hadirN(x, r.pid) < x.sesi.length; })[0];
+      if (lain) { toast(pes(r.pid).nama + ' masih menjalani ' + lain.nama + '. Selesaikan dulu sebelum menyetujui program baru.'); return; }
       if (p.peserta.indexOf(r.pid) < 0) p.peserta.push(r.pid);
       r.status = 'disetujui'; save(); render(); toast(pes(r.pid).nama + ' diterima di ' + p.nama);
     },
@@ -425,7 +427,8 @@
     if (k === 'login') {
       var em = val(f, 'email'), pw = val(f, 'pw'), er = $('#lerr');
       if (!em || !pw) { er.textContent = 'Email dan kata sandi wajib diisi.'; return; }
-      if (em !== 'admin@gmail.com' || pw !== 'admin123') { er.textContent = 'Email atau kata sandi salah.'; return; }
+      var okA = (window.Api && Api.on) ? !!Api.login(em, pw, 'admin') : (em === 'admin@gmail.com' && pw === 'admin123');
+      if (!okA) { er.textContent = 'Email atau kata sandi salah.'; return; }
       setLogin(true); location.hash = '#/dashboard'; render(); return;
     }
     var m = $('#modal'); if (m._submit) m._submit(f);

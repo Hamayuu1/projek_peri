@@ -110,7 +110,10 @@
   function doLogin(f) {
     var em = f.elements.email.value.trim().toLowerCase(), pw = f.elements.pw.value, e = $('lerr');
     if (!em || !pw) { e.textContent = 'Email dan kata sandi wajib diisi.'; return; }
-    var u = db.peserta.filter(function (x) { return x.email.toLowerCase() === em && x.pw === pw; })[0];
+    var lid = window.Api ? Api.login(em, pw, 'peserta') : undefined;
+    var u = lid !== undefined
+      ? db.peserta.filter(function (x) { return x.id === lid; })[0]
+      : db.peserta.filter(function (x) { return x.email.toLowerCase() === em && x.pw === pw; })[0];
     if (!u) { e.textContent = 'Email atau kata sandi salah.'; return; }
     setPid(u.id); S.prog = null; go('beranda', null, null, true);
   }
@@ -190,6 +193,13 @@
     }
     openSheet(h);
   }
+  function batasProg() {
+    var id = pid(), a = mine().filter(function (x) { return !selesai(x) && pct(x) < 100; })[0];
+    if (a) return 'Anda masih mengikuti program "' + a.nama + '" (progres ' + pct(a) + '%). Selesaikan progres program ini (sampai 100%) sebelum mengambil program baru.';
+    var w = db.pendaftaran.filter(function (r) { return r.pid === id && r.status === 'menunggu'; })[0];
+    if (w) { var pw = prog(w.prog); return 'Pendaftaran Anda ke "' + (pw ? pw.nama : 'program lain') + '" masih menunggu konfirmasi pengurus. Tunggu hasilnya sebelum mendaftar program lain.'; }
+    return '';
+  }
   function joinKode(k) {
     S.jval = (k || '').trim(); k = S.jval.toUpperCase();
     var p = db.programs.filter(function (x) { return (x.kode || '').toUpperCase() === k; })[0];
@@ -197,6 +207,7 @@
     if (!p) { S.jmsg = 'Kode tidak ditemukan. Periksa lagi atau tanyakan ke pengurus.'; return rJoin(); }
     if (p.peserta.indexOf(pid()) >= 0) { S.jmsg = 'Anda sudah tergabung di kelas ini.'; return rJoin(); }
     if (p.peserta.length >= p.kuota) { S.jmsg = 'Kuota kelas ini sudah penuh.'; return rJoin(); }
+    var bt = batasProg(); if (bt) { S.jmsg = bt; return rJoin(); }
     p.peserta.push(pid());
     db.undangan.forEach(function (u) { if (u.pid === pid() && u.kode.toUpperCase() === k && u.status === 'menunggu') u.status = 'diterima'; });
     save(); closeSheet(); toast('Berhasil bergabung ke ' + p.nama); show(cur);
@@ -212,7 +223,7 @@
     var q = S.q.toLowerCase();
     var vis = db.programs.filter(function (p) { return p.peserta.indexOf(id) < 0 && (S.cat === 'Semua' || p.kategori === S.cat || (S.cat === 'Usaha' && p.kategori === 'Keuangan')) && (!q || (p.nama + ' ' + p.desc).toLowerCase().indexOf(q) >= 0); });
     var fav = readJSON(FAV + '_' + id, {});
-    $('program').innerHTML = '<h1 style="margin-bottom:2px">Program</h1><p class="m sm" style="margin-bottom:12px">Temukan program PERI yang ingin Anda ikuti berikutnya.</p><input class="in" id="cari" placeholder="Cari program..." value="' + esc(S.q) + '"><div class="chips">' + chips + '</div>' +
+    $('program').innerHTML = '<h1 style="margin-bottom:2px">Program</h1><p class="m sm" style="margin-bottom:12px">Temukan program PERI yang ingin Anda ikuti berikutnya.</p>' + (batasProg() ? '<div class="warn" style="cursor:default;margin-bottom:12px">&#9888; ' + esc(batasProg()) + '</div>' : '') + '<input class="in" id="cari" placeholder="Cari program..." value="' + esc(S.q) + '"><div class="chips">' + chips + '</div>' +
       '<div class="sec" style="margin-top:8px"><h2>Program yang saya ikuti</h2></div>' + (minis ? '<div class="hs">' + minis + '</div>' : '<p class="m sm">Belum ada.</p>') +
       (kand ? '<div class="card" style="margin-top:16px;border-color:var(--gold);background:var(--warn);color:var(--warnink)"><div class="sm">&#10024; Cocok untuk Anda</div><b>' + esc(kand.nama) + '</b><div class="sm" style="margin:2px 0 8px">Satu kategori dengan program yang sedang Anda ikuti (' + esc(kand.kategori) + ').</div><button class="btn" data-a="detail-prog" data-x="' + kand.id + '">Lihat program</button></div>' : '') +
       '<div class="sec"><h2>Program baru</h2><span class="m sm">' + vis.length + ' program</span></div><div id="plist">' + (vis.map(function (p) { return cardP(p, fav); }).join('') || '<div class="cert">Tidak ada program yang cocok</div>') + '</div>';
@@ -224,6 +235,8 @@
     if (p.status === 'segera') return { chip: '<span class="chip g">Segera dibuka</span>', can: false, state: 'segera' };
     if (p.status === 'tutup') return { chip: '<span class="chip r">Pendaftaran ditutup</span>', can: false, state: 'tutup' };
     if (p.peserta.length >= p.kuota) return { chip: '<span class="chip r">Kuota penuh</span>', can: false, state: 'penuh' };
+    var bt = batasProg(p.id);
+    if (bt) return { chip: '<span class="chip y">Selesaikan program aktif</span>', can: false, state: 'terkunci', note: bt };
     return { chip: '<span class="chip">Dibuka</span>', can: true, state: 'buka' };
   }
   function cardP(p, fav) {
@@ -233,16 +246,18 @@
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:6px">' + st.chip + '<button class="btn o" data-a="detail-prog" data-x="' + p.id + '">Detail</button></div></div></div>';
   }
   function detailP(id) {
-    var p = prog(id), st = statusP(p), act = '';
+    var p = prog(id), st = statusP(p), act = '', bt = batasProg();
+    if (bt && st.can) { st.can = false; st.state = 'terkunci'; act = '<div class="note" style="background:var(--warn);color:var(--warnink)">&#9888; ' + esc(bt) + '</div>'; }
     if (st.state === 'menunggu') act = '<button class="btn o w" data-a="batal-daftar" data-x="' + id + '">Batalkan pendaftaran</button><p class="m sm" style="margin-top:8px;text-align:center">Pengurus akan mengonfirmasi pendaftaran Anda. Setelah disetujui, kelas muncul di halaman Kelas.</p>';
     else {
       if (st.state === 'ditolak') act += '<div class="note" style="background:var(--warn);color:var(--warnink)">Pendaftaran sebelumnya ditolak: ' + esc(st.alasan || '-') + '</div>';
-      act += st.can ? '<button class="btn w" data-a="konfirm-daftar" data-x="' + id + '">' + (st.state === 'ditolak' ? 'Daftar lagi' : 'Daftar program ini') + '</button>' : '<button class="btn d w">' + (st.state === 'segera' ? 'Pendaftaran belum dibuka' : st.state === 'penuh' ? 'Kuota penuh' : 'Pendaftaran ditutup') + '</button>';
+      act += st.can ? '<button class="btn w" data-a="konfirm-daftar" data-x="' + id + '">' + (st.state === 'ditolak' ? 'Daftar lagi' : 'Daftar program ini') + '</button>' : '<button class="btn d w">' + (st.state === 'terkunci' ? 'Selesaikan program aktif dulu' : st.state === 'segera' ? 'Pendaftaran belum dibuka' : st.state === 'penuh' ? 'Kuota penuh' : 'Pendaftaran ditutup') + '</button>';
     }
     var mulai = p.sesi.length ? tgl(p.sesi[0].tanggal, 2) : 'Belum dijadwalkan';
     openSheet('<div class="gr"></div><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><div class="pi ' + warna(p) + '">' + (IKON[p.kategori] || '&#128214;') + '</div><div><h2 style="margin:0">' + esc(p.nama) + '</h2><span class="chip">' + esc(p.kategori) + '</span></div></div><p class="m" style="font-size:13px;margin-bottom:10px">' + esc(p.desc) + '</p><dl><dt>Tujuan</dt><dd>' + esc(p.tujuan) + '</dd><dt>Jumlah sesi</dt><dd>' + p.sesi.length + ' sesi</dd><dt>Periode</dt><dd>' + esc(p.periode) + '</dd><dt>Mulai</dt><dd>' + mulai + '</dd><dt>Kuota</dt><dd>' + p.kuota + ' peserta (terisi ' + p.peserta.length + ')</dd></dl><div style="height:14px"></div>' + act);
   }
   function konfirmDaftar(id) {
+    var bt = batasProg(); if (bt) { toast(bt); return; }
     var p = prog(id);
     openSheet('<div class="gr"></div><h2>Daftar ke ' + esc(p.nama) + '?</h2><p class="m" style="font-size:13px">Pendaftaran akan dikirim ke pengurus untuk dikonfirmasi. Pastikan Anda bisa mengikuti seluruh ' + p.sesi.length + ' sesi.</p><label style="display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-size:13px;margin:14px 0"><input type="checkbox" id="ck" style="margin-top:3px"> Saya bersedia mengikuti seluruh sesi.</label><div class="err" id="ce"></div><button class="btn w" data-a="kirim-daftar" data-x="' + id + '">Kirim pendaftaran</button><button class="btn o w" style="margin-top:8px;font-size:13px" data-a="detail-prog" data-x="' + id + '">Kembali</button>');
   }
@@ -356,6 +371,7 @@
     'kirim-daftar': function (el) {
       if (!$('ck').checked) { $('ce').textContent = 'Centang dulu pernyataan di atas.'; return; }
       var id = el.getAttribute('data-x');
+      if (batasProg()) { closeSheet(); toast(batasProg()); return; }
       db.pendaftaran.push({ id: 'r' + Date.now().toString(36), pid: pid(), prog: id, tgl: TODAY, status: 'menunggu', alasan: '' });
       save(); closeSheet(); rProgram(); toast('Pendaftaran dikirim, menunggu konfirmasi pengurus');
     },
