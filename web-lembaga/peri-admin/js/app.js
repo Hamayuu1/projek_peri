@@ -765,7 +765,7 @@ function populateProgramFilter() {
   select.innerHTML = `<option value="all">Semua program</option>${options}`;
 }
 
-function exportCsv() {
+function exportXlsx() {
   const rows = currentFilteredRegistrants();
   if (rows.length === 0) {
     showToast("Tidak ada data untuk diekspor");
@@ -780,35 +780,17 @@ function exportCsv() {
     "Status",
     "Konfirmasi",
   ];
-  const lines = rows.map((r) => {
-    const status = r.duplikat ? "Duplikat" : "Terverifikasi";
-    return (
-      [
-        r.nama,
-        r.email,
-        r.wa,
-        r.program,
-        formatTanggal(r.tanggal),
-        status,
-        r.status === "diterima" ? "Diterima" : "Menunggu",
-      ]
-        // Awalan ' mencegah isian seperti "=1+1" dibaca sebagai rumus saat CSV dibuka di Excel.
-        .map((v) => (/^[=+\-@]/.test(String(v)) ? "'" + v : v))
-        .map((v) => `"${String(v).replace(/"/g, '""')}"`)
-        .join(",")
-    );
-  });
-  const csv = [header.join(","), ...lines].join("\n");
-  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "data-pendaftar-peri.csv";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast("Data pendaftar diekspor ke CSV");
+  const baris = rows.map((r) => [
+    r.nama,
+    r.email,
+    r.wa,
+    r.program,
+    formatTanggal(r.tanggal),
+    r.duplikat ? "Duplikat" : "Terverifikasi",
+    r.status === "diterima" ? "Diterima" : "Menunggu",
+  ]);
+  unduhXlsx("data-pendaftar-peri.xlsx", "Pendaftar", header, baris);
+  showToast("Data pendaftar diekspor ke Excel");
 }
 
 async function initPendaftar() {
@@ -822,7 +804,7 @@ async function initPendaftar() {
   document
     .getElementById("search-pendaftar")
     .addEventListener("input", renderRegistrantTable);
-  document.getElementById("btn-ekspor").addEventListener("click", exportCsv);
+  document.getElementById("btn-ekspor").addEventListener("click", exportXlsx);
   document.getElementById("pendaftar-body").addEventListener("click", (e) => {
     const terima = e.target.closest(".btn-terima");
     const batal = e.target.closest(".btn-batal-terima");
@@ -967,6 +949,37 @@ function updateGuestbookCount() {
   if (el) el.textContent = guestbook.filter((g) => !g.dibaca).length;
 }
 
+// Ekspor umpan balik ke Excel. Hanya pesan asli dari server yang diekspor
+// (bukan data contoh), mengikuti pencarian dan filter kategori yang sedang aktif.
+function exportUmpanBalik() {
+  const rows = gbFiltered().filter((g) => g._api);
+  if (rows.length === 0) {
+    showToast("Tidak ada data untuk diekspor");
+    return;
+  }
+  const header = [
+    "Nama",
+    "Email",
+    "Pesan",
+    "Kategori",
+    "Tanggal kirim",
+    "Status",
+  ];
+  const baris = rows.map((g) => {
+    const k = kategoriOf(g);
+    return [
+      g.nama,
+      g.email === "-" ? "" : g.email,
+      g.pesan,
+      k ? KATEGORI_LABEL[k] || "Lainnya" : "Belum dianalisis",
+      formatTanggal(g.tanggal),
+      g.dibaca ? "Sudah dibaca" : "Belum dibaca",
+    ];
+  });
+  unduhXlsx("data-umpan-balik-peri.xlsx", "Umpan Balik", header, baris);
+  showToast("Umpan balik diekspor ke Excel");
+}
+
 async function initBukuTamu() {
   document.getElementById("gb-search").addEventListener("input", (e) => {
     gbFilter.q = e.target.value;
@@ -976,6 +989,7 @@ async function initBukuTamu() {
     gbFilter.kategori = e.target.value;
     renderGuestbook();
   });
+  document.getElementById("btn-ekspor-umpan").addEventListener("click", exportUmpanBalik);
   await muatPesanApi();
   await muatKategoriModel();
   renderGuestbook();
