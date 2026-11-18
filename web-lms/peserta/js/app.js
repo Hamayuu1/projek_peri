@@ -51,7 +51,7 @@
   function tugasBelum(p) { return (p.tugas || []).filter(function (t) { return tStatus(p, t) === 'belum'; }); }
   function evOn(d) { var r = []; mine().forEach(function (p) { p.sesi.forEach(function (s) { if (s.tanggal === d) r.push({ p: p, s: s }); }); }); return r; }
   function warna(p) { return WARNA[db.programs.indexOf(p) % 4]; }
-  function lastReg(p) { var id = pid(), r = null; db.pendaftaran.forEach(function (x) { if (x.pid === id && x.prog === p.id) r = x; }); return r; }
+  /* pendaftaran program ditangani web lembaga; LMS hanya menerima peserta lewat kode kelas atau undangan */
   function jamLabel(s) { return s.jam.replace(/\./g, ':'); }
 
   var IC = {
@@ -196,8 +196,7 @@
   function batasProg() {
     var id = pid(), a = mine().filter(function (x) { return !selesai(x) && pct(x) < 100; })[0];
     if (a) return 'Anda masih mengikuti program "' + a.nama + '" (progres ' + pct(a) + '%). Selesaikan progres program ini (sampai 100%) sebelum mengambil program baru.';
-    var w = db.pendaftaran.filter(function (r) { return r.pid === id && r.status === 'menunggu'; })[0];
-    if (w) { var pw = prog(w.prog); return 'Pendaftaran Anda ke "' + (pw ? pw.nama : 'program lain') + '" masih menunggu konfirmasi pengurus. Tunggu hasilnya sebelum mendaftar program lain.'; }
+
     return '';
   }
   function joinKode(k) {
@@ -218,20 +217,20 @@
     var m = mine(), id = pid();
     var minis = m.map(function (p) { return '<div class="mini ' + warna(p) + '" data-a="go" data-p="kdetail" data-x="' + p.id + '" style="cursor:pointer">' + esc(p.nama) + '<small>hadir ' + hadirN(p) + ' dari ' + p.sesi.length + ' sesi</small></div>'; }).join('');
     var kats = m.map(function (p) { return p.kategori; });
-    var kand = db.programs.filter(function (p) { var r = lastReg(p); return p.peserta.indexOf(id) < 0 && p.status === 'buka' && p.peserta.length < p.kuota && (!r || r.status === 'ditolak') && kats.indexOf(p.kategori) >= 0; })[0];
+    var kand = db.programs.filter(function (p) { return p.peserta.indexOf(id) < 0 && p.status === 'buka' && p.peserta.length < p.kuota && kats.indexOf(p.kategori) >= 0; })[0];
     var chips = CATS.map(function (c) { return '<button class="' + (S.cat === c ? 'on' : '') + '" data-a="kat" data-x="' + c + '">' + c + '</button>'; }).join('');
     var q = S.q.toLowerCase();
     var vis = db.programs.filter(function (p) { return p.peserta.indexOf(id) < 0 && (S.cat === 'Semua' || p.kategori === S.cat || (S.cat === 'Usaha' && p.kategori === 'Keuangan')) && (!q || (p.nama + ' ' + p.desc).toLowerCase().indexOf(q) >= 0); });
     var fav = readJSON(FAV + '_' + id, {});
-    $('program').innerHTML = '<h1 style="margin-bottom:2px">Program</h1><p class="m sm" style="margin-bottom:12px">Temukan program PERI yang ingin Anda ikuti berikutnya.</p>' + (batasProg() ? '<div class="warn" style="cursor:default;margin-bottom:12px">&#9888; ' + esc(batasProg()) + '</div>' : '') + '<input class="in" id="cari" placeholder="Cari program..." value="' + esc(S.q) + '"><div class="chips">' + chips + '</div>' +
+    $('program').innerHTML = '<h1 style="margin-bottom:2px">Program</h1><p class="m sm" style="margin-bottom:12px">Temukan program PERI yang tersedia. Untuk bergabung, minta kode kelas ke pengurus lalu masukkan lewat menu Gabung kelas.</p>' + (batasProg() ? '<div class="warn" style="cursor:default;margin-bottom:12px">&#9888; ' + esc(batasProg()) + '</div>' : '') + '<input class="in" id="cari" placeholder="Cari program..." value="' + esc(S.q) + '"><div class="chips">' + chips + '</div>' +
       '<div class="sec" style="margin-top:8px"><h2>Program yang saya ikuti</h2></div>' + (minis ? '<div class="hs">' + minis + '</div>' : '<p class="m sm">Belum ada.</p>') +
       (kand ? '<div class="card" style="margin-top:16px;border-color:var(--gold);background:var(--warn);color:var(--warnink)"><div class="sm">&#10024; Cocok untuk Anda</div><b>' + esc(kand.nama) + '</b><div class="sm" style="margin:2px 0 8px">Satu kategori dengan program yang sedang Anda ikuti (' + esc(kand.kategori) + ').</div><button class="btn" data-a="detail-prog" data-x="' + kand.id + '">Lihat program</button></div>' : '') +
       '<div class="sec"><h2>Program baru</h2><span class="m sm">' + vis.length + ' program</span></div><div id="plist">' + (vis.map(function (p) { return cardP(p, fav); }).join('') || '<div class="cert">Tidak ada program yang cocok</div>') + '</div>';
   }
   function statusP(p) {
-    var r = lastReg(p);
-    if (r && r.status === 'menunggu') return { chip: '<span class="chip y">Menunggu konfirmasi</span>', can: false, state: 'menunggu' };
-    if (r && r.status === 'ditolak') return { chip: '<span class="chip r">Ditolak</span>', can: p.status === 'buka' && p.peserta.length < p.kuota, state: 'ditolak', alasan: r.alasan };
+
+
+
     if (p.status === 'segera') return { chip: '<span class="chip g">Segera dibuka</span>', can: false, state: 'segera' };
     if (p.status === 'tutup') return { chip: '<span class="chip r">Pendaftaran ditutup</span>', can: false, state: 'tutup' };
     if (p.peserta.length >= p.kuota) return { chip: '<span class="chip r">Kuota penuh</span>', can: false, state: 'penuh' };
@@ -248,10 +247,10 @@
   function detailP(id) {
     var p = prog(id), st = statusP(p), act = '', bt = batasProg();
     if (bt && st.can) { st.can = false; st.state = 'terkunci'; act = '<div class="note" style="background:var(--warn);color:var(--warnink)">&#9888; ' + esc(bt) + '</div>'; }
-    if (st.state === 'menunggu') act = '<button class="btn o w" data-a="batal-daftar" data-x="' + id + '">Batalkan pendaftaran</button><p class="m sm" style="margin-top:8px;text-align:center">Pengurus akan mengonfirmasi pendaftaran Anda. Setelah disetujui, kelas muncul di halaman Kelas.</p>';
+    if (st.state !== 'menunggu') act += '<div class="note">Untuk bergabung, minta kode kelas ke pengurus, lalu masukkan lewat menu Gabung kelas.</div><button class="btn w" data-a="join">Masukkan kode kelas</button>';
     else {
-      if (st.state === 'ditolak') act += '<div class="note" style="background:var(--warn);color:var(--warnink)">Pendaftaran sebelumnya ditolak: ' + esc(st.alasan || '-') + '</div>';
-      act += st.can ? '<button class="btn w" data-a="konfirm-daftar" data-x="' + id + '">' + (st.state === 'ditolak' ? 'Daftar lagi' : 'Daftar program ini') + '</button>' : '<button class="btn d w">' + (st.state === 'terkunci' ? 'Selesaikan program aktif dulu' : st.state === 'segera' ? 'Pendaftaran belum dibuka' : st.state === 'penuh' ? 'Kuota penuh' : 'Pendaftaran ditutup') + '</button>';
+
+
     }
     var mulai = p.sesi.length ? tgl(p.sesi[0].tanggal, 2) : 'Belum dijadwalkan';
     openSheet('<div class="gr"></div><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><div class="pi ' + warna(p) + '">' + (IKON[p.kategori] || '&#128214;') + '</div><div><h2 style="margin:0">' + esc(p.nama) + '</h2><span class="chip">' + esc(p.kategori) + '</span></div></div><p class="m" style="font-size:13px;margin-bottom:10px">' + esc(p.desc) + '</p><dl><dt>Tujuan</dt><dd>' + esc(p.tujuan) + '</dd><dt>Jumlah sesi</dt><dd>' + p.sesi.length + ' sesi</dd><dt>Periode</dt><dd>' + esc(p.periode) + '</dd><dt>Mulai</dt><dd>' + mulai + '</dd><dt>Kuota</dt><dd>' + p.kuota + ' peserta (terisi ' + p.peserta.length + ')</dd></dl><div style="height:14px"></div>' + act);

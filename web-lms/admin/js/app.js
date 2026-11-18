@@ -44,7 +44,7 @@
   function sorted(p) { p.sesi.sort(function (a, b) { return a.tanggal < b.tanggal ? -1 : a.tanggal > b.tanggal ? 1 : 0; }); p.sesi.forEach(function (s, i) { s.no = i + 1; }); }
   function uid(pre) { return pre + Date.now().toString(36) + Math.floor(Math.random() * 1000).toString(36); }
   function curProg() { var p = prog(ui.prog); if (!p) { ui.prog = db.programs[0] ? db.programs[0].id : null; p = prog(ui.prog); } return p; }
-  function menunggu() { return db.pendaftaran.filter(function (r) { return r.status === 'menunggu'; }); }
+
   function statusChip(st) {
     if (st === 'buka') return '<span class="chip">Dibuka</span>';
     if (st === 'segera') return '<span class="chip g">Segera dibuka</span>';
@@ -63,7 +63,7 @@
     kehadiran: ['Catat Kehadiran', 'Tandai peserta yang hadir pada sebuah sesi.'],
     rekap: ['Rekap Progres', 'Pantau progres peserta dan tandai yang sudah selesai.'],
     sertifikat: ['Sertifikat', 'Unggah template sertifikat. Nama peserta ditulis otomatis.'],
-    pendaftaran: ['Pendaftaran', 'Setujui atau tolak peserta yang mendaftar ke program.']
+
   };
   function route() { var h = location.hash.replace('#/', ''); return ROUTES[h] ? h : 'dashboard'; }
 
@@ -73,7 +73,7 @@
     if (!loggedIn()) { root.innerHTML = viewLogin(); return; }
     var r = route();
     var nav = Object.keys(ROUTES).map(function (k) {
-      var bd = k === 'pendaftaran' && menunggu().length ? '<span class="bd">' + menunggu().length + '</span>' : '';
+      var bd = '';
       return '<a href="#/' + k + '" class="' + (k === r ? 'on' : '') + '">' + (window.ICONS && window.ICONS[k] ? window.ICONS[k] : '') + '<span>' + ROUTES[k][0] + '</span>' + bd + '</a>';
     }).join('');
     root.innerHTML = '<div class="app"><header class="mbar"><button class="burger" data-act="menu" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 6h18v2.5H3zM3 10.8h18v2.5H3zM3 15.6h18v2.5H3z"/></svg></button><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI</div></div></header><div class="scrim" data-act="menu-tutup"></div><aside class="side"><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI<small>Panel pengurus</small></div></div><nav class="nav">' + nav + '</nav><div class="who"><b>Pengurus PERI</b>admin@gmail.com<br><button class="btn o s" style="margin-top:8px" data-act="keluar">Keluar</button></div></aside><main class="main"><div class="top"><div><h1>' + ROUTES[r][0] + '</h1><p class="sub">' + ROUTES[r][1] + '</p></div><div id="topact"></div></div>' + VIEWS[r]() + '</main></div>';
@@ -96,21 +96,21 @@
     var tanpaMateri = [];
     db.programs.forEach(function (p) { p.sesi.forEach(function (s) { if (!s.materi && s.tanggal >= TODAY) tanpaMateri.push({ p: p, s: s }); }); });
     tanpaMateri.sort(function (a, b) { return a.s.tanggal < b.s.tanggal ? -1 : 1; });
-    var m = menunggu();
-    var stats = '<div class="stats"><div class="stat"><span>Peserta aktif</span><b>' + Object.keys(semua).length + '</b><small>di ' + db.programs.length + ' program</small></div><div class="stat"><span>Sesi minggu ini</span><b>' + minggu.length + '</b><small>5 - 11 Okt 2026</small></div><div class="stat"><span>Rata-rata progres</span><b>' + (tot ? Math.round(jml / tot) : 0) + '%</b><small>seluruh peserta</small></div><div class="stat"><span>Pendaftaran menunggu</span><b>' + m.length + '</b><small><a href="#/pendaftaran">Tinjau sekarang</a></small></div></div>';
+
+    var stats = '<div class="stats"><div class="stat"><span>Peserta aktif</span><b>' + Object.keys(semua).length + '</b><small>di ' + db.programs.length + ' program</small></div><div class="stat"><span>Sesi minggu ini</span><b>' + minggu.length + '</b><small>5 - 11 Okt 2026</small></div><div class="stat"><span>Rata-rata progres</span><b>' + (tot ? Math.round(jml / tot) : 0) + '%</b><small>seluruh peserta</small></div></div>';
     var rows = minggu.map(function (x) {
       return '<tr><td>' + tgl(x.s.tanggal, true) + '</td><td>' + esc(x.p.nama) + '<div class="sm mut">Sesi ' + x.s.no + ': ' + esc(x.s.judul) + '</div></td><td>' + x.s.jam + '</td><td>' + x.s.mode + ', ' + esc(x.s.tempat) + '</td></tr>';
     }).join('');
     var mm = tanpaMateri.slice(0, 6).map(function (x) {
       return '<tr><td>' + esc(x.p.nama) + '<div class="sm mut">Sesi ' + x.s.no + ': ' + esc(x.s.judul) + '</div></td><td>' + tgl(x.s.tanggal) + '</td><td><a href="#/materi" data-act="ke-materi" data-id="' + x.p.id + '">Unggah</a></td></tr>';
     }).join('');
-    var mp = m.slice(0, 5).map(function (r) {
+    var m = [], mp = m.slice(0, 5).map(function (r) {
       return '<tr><td>' + esc(pes(r.pid).nama) + '<div class="sm mut">' + esc(prog(r.prog).nama) + '</div></td><td>' + tgl(r.tgl) + '</td></tr>';
     }).join('');
     return stats +
       '<div class="card"><div class="hd"><h2>Sesi minggu ini</h2></div><div class="tw"><table><thead><tr><th>Hari</th><th>Kelas</th><th>Jam</th><th>Tempat</th></tr></thead><tbody>' + (rows || '<tr><td colspan="4" class="empty">Tidak ada sesi minggu ini</td></tr>') + '</tbody></table></div></div>' +
       '<div class="grid2"><div class="card"><div class="hd"><h2>Materi belum diunggah</h2><span class="chip y">' + tanpaMateri.length + ' sesi</span></div><div class="tw"><table><thead><tr><th>Sesi</th><th>Tanggal</th><th></th></tr></thead><tbody>' + (mm || '<tr><td colspan="3" class="empty">Semua sesi sudah punya materi</td></tr>') + '</tbody></table></div></div>' +
-      '<div class="card"><div class="hd"><h2>Pendaftaran menunggu</h2><a href="#/pendaftaran">Lihat semua</a></div><div class="tw"><table><thead><tr><th>Peserta</th><th>Tanggal</th></tr></thead><tbody>' + (mp || '<tr><td colspan="2" class="empty">Tidak ada pendaftaran baru</td></tr>') + '</tbody></table></div></div></div>';
+      '</div>';
   };
 
   VIEWS.program = function () {
@@ -286,7 +286,7 @@
     'tutup': closeModal,
     'ke-materi': function (el) { ui.prog = el.getAttribute('data-id'); },
     'cari': function (el) { ui.q = el.value; var pos = el.selectionStart; render(); var i = $('input[data-act="cari"]'); if (i) { i.focus(); i.setSelectionRange(pos, pos); } },
-    'tab-daftar': function (el) { ui.daftarTab = el.getAttribute('data-id'); render(); },
+
     'sert-file': function (el) { sertFile(el); },
     'sert-tengah': function () { var p = curProg(); if (!p || !p.sertif) return; p.sertif.x = 50; sertApply(); sertSave(); },
     'sert-hapus': function () {
@@ -315,7 +315,7 @@
       var p = prog(el.getAttribute('data-id'));
       openModal('Hapus program?', '<p>Program <b>' + esc(p.nama) + '</b> beserta ' + p.sesi.length + ' sesi dan catatan kehadiran dari ' + p.peserta.length + ' peserta akan dihapus. Tindakan ini tidak bisa dibatalkan.</p>', 'Ya, hapus', function () {
         db.programs = db.programs.filter(function (x) { return x.id !== p.id; });
-        db.pendaftaran = db.pendaftaran.filter(function (r) { return r.prog !== p.id; });
+
         save(); closeModal(); render(); toast('Program dihapus');
       }, true);
     },
