@@ -94,7 +94,7 @@
     ['beranda', 'kelas', 'program'].forEach(function (x) { $('b-' + x).classList.toggle('on', map[p] === x); });
     cur = p;
     $('app').classList.toggle('noTop', p === 'kelas' || p === 'kdetail');
-    $('fab').classList.toggle('on', p === 'kelas');
+    
     if (lg) { rLogin(); return; }
     $('topnm').textContent = user().nama; $('toplogo').src = window.LOGO || '';
     var R = { beranda: rBeranda, kelas: rKelas, kdetail: rK, program: rProgram, jadwal: rJadwal, sesi: rSesi, materi: rMateri, progres: rProgres, sertifikat: rSert };
@@ -125,7 +125,7 @@
     var html = '<p class="m sm" style="margin:-2px 0 10px">Halo, ' + esc(first) + ' &#128075;</p>';
     if (h) html += '<div class="card" data-a="go" data-p="kelas" style="background:var(--t);color:#fff;border-color:var(--t);cursor:pointer;padding:12px 14px"><div class="sm" style="opacity:.85">Kelas hari ini &middot; ' + tgl(h.s.tanggal, 1) + '</div><div style="font-weight:600;font-size:15px">' + esc(h.p.nama) + ' &middot; Sesi ' + h.s.no + '</div><div class="sm" style="opacity:.9">' + jamLabel(h.s) + ' &middot; ' + h.s.mode + ', ' + esc(h.s.tempat) + '</div></div>';
     if (!p) {
-      $('beranda').innerHTML = html + '<div class="card"><h2>Belum ada program</h2><p class="m sm" style="margin-bottom:12px">Anda belum tergabung di program mana pun. Lihat program yang dibuka atau gabung memakai kode kelas.</p><button class="btn" data-a="go" data-p="program">Lihat program</button> <button class="btn o" data-a="join">Gabung kelas</button></div>';
+      $('beranda').innerHTML = html + '<div class="card"><h2>Belum ada program</h2><p class="m sm" style="margin-bottom:12px">Anda belum tergabung di program mana pun. Setelah pendaftaran Anda dikonfirmasi admin, kelas muncul di sini secara otomatis.</p><button class="btn" data-a="go" data-p="program">Lihat status pendaftaran</button></div>';
       return;
     }
     var n = nextSes(p), tb = []; mine().forEach(function (x) { tb = tb.concat(tugasBelum(x).map(function (t) { return { t: t, p: x }; })); });
@@ -214,7 +214,15 @@
   }
 
   /* ---------- program baru ---------- */
-  function rProgram() {
+  function rProgramSaya() {
+    var id = pid(), m = mine();
+    var kelas = m.map(function (p) { return '<div class="card" data-a="go" data-p="kdetail" data-x="' + p.id + '" style="cursor:pointer;margin-bottom:10px"><h3 style="margin:0 0 4px">' + esc(p.nama) + '</h3><div class="m sm">' + esc(p.kategori) + ' &middot; ' + p.sesi.length + ' sesi &middot; hadir ' + hadirN(p) + ' dari ' + p.sesi.length + '</div></div>'; }).join('');
+    var dft = (db.pendaftaranLembaga || []).filter(function (r) { return r.pid === id; });
+    var info = dft.filter(function (r) { return r.status === 'baru' || (r.status === 'diterima' && !r.prog); }).map(function (r) { return '<div class="card" style="margin-bottom:10px"><b>' + esc(r.program) + '</b><div style="margin-top:6px">' + (r.status === 'baru' ? '<span class="chip y">Menunggu konfirmasi admin</span>' : '<span class="chip g">Diterima, kelas belum tersedia di LMS</span>') + '</div></div>'; }).join('');
+    $('program').innerHTML = '<h1 style="margin-bottom:2px">Program</h1><p class="m sm" style="margin-bottom:12px">Pendaftaran program dilakukan di situs PERI. Setelah admin mengonfirmasi, kelas Anda muncul di sini secara otomatis.</p><div class="sec"><h2>Program saya</h2></div>' + (kelas || '<div class="card"><p class="m sm">Belum ada kelas.</p></div>') + (info ? '<div class="sec" style="margin-top:16px"><h2>Status pendaftaran</h2></div>' + info : '');
+  }
+  function rProgram() { return rProgramSaya(); }
+  function rProgramLama() {
     var m = mine(), id = pid();
     var minis = m.map(function (p) { return '<div class="mini ' + warna(p) + '" data-a="go" data-p="kdetail" data-x="' + p.id + '" style="cursor:pointer">' + esc(p.nama) + '<small>hadir ' + hadirN(p) + ' dari ' + p.sesi.length + ' sesi</small></div>'; }).join('');
     var kats = m.map(function (p) { return p.kategori; });
@@ -326,7 +334,7 @@
   function info(k) {
     var T = {
       bahasa: ['Bahasa', '<p class="m" style="font-size:13px">Saat ini aplikasi tersedia dalam Bahasa Indonesia.</p>'],
-      pusat: ['Pusat bantuan', '<div class="row"><div class="t">Cara masuk dan mengganti kata sandi</div></div><div class="row"><div class="t">Cara melihat jadwal dan mengunduh materi</div></div><div class="row"><div class="t">Cara mengumpulkan tugas</div></div><div class="row"><div class="t">Cara bergabung ke kelas</div></div>'],
+      pusat: ['Pusat bantuan', '<div class="row"><div class="t">Cara masuk dan mengganti kata sandi</div></div><div class="row"><div class="t">Cara melihat jadwal dan mengunduh materi</div></div><div class="row"><div class="t">Cara mengumpulkan tugas</div></div><div class="row"><div class="t">Cara masuk ke kelas setelah mendaftar</div></div>'],
       faq: ['Pertanyaan umum', '<div class="fq" data-a="faq"><b>Kapan sertifikat bisa diunduh?</b><p>Setelah pengurus menandai Anda telah menyelesaikan program.</p></div><div class="fq" data-a="faq"><b>Bagaimana progres dihitung?</b><p>Progres adalah persentase sesi yang Anda hadiri dari seluruh sesi program.</p></div><div class="fq" data-a="faq"><b>Kehadiran saya salah tercatat, bagaimana?</b><p>Hubungi fasilitator atau pengurus agar catatan kehadiran diperbaiki.</p></div><div class="fq" data-a="faq"><b>Apakah keluar dari halaman kelas menghapus keanggotaan?</b><p>Tidak. Anda hanya kembali ke daftar kelas.</p></div>'],
       syarat: ['Syarat &amp; ketentuan', '<p class="m" style="font-size:13px">Data Anda dipakai hanya untuk keperluan pelatihan PERI, seperti jadwal, kehadiran, tugas, progres, dan sertifikat. Jaga kerahasiaan kata sandi akun Anda. (Teks contoh pada prototype.)</p>'],
       hubungi: ['Hubungi kami', '<p class="m" style="font-size:13px;margin-bottom:12px">Ada kendala? Hubungi pengurus PERI.</p><button class="btn w" data-a="toast" data-n="Contoh: membuka WhatsApp pengurus">Chat WhatsApp pengurus</button><button class="btn o w" style="margin-top:8px;font-size:13px" data-a="toast" data-n="Contoh: membuka email">Kirim email</button>']
