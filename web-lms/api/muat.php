@@ -59,10 +59,15 @@ try {
         $progs[$r['program_id']]['tugas'][] = ['id' => $tid, 'sesi' => (int) $r['sesi_no'], 'judul' => $r['judul'], 'due' => substr($r['tenggat'], 0, 10), 'desc' => (string) $r['deskripsi']];
     }
 
+    $itemMap = [];
+    foreach ($pdo->query("SELECT tugas_id, user_id, tipe, nama, path, url, kb FROM lms_pengumpulan_item ORDER BY urutan") as $r)
+        $itemMap[$r['tugas_id'] . '|' . $r['user_id']][] = ['nama' => $r['nama'], 'tipe' => $r['tipe'], 'url' => $r['url'], 'ref' => refDari($r['tipe'], $r['path'], $r['url']), 'kb' => (int) $r['kb']];
     foreach ($pdo->query("SELECT g.*, t.program_id FROM lms_pengumpulan g JOIN lms_tugas t ON t.id = g.tugas_id") as $r) {
         $pre = $r['program_id'] . '-';
         $tid = strpos($r['tugas_id'], $pre) === 0 ? substr($r['tugas_id'], strlen($pre)) : $r['tugas_id'];
-        $kumpul[$r['program_id']][$tid][pidDari($r['user_id'])] = ['file' => $r['nama_berkas'], 'at' => substr($r['dikumpul_pada'], 0, 16), 'catatan' => (string) $r['catatan'], 'tipe' => $r['tipe'], 'url' => $r['url'], 'ref' => refDari($r['tipe'], $r['path_berkas'], $r['url']), 'kb' => (int) $r['kb']];
+        $its = $itemMap[$r['tugas_id'] . '|' . $r['user_id']] ?? [];
+        $nama = $its ? $its[0]['nama'] . (count($its) > 1 ? ' (+' . (count($its) - 1) . ')' : '') : (string) $r['nama_berkas'];
+        $kumpul[$r['program_id']][$tid][pidDari($r['user_id'])] = ['file' => $nama, 'at' => substr($r['dikumpul_pada'], 0, 16), 'catatan' => (string) $r['catatan'], 'items' => $its];
     }
     foreach ($kumpul as $pid => $v) $progs[$pid]['kumpul'] = $v;
 

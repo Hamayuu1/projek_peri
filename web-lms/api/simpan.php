@@ -23,7 +23,7 @@ $jam = function ($j) {
 try {
     $nl = $pdo->query("SELECT id, nama_lembaga FROM lms_program")->fetchAll(PDO::FETCH_KEY_PAIR);
     $mOld = []; foreach ($pdo->query("SELECT id, materi_nama, materi_kb, materi_tipe, materi_path, materi_url FROM lms_sesi") as $r) $mOld[$r['id']] = $r;
-    $kOld = []; foreach ($pdo->query("SELECT tugas_id, user_id, nama_berkas, tipe, path_berkas, url, kb FROM lms_pengumpulan") as $r) $kOld[$r['tugas_id'] . '|' . $r['user_id']] = $r;
+    $kOld = []; $kMap = []; foreach ($pdo->query("SELECT tugas_id, user_id, urutan, tipe, nama, path, url, kb FROM lms_pengumpulan_item ORDER BY urutan") as $r) { $kOld[] = $r; $kMap[$r['tugas_id'] . '|' . $r['user_id']][] = $r; }
     $dipakai = [];
     // Berkas dan link hanya dipertahankan kalau penandanya (ref) cocok dengan yang dicatat unggah.php; selain itu dianggap data lama tanpa berkas.
     $simpanMateri = function ($sid, $mat) use (&$mOld, &$dipakai) {
@@ -35,7 +35,19 @@ try {
         }
         return [$mat['nama'], isset($mat['kb']) ? (int) $mat['kb'] : null, null, null, null];
     };
-    $simpanKumpul = function ($tid, $u, $k) use (&$kOld, &$dipakai) {
+    // Isian pengumpulan hanya dipertahankan kalau penandanya (ref) cocok dengan yang tercatat di database.
+    $simpanKumpul = function ($tid, $u, $k) use (&$kMap, &$dipakai) {
+        $lama = $kMap[$tid . '|' . $u] ?? []; $pakai = []; $out = [];
+        foreach (array_slice((array) ($k['items'] ?? []), 0, MAKS_ISIAN) as $it) {
+            if (!is_array($it) || !isset($it['ref'])) continue;
+            foreach ($lama as $i => $o) {
+                if (isset($pakai[$i]) || (string) $it['ref'] !== refDari($o['tipe'], $o['path'], $o['url'])) continue;
+                $pakai[$i] = true; if ($o['path']) $dipakai['tugas/' . $o['path']] = true; $out[] = $o; break;
+            }
+        }
+        return $out;
+    };
+    $simpanKumpulLama = function ($tid, $u, $k) use (&$kOld, &$dipakai) {
         $o = $kOld[$tid . '|' . $u] ?? null;
         if ($o && !empty($k['ref']) && $k['ref'] === refDari($o['tipe'], $o['path_berkas'], $o['url'])) {
             if ($o['path_berkas']) $dipakai['tugas/' . $o['path_berkas']] = true;
@@ -51,7 +63,8 @@ try {
     $inS = $pdo->prepare("INSERT INTO lms_sesi (id,program_id,no,judul,tanggal,jam_mulai,jam_selesai,mode,tempat,materi_nama,materi_kb,materi_tipe,materi_path,materi_url) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     $inH = $pdo->prepare("INSERT INTO lms_kehadiran (sesi_id,user_id,dicatat_pada) VALUES (?,?,?)");
     $inT = $pdo->prepare("INSERT INTO lms_tugas (id,program_id,sesi_no,judul,tenggat,deskripsi) VALUES (?,?,?,?,?,?)");
-    $inK = $pdo->prepare("INSERT INTO lms_pengumpulan (tugas_id,user_id,nama_berkas,tipe,path_berkas,url,kb,catatan,dikumpul_pada) VALUES (?,?,?,?,?,?,?,?,?)");
+    $inK = $pdo->prepare("INSERT INTO lms_pengumpulan (tugas_id,user_id,nama_berkas,catatan,dikumpul_pada) VALUES (?,?,?,?,?)");
+    $inI = $pdo->prepare("INSERT INTO lms_pengumpulan_item (tugas_id,user_id,urutan,tipe,nama,path,url,kb) VALUES (?,?,?,?,?,?,?,?)");
     $inC = $pdo->prepare("INSERT INTO lms_sertifikat_template (program_id,gambar,lebar,tinggi,pos_x,pos_y,ukuran,warna,ketebalan,kapital) VALUES (?,?,?,?,?,?,?,?,?,?)");
     $sekarang = date('Y-m-d H:i:s');
     $kodeProg = [];
@@ -82,7 +95,9 @@ try {
             if (!is_array($arr)) continue;
             foreach ($arr as $pid => $k) {
                 $u = $uid($pid); if ($u === null) continue;
-                $kv = $simpanKumpul($id . '-' . $tid, $u, $k); $inK->execute([$id . '-' . $tid, $u, $kv[0], $kv[1], $kv[2], $kv[3], $kv[4], $k['catatan'] ?? '', $wkt($k['at'] ?? '')]);
+                $its = $simpanKumpul($id . '-' . $tid, $u, $k); if (!$its) continue;
+                $inK->execute([$id . '-' . $tid, $u, $its[0]['nama'], $k['catatan'] ?? '', $wkt($k['at'] ?? '')]);
+                foreach ($its as $n => $o) $inI->execute([$id . '-' . $tid, $u, $n + 1, $o['tipe'], $o['nama'], $o['path'], $o['url'], $o['kb']]);
             }
         }
         $c = $p['sertif'] ?? null;

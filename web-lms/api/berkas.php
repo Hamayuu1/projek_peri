@@ -66,8 +66,21 @@ function refDari($tipe, $path, $url) {
     return '';
 }
 
+// Batas pengumpulan tugas: banyak isian per tugas.
+define('MAKS_ISIAN', 10);
+define('BATAS_TOTAL_KB', 100 * 1024);
+
+// Mengubah $_FILES['berkas'] (satu atau banyak berkas) menjadi daftar berkas, tanpa kolom yang kosong.
+function daftarBerkas($f) {
+    if (!is_array($f) || !isset($f['name'])) return [];
+    $d = [];
+    if (!is_array($f['name'])) $d[] = $f;
+    else foreach ($f['name'] as $i => $n) $d[] = ['name' => $n, 'type' => $f['type'][$i] ?? '', 'tmp_name' => $f['tmp_name'][$i] ?? '', 'error' => $f['error'][$i] ?? UPLOAD_ERR_NO_FILE, 'size' => $f['size'][$i] ?? 0];
+    return array_values(array_filter($d, function ($x) { return ($x['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE; }));
+}
+
 // Menghapus berkas yang tidak dipakai lagi setelah penyimpanan berhasil.
 function hapusYatim($mOld, $kOld, $dipakai) {
     foreach ($mOld as $o) if (!empty($o['materi_path']) && empty($dipakai['materi/' . $o['materi_path']])) hapusBerkas('materi', $o['materi_path']);
-    foreach ($kOld as $o) if (!empty($o['path_berkas']) && empty($dipakai['tugas/' . $o['path_berkas']])) hapusBerkas('tugas', $o['path_berkas']);
+    foreach ($kOld as $o) if (!empty($o['path']) && empty($dipakai['tugas/' . $o['path']])) hapusBerkas('tugas', $o['path']);
 }

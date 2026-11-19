@@ -9,8 +9,8 @@ if ($jenis === 'materi') {
     $st = $pdo->prepare("SELECT materi_nama AS nama, materi_tipe AS tipe, materi_path AS path FROM lms_sesi WHERE id = ?");
     $st->execute([(string) ($_GET['id'] ?? '')]);
 } elseif ($jenis === 'tugas') {
-    $st = $pdo->prepare("SELECT nama_berkas AS nama, tipe, path_berkas AS path FROM lms_pengumpulan WHERE tugas_id = ? AND user_id = ?");
-    $st->execute([(string) ($_GET['prog'] ?? '') . '-' . (string) ($_GET['id'] ?? ''), idDari($_GET['pid'] ?? '')]);
+    $st = $pdo->prepare("SELECT nama, tipe, path FROM lms_pengumpulan_item WHERE tugas_id = ? AND user_id = ? AND urutan = ?");
+    $st->execute([(string) ($_GET['prog'] ?? '') . '-' . (string) ($_GET['id'] ?? ''), idDari($_GET['pid'] ?? ''), max(1, (int) ($_GET['n'] ?? 1))]);
 } else keluar(['ok' => false, 'pesan' => 'Permintaan tidak valid.'], 400);
 
 $r = $st->fetch();
