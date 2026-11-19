@@ -13,6 +13,7 @@ Aturan peran:
   - Role 'admin' hanya bisa ditambahkan lewat database (buat_admin.py atau SQL).
   - Pendaftar hanya boleh memakai web lembaga; endpoint admin menolaknya (403).
   - Pendaftaran program (POST /api/pendaftaran-program) wajib sudah masuk; satu akun satu kali per program.
+  - Umpan balik (POST /api/buku-tamu) wajib sudah masuk; email diambil dari akun, akun admin ditolak.
   - Katalog program: GET /api/program (publik); tambah/ubah/hapus/foto hanya admin. Foto disimpan di folder uploads/.
 
 Pengaturan koneksi ada di file .env (salin dari .env.example).
@@ -521,15 +522,21 @@ def tentukan_kategori(pesan: str):
 
 @app.post("/api/buku-tamu")
 def kirim_umpan_balik():
-    """Dipakai form umpan balik web lembaga. Kategori ditentukan otomatis oleh model NLP."""
+    """Dipakai form umpan balik web lembaga (harus sudah masuk).
+    Email diambil dari akun yang sedang masuk, bukan dari isian formulir, supaya tidak bisa dipalsukan.
+    Kategori ditentukan otomatis oleh model NLP."""
+    user = user_saat_ini()
+    if not user:
+        return galat("Silakan masuk terlebih dahulu untuk mengirim umpan balik.", 401)
+    if user["role"] == "admin":
+        return galat("Akun admin tidak dapat mengirim umpan balik.", 403)
+
     d = data_json()
     nama = str(d.get("nama") or "").strip()
-    email = bersihkan_email(d.get("email"))
+    email = user["email"]
     pesan = str(d.get("pesan") or "").strip()
     if not nama or len(nama) > 100:
         return galat("Nama wajib diisi (maksimal 100 karakter).")
-    if not email:
-        return galat("Masukkan email yang valid.")
     if not 5 <= len(pesan) <= 2000:
         return galat("Pesan harus 5–2000 karakter.")
 
