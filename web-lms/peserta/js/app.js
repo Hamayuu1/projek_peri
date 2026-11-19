@@ -111,6 +111,7 @@
     var em = f.elements.email.value.trim().toLowerCase(), pw = f.elements.pw.value, e = $('lerr');
     if (!em || !pw) { e.textContent = 'Email dan kata sandi wajib diisi.'; return; }
     var lid = window.Api ? Api.login(em, pw, 'peserta') : undefined;
+    if (lid) db = Store.load();
     var u = lid !== undefined
       ? db.peserta.filter(function (x) { return x.id === lid; })[0]
       : db.peserta.filter(function (x) { return x.email.toLowerCase() === em && x.pw === pw; })[0];

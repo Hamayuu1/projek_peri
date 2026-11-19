@@ -20,10 +20,11 @@ $jam = function ($j) {
 };
 
 try {
+    $nl = $pdo->query("SELECT id, nama_lembaga FROM lms_program")->fetchAll(PDO::FETCH_KEY_PAIR);
     $pdo->beginTransaction();
     foreach (['lms_pendaftaran', 'lms_undangan', 'lms_program'] as $t) $pdo->exec("DELETE FROM $t"); // anak-anaknya ikut terhapus (CASCADE)
 
-    $inP = $pdo->prepare("INSERT INTO lms_program (id,nama,kategori,tujuan,deskripsi,periode,angkatan,kuota,status,kode_kelas,fasilitator,pengumuman,urutan) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    $inP = $pdo->prepare("INSERT INTO lms_program (id,nama,kategori,tujuan,deskripsi,periode,angkatan,kuota,status,kode_kelas,fasilitator,pengumuman,urutan,nama_lembaga) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     $inPP = $pdo->prepare("INSERT INTO lms_peserta_program (program_id,user_id,status,bergabung_pada,selesai_pada) VALUES (?,?,?,?,?)");
     $inS = $pdo->prepare("INSERT INTO lms_sesi (id,program_id,no,judul,tanggal,jam_mulai,jam_selesai,mode,tempat,materi_nama,materi_kb) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
     $inH = $pdo->prepare("INSERT INTO lms_kehadiran (sesi_id,user_id,dicatat_pada) VALUES (?,?,?)");
@@ -38,7 +39,7 @@ try {
         $kode = (string) ($p['kode'] ?? strtoupper($id));
         $kodeProg[$kode] = $id;
         $st = in_array($p['status'] ?? '', ['segera', 'buka', 'tutup'], true) ? $p['status'] : 'buka';
-        $inP->execute([$id, $p['nama'] ?? '', $p['kategori'] ?? '', $p['tujuan'] ?? '', $p['desc'] ?? '', $p['periode'] ?? '', $p['angkatan'] ?? '', (int) ($p['kuota'] ?? 30), $st, $kode, $p['fas'] ?? '', $p['ann'] ?? '', $no + 1]);
+        $inP->execute([$id, $p['nama'] ?? '', $p['kategori'] ?? '', $p['tujuan'] ?? '', $p['desc'] ?? '', $p['periode'] ?? '', $p['angkatan'] ?? '', (int) ($p['kuota'] ?? 30), $st, $kode, $p['fas'] ?? '', $p['ann'] ?? '', $no + 1, $nl[$id] ?? null]);
 
         $selesai = array_flip($p['selesai'] ?? []);
         foreach (array_unique($p['peserta'] ?? []) as $pid) {

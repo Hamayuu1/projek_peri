@@ -2,6 +2,8 @@
 // Membaca seluruh data LMS dari MySQL dan mengirimnya dalam bentuk yang dipakai aplikasi (db.peserta, db.programs, dst).
 require __DIR__ . '/db.php';
 $pdo = koneksi();
+require __DIR__ . '/lembaga.php';
+$dftLembaga = sinkronSemua($pdo);
 
 try {
     $peserta = [];
@@ -23,7 +25,7 @@ try {
     }
     $kumpul = [];
 
-    foreach ($pdo->query("SELECT program_id, user_id, status FROM lms_peserta_program ORDER BY bergabung_pada, user_id") as $r) {
+    foreach ($pdo->query("SELECT program_id, user_id, status FROM lms_peserta_program WHERE status <> 'nonaktif' ORDER BY bergabung_pada, user_id") as $r) {
         if (!isset($progs[$r['program_id']])) continue;
         $progs[$r['program_id']]['peserta'][] = pidDari($r['user_id']);
         if ($r['status'] === 'selesai') $progs[$r['program_id']]['selesai'][] = pidDari($r['user_id']);
@@ -80,7 +82,7 @@ try {
     foreach ($pdo->query("SELECT * FROM lms_pendaftaran ORDER BY id") as $r)
         $dft[] = ['id' => 'r' . $r['id'], 'pid' => pidDari($r['user_id']), 'prog' => $r['program_id'], 'tgl' => substr($r['created_at'], 0, 10), 'status' => $r['status'] === 'diterima' ? 'disetujui' : $r['status'], 'alasan' => (string) $r['alasan']];
 
-    keluar(['peserta' => $peserta, 'programs' => array_values($progs), 'undangan' => $und, 'pendaftaran' => $dft]);
+    keluar(['peserta' => $peserta, 'programs' => array_values($progs), 'undangan' => $und, 'pendaftaran' => $dft, 'pendaftaranLembaga' => $dftLembaga]);
 } catch (Exception $e) {
     keluar(['ok' => false, 'pesan' => 'Gagal membaca data: ' . $e->getMessage()], 500);
 }

@@ -61,8 +61,8 @@
 
   Api.login = function (email, pw, peran) {
     if (!Api.on) return undefined;
-    var r = panggil('POST', 'login.php', JSON.stringify({ email: email, pw: pw, peran: peran }));
-    return r && r.ok ? r.id : null;
+    var r = panggil('POST', peran === 'admin' ? 'login.php' : 'login_lembaga.php', JSON.stringify({ email: email, pw: pw, peran: peran }));
+    if (r && r.ok) { muat(); return r.id; } return null;
   };
 
   window.Api = Api;
