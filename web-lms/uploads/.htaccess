@@ -1,0 +1,3 @@
+# Berkas di folder ini tidak boleh dibuka langsung lewat alamat web.
+# Semua akses harus lewat api/unduh.php yang memeriksa hak akses.
+Require all denied

@@ -3,6 +3,7 @@
 require __DIR__ . '/db.php';
 $pdo = koneksi();
 require __DIR__ . '/lembaga.php';
+require __DIR__ . '/berkas.php';
 $dftLembaga = sinkronSemua($pdo);
 
 try {
@@ -38,7 +39,7 @@ try {
             'id' => $r['id'], 'no' => (int) $r['no'], 'judul' => $r['judul'], 'tanggal' => substr($r['tanggal'], 0, 10),
             'jam' => str_replace(':', '.', substr($r['jam_mulai'], 0, 5)) . '-' . str_replace(':', '.', substr($r['jam_selesai'], 0, 5)),
             'mode' => $r['mode'], 'tempat' => (string) $r['tempat'],
-            'materi' => $r['materi_nama'] !== null && $r['materi_nama'] !== '' ? ['nama' => $r['materi_nama'], 'kb' => (int) $r['materi_kb']] : null,
+            'materi' => $r['materi_nama'] !== null && $r['materi_nama'] !== '' ? ['nama' => $r['materi_nama'], 'kb' => (int) $r['materi_kb'], 'tipe' => $r['materi_tipe'], 'url' => $r['materi_url'], 'ref' => refDari($r['materi_tipe'], $r['materi_path'], $r['materi_url'])] : null,
             'hadir' => [],
         ];
         $progs[$r['program_id']]['sesi'][] = $s;
@@ -61,7 +62,7 @@ try {
     foreach ($pdo->query("SELECT g.*, t.program_id FROM lms_pengumpulan g JOIN lms_tugas t ON t.id = g.tugas_id") as $r) {
         $pre = $r['program_id'] . '-';
         $tid = strpos($r['tugas_id'], $pre) === 0 ? substr($r['tugas_id'], strlen($pre)) : $r['tugas_id'];
-        $kumpul[$r['program_id']][$tid][pidDari($r['user_id'])] = ['file' => $r['nama_berkas'], 'at' => substr($r['dikumpul_pada'], 0, 16), 'catatan' => (string) $r['catatan']];
+        $kumpul[$r['program_id']][$tid][pidDari($r['user_id'])] = ['file' => $r['nama_berkas'], 'at' => substr($r['dikumpul_pada'], 0, 16), 'catatan' => (string) $r['catatan'], 'tipe' => $r['tipe'], 'url' => $r['url'], 'ref' => refDari($r['tipe'], $r['path_berkas'], $r['url']), 'kb' => (int) $r['kb']];
     }
     foreach ($kumpul as $pid => $v) $progs[$pid]['kumpul'] = $v;
 

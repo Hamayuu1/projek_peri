@@ -1,6 +1,7 @@
 <?php
 // Menerima seluruh data aplikasi (JSON) dan menuliskannya ke tabel lms_*. Hanya POST.
 require __DIR__ . '/db.php';
+require __DIR__ . '/berkas.php';
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') keluar(['ok' => false, 'pesan' => 'Hanya POST'], 405);
 
 $d = json_decode(file_get_contents('php://input'), true);
@@ -21,15 +22,36 @@ $jam = function ($j) {
 
 try {
     $nl = $pdo->query("SELECT id, nama_lembaga FROM lms_program")->fetchAll(PDO::FETCH_KEY_PAIR);
+    $mOld = []; foreach ($pdo->query("SELECT id, materi_nama, materi_kb, materi_tipe, materi_path, materi_url FROM lms_sesi") as $r) $mOld[$r['id']] = $r;
+    $kOld = []; foreach ($pdo->query("SELECT tugas_id, user_id, nama_berkas, tipe, path_berkas, url, kb FROM lms_pengumpulan") as $r) $kOld[$r['tugas_id'] . '|' . $r['user_id']] = $r;
+    $dipakai = [];
+    // Berkas dan link hanya dipertahankan kalau penandanya (ref) cocok dengan yang dicatat unggah.php; selain itu dianggap data lama tanpa berkas.
+    $simpanMateri = function ($sid, $mat) use (&$mOld, &$dipakai) {
+        if (!is_array($mat) || (string) ($mat['nama'] ?? '') === '') return [null, null, null, null, null];
+        $o = $mOld[$sid] ?? null;
+        if ($o && $o['materi_tipe'] && isset($mat['ref']) && $mat['ref'] === refDari($o['materi_tipe'], $o['materi_path'], $o['materi_url'])) {
+            if ($o['materi_path']) $dipakai['materi/' . $o['materi_path']] = true;
+            return [$o['materi_nama'], $o['materi_kb'], $o['materi_tipe'], $o['materi_path'], $o['materi_url']];
+        }
+        return [$mat['nama'], isset($mat['kb']) ? (int) $mat['kb'] : null, null, null, null];
+    };
+    $simpanKumpul = function ($tid, $u, $k) use (&$kOld, &$dipakai) {
+        $o = $kOld[$tid . '|' . $u] ?? null;
+        if ($o && !empty($k['ref']) && $k['ref'] === refDari($o['tipe'], $o['path_berkas'], $o['url'])) {
+            if ($o['path_berkas']) $dipakai['tugas/' . $o['path_berkas']] = true;
+            return [$o['nama_berkas'], $o['tipe'], $o['path_berkas'], $o['url'], $o['kb']];
+        }
+        return [(string) ($k['file'] ?? ''), 'berkas', null, null, null];
+    };
     $pdo->beginTransaction();
     foreach (['lms_pendaftaran', 'lms_undangan', 'lms_program'] as $t) $pdo->exec("DELETE FROM $t"); // anak-anaknya ikut terhapus (CASCADE)
 
     $inP = $pdo->prepare("INSERT INTO lms_program (id,nama,kategori,tujuan,deskripsi,periode,angkatan,kuota,status,kode_kelas,fasilitator,pengumuman,urutan,nama_lembaga) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     $inPP = $pdo->prepare("INSERT INTO lms_peserta_program (program_id,user_id,status,bergabung_pada,selesai_pada) VALUES (?,?,?,?,?)");
-    $inS = $pdo->prepare("INSERT INTO lms_sesi (id,program_id,no,judul,tanggal,jam_mulai,jam_selesai,mode,tempat,materi_nama,materi_kb) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+    $inS = $pdo->prepare("INSERT INTO lms_sesi (id,program_id,no,judul,tanggal,jam_mulai,jam_selesai,mode,tempat,materi_nama,materi_kb,materi_tipe,materi_path,materi_url) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     $inH = $pdo->prepare("INSERT INTO lms_kehadiran (sesi_id,user_id,dicatat_pada) VALUES (?,?,?)");
     $inT = $pdo->prepare("INSERT INTO lms_tugas (id,program_id,sesi_no,judul,tenggat,deskripsi) VALUES (?,?,?,?,?,?)");
-    $inK = $pdo->prepare("INSERT INTO lms_pengumpulan (tugas_id,user_id,nama_berkas,catatan,dikumpul_pada) VALUES (?,?,?,?,?)");
+    $inK = $pdo->prepare("INSERT INTO lms_pengumpulan (tugas_id,user_id,nama_berkas,tipe,path_berkas,url,kb,catatan,dikumpul_pada) VALUES (?,?,?,?,?,?,?,?,?)");
     $inC = $pdo->prepare("INSERT INTO lms_sertifikat_template (program_id,gambar,lebar,tinggi,pos_x,pos_y,ukuran,warna,ketebalan,kapital) VALUES (?,?,?,?,?,?,?,?,?,?)");
     $sekarang = date('Y-m-d H:i:s');
     $kodeProg = [];
@@ -50,8 +72,8 @@ try {
         foreach ($p['sesi'] ?? [] as $s) {
             [$a, $b] = $jam($s['jam'] ?? '');
             $m = $s['mode'] ?? 'Luring'; if (!in_array($m, ['Luring', 'Daring'], true)) $m = 'Luring';
-            $mat = $s['materi'] ?? null;
-            $inS->execute([$s['id'], $id, (int) $s['no'], $s['judul'] ?? '', $tgl($s['tanggal'] ?? ''), $a, $b, $m, $s['tempat'] ?? '', $mat['nama'] ?? null, isset($mat['kb']) ? (int) $mat['kb'] : null]);
+            $mv = $simpanMateri($s['id'], $s['materi'] ?? null);
+            $inS->execute([$s['id'], $id, (int) $s['no'], $s['judul'] ?? '', $tgl($s['tanggal'] ?? ''), $a, $b, $m, $s['tempat'] ?? '', $mv[0], $mv[1], $mv[2], $mv[3], $mv[4]]);
             foreach (array_unique($s['hadir'] ?? []) as $pid) { $u = $uid($pid); if ($u !== null) $inH->execute([$s['id'], $u, $sekarang]); }
         }
         foreach ($p['tugas'] ?? [] as $t)
@@ -60,7 +82,7 @@ try {
             if (!is_array($arr)) continue;
             foreach ($arr as $pid => $k) {
                 $u = $uid($pid); if ($u === null) continue;
-                $inK->execute([$id . '-' . $tid, $u, $k['file'] ?? '', $k['catatan'] ?? '', $wkt($k['at'] ?? '')]);
+                $kv = $simpanKumpul($id . '-' . $tid, $u, $k); $inK->execute([$id . '-' . $tid, $u, $kv[0], $kv[1], $kv[2], $kv[3], $kv[4], $k['catatan'] ?? '', $wkt($k['at'] ?? '')]);
             }
         }
         $c = $p['sertif'] ?? null;
@@ -82,6 +104,7 @@ try {
         $inU->execute([$u, $pg, $r['dari'] ?? '', $stt]);
     }
     $pdo->commit();
+    hapusYatim($mOld, $kOld, $dipakai);
     keluar(['ok' => true]);
 } catch (Exception $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
