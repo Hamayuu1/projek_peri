@@ -67,6 +67,7 @@
     program: ['Kelola Program', 'Tambah, ubah, atau hapus program pelatihan.'],
     jadwal: ['Kelola Jadwal', 'Atur sesi pada setiap program.'],
     materi: ['Kelola Materi', 'Unggah materi untuk tiap sesi.'],
+    tugas: ['Kelola Tugas', 'Buat tugas dan lihat hasil pengumpulan peserta.'],
     kehadiran: ['Catat Kehadiran', 'Tandai peserta yang hadir pada sebuah sesi.'],
     rekap: ['Rekap Progres', 'Pantau progres peserta dan tandai yang sudah selesai.'],
     sertifikat: ['Sertifikat', 'Unggah template sertifikat. Nama peserta ditulis otomatis.'],
@@ -147,6 +148,51 @@
     return progSelect() + '<div class="note">Materi berupa berkas (PDF, Word, PowerPoint, Excel, JPG, PNG, ZIP, atau MP4, paling besar 50 MB) atau link http/https.</div><div class="card"><div class="hd"><h2>' + esc(p.nama) + '</h2></div><div class="tw"><table><thead><tr><th>#</th><th>Sesi</th><th>Materi</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="4" class="empty">Belum ada sesi pada program ini.</td></tr>') + '</tbody></table></div></div>';
   };
 
+  /* ---------- tugas ---------- */
+  function tugasId(p) { var m = 0; (p.tugas || []).forEach(function (t) { var n = parseInt(String(t.id).replace(/\D/g, ''), 10); if (n > m) m = n; }); return 't' + (m + 1); }
+  function formTugas(p, t) {
+    t = t || { judul: '', sesi: '', due: '', desc: '' };
+    var so = p.sesi.map(function (s) { return '<option value="' + s.no + '"' + (+t.sesi === s.no ? ' selected' : '') + '>Sesi ' + s.no + ': ' + esc(s.judul) + '</option>'; }).join('');
+    return '<div class="fld"><label>Judul tugas</label><input name="judul" value="' + esc(t.judul) + '"></div><div class="row2"><div class="fld"><label>Terkait sesi</label><select name="sesi">' + so + '</select></div><div class="fld"><label>Tenggat</label><input name="due" type="date" value="' + esc(t.due) + '"></div></div><div class="fld"><label>Petunjuk tugas</label><textarea name="desc" rows="4">' + esc(t.desc) + '</textarea></div>';
+  }
+  function bacaTugas(f) {
+    var d = { judul: val(f, 'judul'), sesi: parseInt(val(f, 'sesi'), 10), due: val(f, 'due'), desc: val(f, 'desc') };
+    if (!d.judul) { setErr(f, 'Judul tugas wajib diisi.'); return null; }
+    if (!d.sesi) { setErr(f, 'Pilih sesi yang terkait.'); return null; }
+    if (!d.due) { setErr(f, 'Tenggat wajib diisi.'); return null; }
+    return d;
+  }
+  function isiHtml(t, id, k) {
+    if (!k.items || !k.items.length) return esc(k.file || '');
+    return k.items.map(function (it, i) {
+      var link = it.tipe === 'link';
+      return '<div class="sm" style="margin-bottom:4px"><button class="btn o s" data-act="buka-isi" data-id="' + esc(t.id) + '" data-pid="' + esc(id) + '" data-n="' + (i + 1) + '"' + (link ? ' data-u="' + esc(it.url) + '"' : '') + '>' + (link ? 'Buka' : 'Unduh') + '</button> ' + esc(it.nama) + '</div>';
+    }).join('');
+  }
+  function viewKumpul(p, t) {
+    var rows = p.peserta.map(function (id) {
+      var u = pes(id), k = p.kumpul[t.id] && p.kumpul[t.id][id];
+      if (!u) return '';
+      return '<tr><td><b>' + esc(u.nama) + '</b><div class="sm mut">' + esc(u.email) + '</div></td><td>' + (k ? '<span class="chip">Terkumpul</span>' : '<span class="chip y">Belum</span>') + '</td><td>' + (k ? esc(k.at) : '') + '</td><td>' + (k ? isiHtml(t, id, k) : '') + '</td><td>' + (k ? esc(k.catatan || '') : '') + '</td></tr>';
+    }).join('');
+    return '<button class="btn o s" data-act="semua-tugas" style="margin-bottom:12px">&larr; Semua tugas</button>' + (t.desc ? '<div class="note">' + esc(t.desc) + '</div>' : '') +
+      '<div class="card"><div class="hd"><h2>' + esc(t.judul) + '</h2><span class="sub">Sesi ' + t.sesi + ' &middot; tenggat ' + tgl(t.due) + '</span></div><div class="tw"><table><thead><tr><th>Peserta</th><th>Status</th><th>Dikirim</th><th>Isian</th><th>Catatan</th></tr></thead><tbody>' + (rows || '<tr><td colspan="5" class="empty">Belum ada peserta di kelas ini.</td></tr>') + '</tbody></table></div></div>';
+  }
+
+  VIEWS.tugas = function () {
+    var p = curProg();
+    if (!p) return '<div class="card empty">Belum ada program.</div>';
+    p.tugas = p.tugas || []; p.kumpul = p.kumpul || {};
+    var t = ui.tugas ? p.tugas.filter(function (x) { return x.id === ui.tugas; })[0] : null;
+    if (t) return viewKumpul(p, t);
+    var rows = p.tugas.map(function (x) {
+      var n = p.peserta.filter(function (id) { return p.kumpul[x.id] && p.kumpul[x.id][id]; }).length;
+      return '<tr><td><b>' + esc(x.judul) + '</b></td><td>Sesi ' + x.sesi + '</td><td>' + tgl(x.due) + '</td><td>' + n + ' / ' + p.peserta.length + '</td><td><div class="acts"><button class="btn s" data-act="lihat-kumpul" data-id="' + esc(x.id) + '">Lihat pengumpulan</button><button class="btn o s" data-act="ubah-tugas" data-id="' + esc(x.id) + '">Ubah</button><button class="btn r s" data-act="hapus-tugas" data-id="' + esc(x.id) + '">Hapus</button></div></td></tr>';
+    }).join('');
+    return progSelect('<button class="btn" data-act="tambah-tugas" style="margin-left:auto">+ Tambah tugas</button>') +
+      '<div class="card"><div class="hd"><h2>' + esc(p.nama) + '</h2><span class="sub">' + p.tugas.length + ' tugas</span></div><div class="tw"><table><thead><tr><th>Judul tugas</th><th>Sesi</th><th>Tenggat</th><th>Terkumpul</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="5" class="empty">Belum ada tugas. Tekan Tambah tugas.</td></tr>') + '</tbody></table></div></div>';
+  };
+
   VIEWS.kehadiran = function () {
     var p = curProg();
     if (!p) return '<div class="card empty">Belum ada program.</div>';
@@ -195,6 +241,7 @@
   };
 
   /* ---------- sertifikat ---------- */
+  if (window.ICONS) window.ICONS.tugas = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>';
   if (window.ICONS) window.ICONS.sertifikat = '<svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M8.5 13.2 7 22l5-3 5 3-1.5-8.800"/></svg>';
   var SAMPLE = 'Nama Lengkap Peserta';
   function sertSave() {
@@ -342,6 +389,38 @@
         s.judul = d.judul; s.tanggal = d.tanggal; s.jam = d.jam; s.mode = d.mode; s.tempat = d.tempat;
         sorted(p); save(); closeModal(); render(); toast('Jadwal diperbarui');
       });
+    },
+    'tambah-tugas': function () {
+      var p = curProg();
+      if (!p.sesi.length) { toast('Tambahkan sesi dulu di Kelola Jadwal.'); return; }
+      openModal('Tambah tugas - ' + esc(p.nama), formTugas(p), 'Simpan', function (f) {
+        var d = bacaTugas(f); if (!d) return;
+        p.tugas = p.tugas || []; p.tugas.push({ id: tugasId(p), sesi: d.sesi, judul: d.judul, due: d.due, desc: d.desc });
+        save(); closeModal(); render(); toast('Tugas ditambahkan');
+      });
+    },
+    'ubah-tugas': function (el) {
+      var p = curProg(), t = (p.tugas || []).filter(function (x) { return x.id === el.getAttribute('data-id'); })[0]; if (!t) return;
+      openModal('Ubah tugas', formTugas(p, t), 'Simpan perubahan', function (f) {
+        var d = bacaTugas(f); if (!d) return;
+        t.judul = d.judul; t.sesi = d.sesi; t.due = d.due; t.desc = d.desc;
+        save(); closeModal(); render(); toast('Tugas diperbarui');
+      });
+    },
+    'hapus-tugas': function (el) {
+      var p = curProg(), t = (p.tugas || []).filter(function (x) { return x.id === el.getAttribute('data-id'); })[0]; if (!t) return;
+      var n = Object.keys((p.kumpul || {})[t.id] || {}).length;
+      openModal('Hapus tugas?', '<p>Tugas <b>' + esc(t.judul) + '</b> akan dihapus, termasuk ' + n + ' pengumpulan peserta beserta berkasnya.</p>', 'Ya, hapus', function () {
+        p.tugas = p.tugas.filter(function (x) { return x.id !== t.id; }); if (p.kumpul) delete p.kumpul[t.id];
+        save(); closeModal(); render(); toast('Tugas dihapus');
+      }, true);
+    },
+    'lihat-kumpul': function (el) { ui.tugas = el.getAttribute('data-id'); render(); },
+    'semua-tugas': function () { ui.tugas = null; render(); },
+    'buka-isi': function (el) {
+      var u = el.getAttribute('data-u'), b = (window.Api && Api.base) || '../api/', p = curProg();
+      if (u) { if (/^https?:\/\//i.test(u)) window.open(u, '_blank', 'noopener,noreferrer'); return; }
+      window.open(b + 'unduh.php?jenis=tugas&prog=' + encodeURIComponent(p.id) + '&id=' + encodeURIComponent(el.getAttribute('data-id')) + '&pid=' + encodeURIComponent(el.getAttribute('data-pid')) + '&n=' + encodeURIComponent(el.getAttribute('data-n')) + '&inline=1', '_blank', 'noopener');
     },
     'hapus-sesi': function (el) {
       var p = curProg(), s = cariSesi(el.getAttribute('data-id'));
