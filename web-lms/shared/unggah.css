@@ -1,0 +1,22 @@
+/* Kotak unggah bersama (admin dan peserta): tab Upload dan Link. Memakai warna dari tema masing-masing. */
+.ug{margin:4px 0 12px}
+.ug-tab{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.ug-tab button{background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:8px 14px;font-size:13.5px;font-weight:500;color:var(--mut);cursor:pointer}
+.ug-tab button.on{color:var(--t);border-bottom-color:var(--t);font-weight:600}
+.ug-zone{border:2px dashed var(--t);background:var(--soft);border-radius:10px;padding:26px 14px;text-align:center;cursor:pointer;color:var(--ink);transition:background .15s}
+.ug-zone:hover,.ug-zone:focus-visible,.ug-zone.drag{background:var(--warn);outline:none}
+.ug-zone svg{width:34px;height:34px;fill:none;stroke:var(--t);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;margin-bottom:8px}
+.ug-t{font-weight:600;font-size:13.5px}
+.ug-s{font-size:11.5px;color:var(--mut);margin-top:6px;line-height:1.4}
+.ug-lrow{display:flex;gap:8px}
+.ug-lrow input{flex:1;min-width:0;font:inherit;border:1.5px solid var(--line);border-radius:8px;padding:9px 12px;background:var(--card);color:var(--ink)}
+.ug-btn{border:0;border-radius:8px;background:var(--t);color:#fff;font-weight:600;font-size:13px;padding:0 16px;cursor:pointer}
+.ug-list{list-style:none;padding:0;margin:10px 0 0}
+.ug-list li{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:7px 8px 7px 10px;margin-bottom:6px;background:var(--card)}
+.ug-list .ug-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.ug-list .ug-k{font-size:11.5px;color:var(--mut);flex:none}
+.ug-list .ug-b{font-size:10.5px;font-weight:600;border-radius:999px;padding:1px 8px;background:var(--soft);color:var(--t);flex:none}
+.ug-list .ug-x{border:0;background:none;color:var(--mut);font-size:20px;line-height:1;padding:0 6px;cursor:pointer}
+.ug-list .ug-x:hover{color:var(--t)}
+.ug-err{color:#B3261E;font-size:12.5px;margin-top:6px;min-height:0}
+:root[data-th=dark] .ug-err{color:#FF9C94}

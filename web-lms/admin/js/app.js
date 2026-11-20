@@ -8,7 +8,14 @@
   var BULAN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
   var HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
   var EXT_OK = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'jpg', 'jpeg', 'png'];
-  var MAX_KB = 10240;
+  var MAX_KB = 51200;
+  function ukuranMateri(m) { if (m.tipe === 'link') return 'Link'; return m.kb < 1024 ? m.kb + ' KB' : (m.kb / 1024).toFixed(1) + ' MB'; }
+  function namaMateri(s) {
+    var m = s.materi, b = (window.Api && Api.base) || '../api/';
+    if (m.tipe === 'link' && m.url) return '<a href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">' + esc(m.nama) + '</a>';
+    if (m.tipe === 'berkas') return '<a href="' + b + 'unduh.php?jenis=materi&id=' + encodeURIComponent(s.id) + '&inline=1" target="_blank" rel="noopener">' + esc(m.nama) + '</a>';
+    return esc(m.nama);
+  }
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function load() {
@@ -134,10 +141,10 @@
     var p = curProg();
     if (!p) return '<div class="card empty">Belum ada program.</div>';
     var rows = p.sesi.map(function (s) {
-      var f = s.materi ? esc(s.materi.nama) + '<div class="sm mut">' + (s.materi.kb / 1024).toFixed(1) + ' MB</div>' : '<span class="chip y">Belum ada</span>';
-      return '<tr><td>' + s.no + '</td><td><b>' + esc(s.judul) + '</b><div class="sm mut">' + tgl(s.tanggal) + '</div></td><td>' + f + '</td><td><div class="acts"><label class="btn ' + (s.materi ? 'o' : '') + ' s" style="cursor:pointer">' + (s.materi ? 'Ganti' : 'Unggah') + '<input type="file" data-act="unggah" data-id="' + s.id + '" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png" hidden></label>' + (s.materi ? '<button class="btn r s" data-act="hapus-materi" data-id="' + s.id + '">Hapus</button>' : '') + '</div></td></tr>';
+      var f = s.materi ? namaMateri(s) + '<div class="sm mut">' + ukuranMateri(s.materi) + '</div>' : '<span class="chip y">Belum ada</span>';
+      return '<tr><td>' + s.no + '</td><td><b>' + esc(s.judul) + '</b><div class="sm mut">' + tgl(s.tanggal) + '</div></td><td>' + f + '</td><td><div class="acts"><button class="btn ' + (s.materi ? 'o' : '') + ' s" data-act="unggah" data-id="' + s.id + '">' + (s.materi ? 'Ganti' : 'Unggah') + '</button>' + (s.materi ? '<button class="btn r s" data-act="hapus-materi" data-id="' + s.id + '">Hapus</button>' : '') + '</div></td></tr>';
     }).join('');
-    return progSelect() + '<div class="note">Jenis berkas yang boleh: PDF, Word, PowerPoint, JPG, atau PNG, paling besar 10 MB. (Pada prototype ini hanya nama dan ukuran berkas yang disimpan.)</div><div class="card"><div class="hd"><h2>' + esc(p.nama) + '</h2></div><div class="tw"><table><thead><tr><th>#</th><th>Sesi</th><th>Materi</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="4" class="empty">Belum ada sesi pada program ini.</td></tr>') + '</tbody></table></div></div>';
+    return progSelect() + '<div class="note">Materi berupa berkas (PDF, Word, PowerPoint, Excel, JPG, PNG, ZIP, atau MP4, paling besar 50 MB) atau link http/https.</div><div class="card"><div class="hd"><h2>' + esc(p.nama) + '</h2></div><div class="tw"><table><thead><tr><th>#</th><th>Sesi</th><th>Materi</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="4" class="empty">Belum ada sesi pada program ini.</td></tr>') + '</tbody></table></div></div>';
   };
 
   VIEWS.kehadiran = function () {
@@ -344,6 +351,22 @@
     },
 
     'unggah': function (el) {
+      var sid = el.getAttribute('data-id'), s = cariSesi(sid); if (!s) return;
+      var ada = s.materi ? '<div class="note y">Materi saat ini: <b>' + esc(s.materi.nama) + '</b> (' + ukuranMateri(s.materi) + '). Yang baru akan menggantikannya.</div>' : '';
+      openModal('Materi Sesi ' + s.no + ': ' + esc(s.judul), ada + Unggah.buat('materi', { materi: true, maksKb: MAX_KB }), 'Simpan', function (f) {
+        var a = Unggah.ambil('materi');
+        if (!a.berkas.length && !a.link.length) { toast('Pilih berkas atau tempel link.'); return; }
+        if (!window.Api || !Api.on) { toast('Database belum tersambung. Buka lewat http://localhost/web-lms/'); return; }
+        var p = [['jenis', 'materi'], ['id', sid]];
+        if (a.link.length) p.push(['tipe', 'link'], ['url', a.link[0]]); else p.push(['tipe', 'berkas'], ['berkas', a.berkas[0]]);
+        var btn = f.querySelector('.mf button:last-child'); btn.disabled = true; btn.textContent = 'Mengunggah...';
+        Unggah.kirim('unggah.php', p, function (x) { btn.textContent = 'Mengunggah ' + Math.round(x * 100) + '%'; }, function (r) {
+          if (!r || !r.ok) { btn.disabled = false; btn.textContent = 'Simpan'; toast((r && r.pesan) || 'Unggah gagal.'); return; }
+          var s2 = cariSesi(sid) || s; s2.materi = r.data; save(); closeModal(); render(); toast('Materi Sesi ' + s2.no + ' tersimpan');
+        });
+      });
+    },
+    'unggah-lama': function (el) {
       var f = el.files[0]; if (!f) return;
       var ext = f.name.split('.').pop().toLowerCase();
       if (EXT_OK.indexOf(ext) < 0) { toast('Jenis berkas tidak diizinkan. Pakai PDF, Word, PowerPoint, JPG, atau PNG.'); el.value = ''; return; }

@@ -20,6 +20,17 @@
   function setPid(v) { try { if (v) sessionStorage.setItem(AUTH, v); else sessionStorage.removeItem(AUTH); } catch (e) {} }
   function user() { var id = pid(); return db.peserta.filter(function (p) { return p.id === id; })[0]; }
   function save() { Store.save(db); }
+  function tombolMateri(s) {
+    var m = s.materi, link = m.tipe === 'link';
+    return '<button class="btn o" data-a="unduh" data-sid="' + esc(s.id) + '"' + (m.tipe ? ' data-ok="1"' : '') + (link ? ' data-u="' + esc(m.url) + '"' : '') + '>' + (link ? 'Buka' : 'Unduh') + '</button>';
+  }
+  function daftarIsian(sb, tid) {
+    var its = sb.items && sb.items.length ? sb.items : [{ nama: sb.file, tipe: 'berkas', kb: 0, lama: true }];
+    return its.map(function (it, i) {
+      var link = it.tipe === 'link', uk = link ? 'Link' : (it.kb < 1024 ? it.kb + ' KB' : (it.kb / 1024).toFixed(1) + ' MB');
+      return '<div class="row"><div class="t">' + esc(it.nama) + '<small>' + uk + '</small></div>' + (it.lama ? '' : '<button class="btn o" data-a="unduh-isi" data-x="' + esc(tid) + '" data-n="' + (i + 1) + '"' + (link ? ' data-u="' + esc(it.url) + '"' : '') + '>' + (link ? 'Buka' : 'Unduh') + '</button>') + '</div>';
+    }).join('');
+  }
   function toast(t) { var e = $('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(function () { e.classList.remove('on'); }, 2400); }
 
   /* ---------- tanggal ---------- */
@@ -131,7 +142,7 @@
     var n = nextSes(p), tb = []; mine().forEach(function (x) { tb = tb.concat(tugasBelum(x).map(function (t) { return { t: t, p: x }; })); });
     tb.sort(function (a, b) { return a.t.due < b.t.due ? -1 : 1; });
     var sw = mine().length > 1 ? '<div class="sel2"><select data-a="pilih-prog">' + mine().map(function (x) { return '<option value="' + x.id + '"' + (x.id === p.id ? ' selected' : '') + '>' + esc(x.nama) + '</option>'; }).join('') + '</select></div>' : '';
-    var mat = p.sesi.filter(function (s) { return s.materi; }).map(function (s) { return '<div class="row"><div class="t">Sesi ' + s.no + ' : ' + esc(s.judul) + '<small>' + esc(s.materi.nama) + '</small></div><button class="btn o" data-a="unduh" data-n="' + esc(s.materi.nama) + '">Unduh</button></div>'; }).join('');
+    var mat = p.sesi.filter(function (s) { return s.materi; }).map(function (s) { return '<div class="row"><div class="t">Sesi ' + s.no + ' : ' + esc(s.judul) + '<small>' + esc(s.materi.nama) + '</small></div>' + tombolMateri(s) + '</div>'; }).join('');
     html += sw + '<div class="card"><h1>' + esc(p.nama) + '</h1><p class="m sm" style="margin-bottom:10px">' + esc(p.desc) + '</p><dl><dt>Tujuan</dt><dd>' + esc(p.tujuan) + '</dd><dt>Periode</dt><dd>' + esc(p.periode) + '</dd><dt>Angkatan</dt><dd>' + esc(p.angkatan) + '</dd></dl><div style="text-align:right"><button class="btn" data-a="go" data-p="kdetail" data-x="' + p.id + '">Lebih lanjut</button></div></div>';
     html += '<div style="display:grid;grid-template-columns:1.1fr 1fr;gap:12px"><div class="card"><h2>Jadwal sesi mendatang</h2>' + (n ? '<b style="color:var(--chip)">' + tgl(n.tanggal, 1) + '</b><div>' + esc(n.judul) + '</div><div class="m sm">' + jamLabel(n) + ' &nbsp; Sesi #' + n.no + '</div><div style="margin:8px 0"><span class="chip">' + n.mode + '</span> <span class="sm m">di ' + esc(n.tempat) + '</span></div><div style="text-align:right"><button class="btn" data-a="go" data-p="sesi" data-x="' + p.id + '" data-y="' + n.id + '">Lebih lanjut</button></div>' : '<p class="m sm">Semua sesi sudah berlangsung.</p>') + '</div>' +
       '<div class="card" data-a="go" data-p="progres" style="cursor:pointer"><h2>Progres Anda</h2><div class="big">' + pct(p) + '%</div><div class="bar"><i style="width:' + pct(p) + '%"></i></div><div class="m sm">' + hadirN(p) + ' dari ' + p.sesi.length + ' sesi dihadiri</div><div style="margin-top:14px"><span class="chip ' + (selesai(p) ? '' : 'y') + '">' + (selesai(p) ? 'Selesai' : 'Sedang berjalan') + '</span></div></div></div>';
@@ -156,7 +167,7 @@
     if (!p || p.peserta.indexOf(pid()) < 0) { go('kelas', null, null, true); return; }
     var tl = { ringkasan: 'Ringkasan', materi: 'Materi', tugas: 'Tugas' }, tb = tugasBelum(p).length;
     var tabs = '<div class="tabs">' + Object.keys(tl).map(function (t) { return '<button class="' + (S.tab === t ? 'on' : '') + '" data-a="tab" data-x="' + t + '">' + tl[t] + (t === 'tugas' && tb ? ' (' + tb + ')' : '') + '</button>'; }).join('') + '</div>';
-    var hd = '<div class="kh ' + warna(p) + '"><button class="bk" data-a="keluar-kelas">&larr; Daftar kelas</button><h1>' + esc(p.nama) + '</h1><p>' + esc(p.fas) + ' &middot; Kode kelas ' + esc(p.kode) + '</p></div>';
+    var hd = '<div class="kh ' + warna(p) + '"><button class="bk" data-a="keluar-kelas">&larr; Daftar kelas</button><h1>' + esc(p.nama) + '</h1><p>' + esc(p.fas) + '</p></div>';
     var b = '';
     if (S.tab === 'ringkasan') {
       var n = nextSes(p);
@@ -166,15 +177,15 @@
         (p.ann ? '<div class="card"><h2>Pengumuman</h2><div class="sm m">Dari ' + esc(p.fas) + '</div><p style="font-size:13px;margin-top:4px">' + esc(p.ann) + '</p></div>' : '');
     }
     if (S.tab === 'materi') {
-      b = '<div class="card">' + (p.sesi.length ? p.sesi.map(function (s) { return '<div class="row"><div class="t">Sesi ' + s.no + ' : ' + esc(s.judul) + '<small>' + (s.materi ? esc(s.materi.nama) : 'Belum tersedia') + '</small></div>' + (s.materi ? '<button class="btn o" data-a="unduh" data-n="' + esc(s.materi.nama) + '">Unduh</button>' : '<button class="btn d">Unduh</button>') + '</div>'; }).join('') : '<p class="m sm">Belum ada sesi.</p>') + '</div>';
+      b = '<div class="card">' + (p.sesi.length ? p.sesi.map(function (s) { return '<div class="row"><div class="t">Sesi ' + s.no + ' : ' + esc(s.judul) + '<small>' + (s.materi ? esc(s.materi.nama) : 'Belum tersedia') + '</small></div>' + (s.materi ? tombolMateri(s) : '<button class="btn d">Unduh</button>') + '</div>'; }).join('') : '<p class="m sm">Belum ada sesi.</p>') + '</div>';
     }
     if (S.tab === 'tugas') {
       var t = S.tug ? (p.tugas || []).filter(function (x) { return x.id === S.tug; })[0] : null;
       if (t) {
         var sb = sub(p, t);
         b = '<button class="back" data-a="semua-tugas">&larr; Semua tugas</button><div class="card"><span class="chip ' + (sb ? '' : 'y') + '">' + (sb ? 'Dikumpulkan' : 'Belum dikumpulkan') + '</span><h1 style="margin-top:8px;font-size:18px">' + esc(t.judul) + '</h1><p class="m sm">Terkait Sesi ' + t.sesi + ' &middot; Tenggat ' + tgl(t.due) + '</p><p style="margin-top:10px;font-size:13px">' + esc(t.desc) + '</p></div>' +
-          (sb ? '<div class="card"><h2>Pekerjaan Anda</h2><div class="row"><div class="t">' + esc(sb.file) + '<small>Dikirim ' + esc(sb.at) + '</small></div></div><button class="btn o w" style="font-size:13px" data-a="batal-kumpul" data-x="' + t.id + '">Batalkan pengiriman</button></div>'
-            : '<div class="card"><h2>Pekerjaan Anda</h2><label class="att" for="fl" id="fln" style="display:block;cursor:pointer;margin:0 0 10px">&#128206; Pilih berkas (foto, PDF, atau dokumen)</label><input id="fl" type="file" style="display:none"><label style="margin-top:0">Catatan untuk fasilitator (boleh kosong)</label><textarea class="in" rows="2" id="cat"></textarea><div id="te" class="err"></div><br><button class="btn w" data-a="kumpul" data-x="' + t.id + '">Kumpulkan tugas</button></div>');
+          (sb && S.ubah !== t.id ? '<div class="card"><h2>Pekerjaan Anda</h2>' + daftarIsian(sb, t.id) + '<p class="m sm" style="margin:8px 0">Dikirim ' + esc(sb.at) + (sb.catatan ? ' &middot; Catatan: ' + esc(sb.catatan) : '') + '</p><button class="btn o w" style="font-size:13px;margin-bottom:8px" data-a="ubah-kumpul" data-x="' + t.id + '">Ubah pengumpulan</button><button class="btn o w" style="font-size:13px" data-a="batal-kumpul" data-x="' + t.id + '">Batalkan pengiriman</button></div>'
+            : '<div class="card"><h2>Pekerjaan Anda</h2>' + Unggah.buat('tugas', { banyak: true, maks: 10, maksKb: 51200, totalKb: 102400, lama: sb ? (sb.items || []) : [] }) + '<label style="margin-top:0">Catatan untuk fasilitator (boleh kosong)</label><textarea class="in" rows="2" id="cat">' + esc(sb ? sb.catatan : '') + '</textarea><div id="te" class="err"></div><br><button class="btn w" data-a="kumpul" data-x="' + t.id + '">Kumpulkan tugas</button></div>');
       } else {
         b = '<div class="card">' + ((p.tugas || []).map(function (x) { var st = tStatus(p, x), chip = st === 'kumpul' ? '<span class="chip">Dikumpulkan</span>' : st === 'belum' ? '<span class="chip y">Belum</span>' : '<span class="chip g">Terkunci</span>'; return '<div class="row" style="cursor:pointer" data-a="buka-tugas" data-x="' + x.id + '"><div class="t">' + esc(x.judul) + '<small>Sesi ' + x.sesi + ' &middot; tenggat ' + tgl(x.due) + '</small></div>' + chip + '</div>'; }).join('') || '<p class="m sm">Belum ada tugas pada kelas ini.</p>') + '</div>';
       }
@@ -285,11 +296,11 @@
   function rSesi() {
     var p = prog(S.a1) || cp(), s = p && p.sesi.filter(function (x) { return x.id === S.a2; })[0];
     if (!p || !s) { go('jadwal', null, null, true); return; }
-    $('sesi').innerHTML = '<button class="back" data-a="go" data-p="jadwal">&larr; Jadwal</button><div class="card"><span class="chip">Sesi #' + s.no + '</span><h1 style="margin-top:8px">' + esc(s.judul) + '</h1><dl style="margin-top:12px"><dt>Hari</dt><dd>' + tgl(s.tanggal, 2).replace(/^(\w+), /, '$1, ') + '</dd><dt>Jam</dt><dd>' + jamLabel(s) + ' WITA</dd><dt>Mode</dt><dd>' + s.mode + '</dd><dt>Lokasi</dt><dd>' + esc(s.tempat) + '</dd><dt>Program</dt><dd>' + esc(p.nama) + '</dd></dl></div><div class="card"><h2>Materi sesi</h2><div class="row"><div class="t">' + esc(s.judul) + '<small>' + (s.materi ? esc(s.materi.nama) : 'Belum tersedia') + '</small></div>' + (s.materi ? '<button class="btn o" data-a="unduh" data-n="' + esc(s.materi.nama) + '">Unduh</button>' : '<button class="btn d">Unduh</button>') + '</div></div>';
+    $('sesi').innerHTML = '<button class="back" data-a="go" data-p="jadwal">&larr; Jadwal</button><div class="card"><span class="chip">Sesi #' + s.no + '</span><h1 style="margin-top:8px">' + esc(s.judul) + '</h1><dl style="margin-top:12px"><dt>Hari</dt><dd>' + tgl(s.tanggal, 2).replace(/^(\w+), /, '$1, ') + '</dd><dt>Jam</dt><dd>' + jamLabel(s) + ' WITA</dd><dt>Mode</dt><dd>' + s.mode + '</dd><dt>Lokasi</dt><dd>' + esc(s.tempat) + '</dd><dt>Program</dt><dd>' + esc(p.nama) + '</dd></dl></div><div class="card"><h2>Materi sesi</h2><div class="row"><div class="t">' + esc(s.judul) + '<small>' + (s.materi ? esc(s.materi.nama) : 'Belum tersedia') + '</small></div>' + (s.materi ? tombolMateri(s) : '<button class="btn d">Unduh</button>') + '</div></div>';
   }
   function rMateri() {
     var p = cp(); if (!p) { $('materi').innerHTML = kosong('Materi Pelatihan'); return; }
-    $('materi').innerHTML = '<h1 style="margin-bottom:12px">Materi Pelatihan</h1>' + pSel() + '<p class="m sm" style="margin:-4px 0 12px">' + esc(p.nama) + '</p><div class="card">' + (p.sesi.map(function (s) { return '<div class="row"><div class="t">Sesi ' + s.no + ' : ' + esc(s.judul) + '<small>' + (s.materi ? esc(s.materi.nama) : 'Belum tersedia') + '</small></div>' + (s.materi ? '<button class="btn o" data-a="unduh" data-n="' + esc(s.materi.nama) + '">Unduh</button>' : '<button class="btn d">Unduh</button>') + '</div>'; }).join('') || '<p class="m sm">Belum ada sesi.</p>') + '</div>';
+    $('materi').innerHTML = '<h1 style="margin-bottom:12px">Materi Pelatihan</h1>' + pSel() + '<p class="m sm" style="margin:-4px 0 12px">' + esc(p.nama) + '</p><div class="card">' + (p.sesi.map(function (s) { return '<div class="row"><div class="t">Sesi ' + s.no + ' : ' + esc(s.judul) + '<small>' + (s.materi ? esc(s.materi.nama) : 'Belum tersedia') + '</small></div>' + (s.materi ? tombolMateri(s) : '<button class="btn d">Unduh</button>') + '</div>'; }).join('') || '<p class="m sm">Belum ada sesi.</p>') + '</div>';
   }
   function rProgres() {
     var p = cp(); if (!p) { $('progres').innerHTML = kosong('Progres Anda'); return; }
@@ -353,10 +364,24 @@
     'buka-tugas': function (el) {
       var p = prog(S.a1), t = p.tugas.filter(function (x) { return x.id === el.getAttribute('data-x'); })[0];
       if (tStatus(p, t) === 'kunci') { toast('Tugas ini dibuka setelah sesinya berlangsung'); return; }
-      S.tug = t.id; rK(); window.scrollTo(0, 0);
+      S.tug = t.id; S.ubah = null; rK(); window.scrollTo(0, 0);
     },
-    'semua-tugas': function () { S.tug = null; rK(); },
+    'semua-tugas': function () { S.tug = null; S.ubah = null; rK(); },
     'kumpul': function (el) {
+      var p = prog(S.a1), tid = el.getAttribute('data-x'), a = Unggah.ambil('tugas');
+      if (!a.jumlah) { $('te').textContent = 'Tambahkan minimal satu berkas atau link.'; return; }
+      if (!window.Api || !Api.on) { $('te').textContent = 'Database belum tersambung. Buka lewat http://localhost/web-lms/'; return; }
+      var pr = [['prog', p.id], ['id', tid], ['pid', pid()], ['catatan', ($('cat').value || '').trim()], ['keep', JSON.stringify(a.keep)]];
+      a.berkas.forEach(function (f) { pr.push(['berkas[]', f]); });
+      a.link.forEach(function (u) { pr.push(['link[]', u]); });
+      el.disabled = true; el.textContent = 'Mengunggah...';
+      Unggah.kirim('kumpul.php', pr, function (x) { el.textContent = 'Mengunggah ' + Math.round(x * 100) + '%'; }, function (r) {
+        if (!r || !r.ok) { el.disabled = false; el.textContent = 'Kumpulkan tugas'; $('te').textContent = (r && r.pesan) || 'Unggah gagal.'; return; }
+        var q = prog(S.a1) || p; q.kumpul = q.kumpul || {}; q.kumpul[tid] = q.kumpul[tid] || {};
+        q.kumpul[tid][pid()] = r.data; S.ubah = null; save(); S.tug = null; rK(); toast('Tugas dikumpulkan');
+      });
+    },
+    'kumpul-lama': function (el) {
       var p = prog(S.a1), id = el.getAttribute('data-x'), f = $('fl').files[0];
       if (!f) { $('te').textContent = 'Pilih berkas dulu sebelum mengumpulkan.'; return; }
       p.kumpul = p.kumpul || {}; p.kumpul[id] = p.kumpul[id] || {};
@@ -365,7 +390,18 @@
       save(); S.tug = null; rK(); toast('Tugas dikumpulkan');
     },
     'batal-kumpul': function (el) { var p = prog(S.a1); delete p.kumpul[el.getAttribute('data-x')][pid()]; save(); rK(); toast('Pengiriman dibatalkan'); },
-    'unduh': function (el) { toast('Prototype: ' + el.getAttribute('data-n') + ' akan terunduh pada versi akhir'); },
+    'unduh': function (el) {
+      if (!el.getAttribute('data-ok')) { toast('Berkas materi ini belum diunggah ulang oleh pengurus.'); return; }
+      var u = el.getAttribute('data-u'), B = (window.Api && Api.base) || '../api/';
+      if (u) { if (/^https?:\/\//i.test(u)) window.open(u, '_blank', 'noopener,noreferrer'); return; }
+      window.open(B + 'unduh.php?jenis=materi&id=' + encodeURIComponent(el.getAttribute('data-sid')) + '&inline=1', '_blank', 'noopener');
+    },
+    'unduh-isi': function (el) {
+      var u = el.getAttribute('data-u'), B = (window.Api && Api.base) || '../api/';
+      if (u) { if (/^https?:\/\//i.test(u)) window.open(u, '_blank', 'noopener,noreferrer'); return; }
+      window.open(B + 'unduh.php?jenis=tugas&prog=' + encodeURIComponent(S.a1) + '&id=' + encodeURIComponent(el.getAttribute('data-x')) + '&pid=' + encodeURIComponent(pid()) + '&n=' + encodeURIComponent(el.getAttribute('data-n')) + '&inline=1', '_blank', 'noopener');
+    },
+    'ubah-kumpul': function (el) { S.ubah = el.getAttribute('data-x'); rK(); },
     'join': function () { S.jmsg = ''; S.jval = ''; rJoin(); },
     'join-tab': function (el) { S.joinTab = el.getAttribute('data-x'); S.jmsg = ''; S.jval = ''; rJoin(); },
     'join-kode': function () { joinKode($('jk').value); },
