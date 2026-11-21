@@ -115,7 +115,7 @@ try {
     foreach ($pdo->query("SELECT * FROM lms_pendaftaran ORDER BY id") as $r)
         $dft[] = ['id' => 'r' . $r['id'], 'pid' => pidDari($r['user_id']), 'prog' => $r['program_id'], 'tgl' => substr($r['created_at'], 0, 10), 'status' => $r['status'] === 'diterima' ? 'disetujui' : $r['status'], 'alasan' => (string) $r['alasan']];
 
-    $out = ['peserta' => $peserta, 'programs' => array_values($progs), 'undangan' => $und, 'pendaftaran' => $dft, 'pendaftaranLembaga' => $dftLembaga];
+    $out = ['me' => ['peran' => $sesi['peran'], 'csrf' => tokenCsrf()], 'peserta' => $peserta, 'programs' => array_values($progs), 'undangan' => $und, 'pendaftaran' => $dft, 'pendaftaranLembaga' => $dftLembaga];
     keluar($sesi['peran'] === 'admin' ? $out : batasiPeserta($out, $sesi['uid']));
 } catch (Exception $e) {
     keluar(['ok' => false, 'pesan' => 'Gagal membaca data: ' . $e->getMessage()], 500);

@@ -4,6 +4,7 @@ require __DIR__ . '/db.php';
 require __DIR__ . '/berkas.php';
 require __DIR__ . '/guard.php';
 wajibPeran('admin');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') wajibCsrfHeader();
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') keluar(['ok' => false, 'pesan' => 'Hanya POST'], 405);
 
 $d = json_decode(file_get_contents('php://input'), true);

@@ -389,7 +389,11 @@
       p.kumpul[id][pid()] = { file: f.name, at: TODAY + ' ' + z(n.getHours()) + ':' + z(n.getMinutes()), catatan: ($('cat').value || '').trim() };
       save(); S.tug = null; rK(); toast('Tugas dikumpulkan');
     },
-    'batal-kumpul': function (el) { var p = prog(S.a1); delete p.kumpul[el.getAttribute('data-x')][pid()]; save(); rK(); toast('Pengiriman dibatalkan'); },
+    'batal-kumpul': function (el) {
+      var p = prog(S.a1), tid = el.getAttribute('data-x');
+      if (window.Api && Api.on) { var r = Api.aksi('batal_kumpul.php', { prog: p.id, id: tid }); if (!r.ok) { toast(r.pesan || 'Pembatalan gagal.'); return; } }
+      delete p.kumpul[tid][pid()]; save(); rK(); toast('Pengiriman dibatalkan');
+    },
     'unduh': function (el) {
       if (!el.getAttribute('data-ok')) { toast('Berkas materi ini belum diunggah ulang oleh pengurus.'); return; }
       var u = el.getAttribute('data-u'), B = (window.Api && Api.base) || '../api/';

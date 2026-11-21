@@ -40,6 +40,12 @@ function tokenCsrf() {
     return $_SESSION['csrf'];
 }
 
+// Untuk permintaan JSON selain login: token dikirim lewat header X-CSRF-Token.
+function wajibCsrfHeader() {
+    if (!cekCsrf($_SERVER['HTTP_X_CSRF_TOKEN'] ?? null))
+        keluar(['ok' => false, 'pesan' => 'Sesi halaman kedaluwarsa. Muat ulang halaman lalu coba lagi.'], 403);
+}
+
 function cekCsrf($t) {
     mulaiSesi();
     return !empty($_SESSION['csrf']) && is_string($t) && hash_equals($_SESSION['csrf'], $t);

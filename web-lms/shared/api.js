@@ -9,13 +9,14 @@
   var me = document.currentScript;
   var base = me && me.src ? me.src.replace(/shared\/api\.js.*$/, 'api/') : '../api/';
   var asli = Storage.prototype.setItem;
-  var Api = { on: false, base: base, terakhir: 0 };
+  var Api = { on: false, base: base, terakhir: 0, peran: null, csrf: null };
 
   function panggil(metode, path, body) {
     try {
       var x = new XMLHttpRequest();
       x.open(metode, base + path, false);
       if (body) x.setRequestHeader('Content-Type', 'application/json');
+      if (metode !== 'GET' && Api.csrf) x.setRequestHeader('X-CSRF-Token', Api.csrf);
       x.send(body || null);
       if (x.status < 200 || x.status >= 300) return { ok: false, status: x.status, pesan: (function () { try { return JSON.parse(x.responseText).pesan; } catch (e) { return 'Server mengembalikan kode ' + x.status; } })() };
       return JSON.parse(x.responseText);
@@ -29,6 +30,7 @@
     var d = panggil('GET', 'muat.php');
     if (d && d.status === 401) { Api.on = true; Api.terakhir = Date.now(); return false; } // API aktif, belum login
     if (!d || !d.programs) return false;
+    if (d.me) { Api.peran = d.me.peran; Api.csrf = d.me.csrf; delete d.me; } // token tidak disimpan di localStorage
     try { asli.call(window.localStorage, S.KEY, JSON.stringify(d)); } catch (e) { return false; }
     Api.on = true; Api.terakhir = Date.now(); S.TODAY = hariIni();
     return true;
@@ -48,7 +50,7 @@
 
   Storage.prototype.setItem = function (k, v) {
     asli.call(this, k, v);
-    if (Api.on && k === S.KEY && this === window.localStorage) {
+    if (Api.on && Api.peran !== 'peserta' && k === S.KEY && this === window.localStorage) { // peserta tidak menyimpan lewat simpan.php; aksinya lewat endpoint sendiri
       var r = panggil('POST', 'simpan.php', v);
       if (!r || !r.ok) peringatan('Perubahan belum tersimpan ke database' + (r && r.pesan ? ': ' + r.pesan : '. Pastikan MySQL Laragon berjalan.'));
     }
@@ -66,6 +68,12 @@
     if (!t || !t.csrf) return null;
     var r = panggil('POST', peran === 'admin' ? 'login.php' : 'login_lembaga.php', JSON.stringify({ email: email, pw: pw, csrf: t.csrf }));
     if (r && r.ok) { muat(); return r.id; } return null;
+  };
+
+  // Aksi tunggal ke endpoint khusus (mis. 'batal_kumpul.php'). Mengembalikan {ok, pesan}.
+  Api.aksi = function (endpoint, data) {
+    if (!Api.on) return { ok: false, pesan: 'Database belum tersambung.' };
+    return panggil('POST', endpoint, JSON.stringify(data || {})) || { ok: false, pesan: 'Server tidak dapat dijangkau.' };
   };
 
   window.Api = Api;
