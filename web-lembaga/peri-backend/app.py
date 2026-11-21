@@ -48,6 +48,9 @@ DB_USER = os.environ.get("PERI_DB_USER", "root")
 DB_PASS = os.environ.get("PERI_DB_PASS", "")
 DB_NAME = os.environ.get("PERI_DB_NAME", "peri")
 
+# Kunci bersama antara server Flask ini dan server LMS (server ke server). Kosong = jalur LMS dinonaktifkan.
+LMS_KUNCI = os.environ.get("PERI_LMS_KUNCI", "")
+
 NLP_URL = os.environ.get("PERI_NLP_URL", "http://127.0.0.1:5000/api/kategori")
 
 SMTP_HOST = os.environ.get("SMTP_HOST", "")
@@ -644,6 +647,35 @@ def konfirmasi_pendaftar_program(pid: int):
             return galat("Pendaftar tidak ditemukan.", 404)
         cur.execute("UPDATE pendaftaran_program SET status=%s WHERE id=%s", (status, pid))
     return jsonify({"ok": True, "status": status})
+
+
+@app.post("/api/lms/pendaftaran")
+def lms_pendaftaran():
+    """Dipanggil server LMS (bukan browser): daftar pendaftaran program milik akun pendaftar.
+    Wajib header X-LMS-Key sesuai PERI_LMS_KUNCI. Isi opsional: {"user_id": n} untuk satu akun saja."""
+    if not LMS_KUNCI:
+        return galat("Jalur LMS belum diaktifkan.", 503)
+    if not hmac.compare_digest(request.headers.get("X-LMS-Key", ""), LMS_KUNCI):
+        return galat("Tidak diizinkan.", 403)
+    uid = data_json().get("user_id")
+    sql = (
+        "SELECT pp.user_id, u.email, pp.program, pp.status, pp.nama "
+        "FROM pendaftaran_program pp JOIN users u ON u.id = pp.user_id "
+        "WHERE u.role = 'pendaftar'"
+    )
+    arg = ()
+    if uid is not None:
+        if not isinstance(uid, int) or isinstance(uid, bool):
+            return galat("user_id tidak valid.")
+        sql += " AND pp.user_id = %s"
+        arg = (uid,)
+    with db().cursor() as cur:
+        cur.execute(sql + " ORDER BY pp.id", arg)
+        baris = cur.fetchall()
+    return jsonify({"pendaftaran": [
+        {"user_id": b["user_id"], "email": b["email"], "program": b["program"], "status": b["status"], "nama": b["nama"]}
+        for b in baris
+    ]})
 
 
 @app.get("/api/buku-tamu")

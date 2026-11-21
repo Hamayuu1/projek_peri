@@ -16,6 +16,7 @@ Tidak ada lagi data contoh: akun admin dibuat dengan skrip, peserta masuk otomat
 2. Salin folder `web-lms` ke folder web Laragon (`C:\laragon\www\`).
 3. Buka HeidiSQL dari menu Laragon, lalu import berurutan: `lms_schema.sql`, `migrasi_02_berkas.sql`, `migrasi_03_item.sql`, `migrasi_04_admin.sql` (encoding **UTF-8**, tekan F9).
 4. Salin `web-lms/.env.example` menjadi `web-lms/.env`, lalu isi.
+   Buat satu kunci rahasia (`python -c "import secrets;print(secrets.token_hex(32))"`), isikan sebagai `LMS_KUNCI` di `web-lms/.env` dan `PERI_LMS_KUNCI` di `web-lembaga/peri-backend/.env`. LMS mengambil data pendaftaran lewat Flask memakai kunci ini, bukan membaca database `peri`.
 5. Buat admin: `php database/buat_admin.php emailanda@contoh.com` (di folder `web-lms`).
 6. Buka `http://localhost/web-lms/admin/` atau `http://localhost/web-lms/peserta/`.
 

@@ -7,8 +7,6 @@ CREATE USER IF NOT EXISTS 'lms_app'@'localhost' IDENTIFIED BY 'GANTI_DENGAN_KATA
 -- Database LMS: boleh baca dan tulis, tanpa hak mengubah struktur tabel.
 GRANT SELECT, INSERT, UPDATE, DELETE ON peri_lms.* TO 'lms_app'@'localhost';
 
--- Database web lembaga: hanya membaca pendaftaran program dan email akun (tidak bisa membaca kata sandi atau tabel lain).
-GRANT SELECT ON peri.pendaftaran_program TO 'lms_app'@'localhost';
-GRANT SELECT (id, email, role) ON peri.users TO 'lms_app'@'localhost';
+-- LMS tidak membaca database web lembaga; pendaftaran diambil lewat Flask (lihat LMS_KUNCI di .env).
 
 FLUSH PRIVILEGES;

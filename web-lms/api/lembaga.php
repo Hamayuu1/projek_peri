@@ -1,16 +1,15 @@
 <?php
 // Penghubung LMS ke web lembaga: login lewat server Flask lembaga dan membaca pendaftaran dari database peri.
-// Alamat Flask dan nama database lembaga diatur di .env (LMS_FLASK_URL, LMS_LEMBAGA_DB); bawaannya untuk Laragon.
-$LEMBAGA = [
-    'flask' => rtrim($ENV_LMS['LMS_FLASK_URL'] ?? 'http://127.0.0.1:5001', '/'),
-    'db'    => preg_match('/^[A-Za-z0-9_]+$/', $ENV_LMS['LMS_LEMBAGA_DB'] ?? '') ? $ENV_LMS['LMS_LEMBAGA_DB'] : 'peri',
-];
+// Alamat Flask diatur di .env (LMS_FLASK_URL, LMS_KUNCI); bawaannya untuk Laragon.
+$LEMBAGA = ['flask' => rtrim($ENV_LMS['LMS_FLASK_URL'] ?? 'http://127.0.0.1:5001', '/')];
 
 // Memanggil Flask (POST JSON). Hasil: [kode_http, data] atau null kalau Flask tidak bisa dijangkau.
 function panggilFlask($path, $body) {
     global $LEMBAGA;
+    global $ENV_LMS;
+    $kunci = (string) ($ENV_LMS['LMS_KUNCI'] ?? '');
     $ctx = stream_context_create(['http' => [
-        'method' => 'POST', 'header' => "Content-Type: application/json\r\n",
+        'method' => 'POST', 'header' => "Content-Type: application/json\r\n" . ($kunci !== '' ? "X-LMS-Key: $kunci\r\n" : ''),
         'content' => json_encode($body), 'timeout' => 8, 'ignore_errors' => true,
     ]]);
     $res = @file_get_contents($LEMBAGA['flask'] . $path, false, $ctx);
@@ -18,6 +17,13 @@ function panggilFlask($path, $body) {
     $kode = 0;
     if (isset($http_response_header[0]) && preg_match('#\s(\d{3})\s#', $http_response_header[0], $m)) $kode = (int) $m[1];
     return [$kode, json_decode($res, true)];
+}
+
+// Mengambil pendaftaran program dari Flask (bukan langsung dari database lembaga). Hasil: daftar baris atau null kalau gagal.
+function ambilPendaftaran($periId = null) {
+    $r = panggilFlask('/api/lms/pendaftaran', $periId === null ? new stdClass() : ['user_id' => (int) $periId]);
+    if ($r === null || $r[0] !== 200 || !is_array($r[1]) || !isset($r[1]['pendaftaran'])) return null;
+    return $r[1]['pendaftaran'];
 }
 
 // Mencari akun LMS untuk pengguna lembaga; dibuat kalau belum ada. Mengembalikan id akun LMS atau null.
@@ -52,11 +58,9 @@ function petaProgram($pdo) {
 // Aturan: pendaftaran berstatus diterima => masuk kelas (satu kelas saja, yang paling awal terdaftar);
 // konfirmasi dibatalkan => akses dinonaktifkan; status selesai tidak diubah.
 // Mengembalikan daftar pendaftaran pengguna itu: [['prog' => id kelas atau null, 'program' => nama, 'status' => baru|diterima], ...]
-function sinkronKelas($pdo, $uid, $periId, $peta) {
-    global $LEMBAGA;
-    $st = $pdo->prepare("SELECT program, status, nama FROM `{$LEMBAGA['db']}`.pendaftaran_program WHERE user_id = ? ORDER BY id");
-    $st->execute([$periId]);
-    $baris = $st->fetchAll();
+function sinkronKelas($pdo, $uid, $periId, $peta, $baris = null) {
+    if ($baris === null) $baris = ambilPendaftaran($periId);
+    if ($baris === null) return []; // Flask tidak terjangkau: jangan mengubah keanggotaan kelas
     $daftar = []; $diterima = [];
     foreach ($baris as $b) {
         $pg = $peta[mb_strtolower(trim($b['program']))] ?? null;
@@ -95,14 +99,17 @@ function sinkronKelas($pdo, $uid, $periId, $peta) {
 // Kalau database lembaga belum ada atau Flask belum pernah dijalankan, bagian ini dilewati tanpa mengganggu aplikasi.
 // Hasil: daftar pendaftaran untuk ditampilkan: [['pid' => ..., 'prog' => ..., 'program' => ..., 'status' => ...], ...]
 function sinkronSemua($pdo) {
-    global $LEMBAGA;
     $hasil = [];
+    $semua = ambilPendaftaran();
+    if ($semua === null) return [];
     try {
-        foreach ($pdo->query("SELECT DISTINCT pp.user_id, u.email FROM `{$LEMBAGA['db']}`.pendaftaran_program pp JOIN `{$LEMBAGA['db']}`.users u ON u.id = pp.user_id WHERE pp.status = 'diterima' AND u.role = 'pendaftar'")->fetchAll() as $r)
-            pastikanPengguna($pdo, (int) $r['user_id'], $r['email']);
+        $per = [];
+        foreach ($semua as $b) $per[(int) $b['user_id']][] = $b;
+        foreach ($per as $periId => $rows)
+            foreach ($rows as $b) if ($b['status'] === 'diterima') { pastikanPengguna($pdo, $periId, $b['email']); break; }
         $peta = petaProgram($pdo);
         foreach ($pdo->query("SELECT id, peri_user_id FROM users WHERE peri_user_id IS NOT NULL AND role = 'peserta'")->fetchAll() as $u) {
-            foreach (sinkronKelas($pdo, (int) $u['id'], (int) $u['peri_user_id'], $peta) as $d)
+            foreach (sinkronKelas($pdo, (int) $u['id'], (int) $u['peri_user_id'], $peta, $per[(int) $u['peri_user_id']] ?? []) as $d)
                 $hasil[] = ['pid' => pidDari($u['id']), 'prog' => $d['prog'], 'program' => $d['program'], 'status' => $d['status']];
         }
     } catch (Exception $e) { return []; }
