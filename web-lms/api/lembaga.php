@@ -1,9 +1,9 @@
 <?php
 // Penghubung LMS ke web lembaga: login lewat server Flask lembaga dan membaca pendaftaran dari database peri.
-// Pengaturan di bawah memakai bawaan Laragon. Ubah kalau Flask atau database lembaga berbeda.
+// Alamat Flask dan nama database lembaga diatur di .env (LMS_FLASK_URL, LMS_LEMBAGA_DB); bawaannya untuk Laragon.
 $LEMBAGA = [
-    'flask' => 'http://127.0.0.1:5001',
-    'db'    => 'peri',
+    'flask' => rtrim($ENV_LMS['LMS_FLASK_URL'] ?? 'http://127.0.0.1:5001', '/'),
+    'db'    => preg_match('/^[A-Za-z0-9_]+$/', $ENV_LMS['LMS_LEMBAGA_DB'] ?? '') ? $ENV_LMS['LMS_LEMBAGA_DB'] : 'peri',
 ];
 
 // Memanggil Flask (POST JSON). Hasil: [kode_http, data] atau null kalau Flask tidak bisa dijangkau.
