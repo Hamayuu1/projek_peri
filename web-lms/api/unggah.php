@@ -2,6 +2,8 @@
 // Menerima berkas atau link untuk materi (admin) dan pengumpulan tugas (peserta). Hanya POST (multipart).
 require __DIR__ . '/db.php';
 require __DIR__ . '/berkas.php';
+require __DIR__ . '/guard.php';
+$sesi = wajibLogin();
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') keluar(['ok' => false, 'pesan' => 'Hanya POST'], 405);
 
 $jenis = (string) ($_POST['jenis'] ?? '');
@@ -9,6 +11,8 @@ $tipe = (string) ($_POST['tipe'] ?? 'berkas');
 if (!in_array($jenis, ['materi', 'tugas'], true) || !in_array($tipe, ['berkas', 'link'], true))
     keluar(['ok' => false, 'pesan' => 'Permintaan tidak valid. Jika berkas besar, periksa batas post_max_size di php.ini.'], 400);
 
+if ($jenis === 'materi' && $sesi['peran'] !== 'admin') keluar(['ok' => false, 'pesan' => 'Anda tidak memiliki akses.'], 403);
+if ($jenis === 'tugas' && $sesi['peran'] !== 'peserta') keluar(['ok' => false, 'pesan' => 'Anda tidak memiliki akses.'], 403);
 $pdo = koneksi();
 $sub = $jenis;
 
@@ -21,7 +25,7 @@ if ($jenis === 'materi') {
 } else {
     $prog = (string) ($_POST['prog'] ?? '');
     $tid = $prog . '-' . (string) ($_POST['id'] ?? '');
-    $uid = idDari($_POST['pid'] ?? '');
+    $uid = idDari($sesi['uid']);
     $st = $pdo->prepare("SELECT 1 FROM lms_tugas WHERE id = ? AND program_id = ?");
     $st->execute([$tid, $prog]);
     if (!$st->fetch()) keluar(['ok' => false, 'pesan' => 'Tugas tidak ditemukan.'], 404);

@@ -17,7 +17,7 @@
       x.open(metode, base + path, false);
       if (body) x.setRequestHeader('Content-Type', 'application/json');
       x.send(body || null);
-      if (x.status < 200 || x.status >= 300) return { ok: false, pesan: (function () { try { return JSON.parse(x.responseText).pesan; } catch (e) { return 'Server mengembalikan kode ' + x.status; } })() };
+      if (x.status < 200 || x.status >= 300) return { ok: false, status: x.status, pesan: (function () { try { return JSON.parse(x.responseText).pesan; } catch (e) { return 'Server mengembalikan kode ' + x.status; } })() };
       return JSON.parse(x.responseText);
     } catch (e) { return null; }
   }
@@ -27,6 +27,7 @@
   }
   function muat() {
     var d = panggil('GET', 'muat.php');
+    if (d && d.status === 401) { Api.on = true; Api.terakhir = Date.now(); return false; } // API aktif, belum login
     if (!d || !d.programs) return false;
     try { asli.call(window.localStorage, S.KEY, JSON.stringify(d)); } catch (e) { return false; }
     Api.on = true; Api.terakhir = Date.now(); S.TODAY = hariIni();
@@ -61,7 +62,9 @@
 
   Api.login = function (email, pw, peran) {
     if (!Api.on) return undefined;
-    var r = panggil('POST', peran === 'admin' ? 'login.php' : 'login_lembaga.php', JSON.stringify({ email: email, pw: pw, peran: peran }));
+    var t = panggil('GET', 'token.php');
+    if (!t || !t.csrf) return null;
+    var r = panggil('POST', peran === 'admin' ? 'login.php' : 'login_lembaga.php', JSON.stringify({ email: email, pw: pw, csrf: t.csrf }));
     if (r && r.ok) { muat(); return r.id; } return null;
   };
 

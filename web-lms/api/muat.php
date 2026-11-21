@@ -1,10 +1,37 @@
 <?php
 // Membaca seluruh data LMS dari MySQL dan mengirimnya dalam bentuk yang dipakai aplikasi (db.peserta, db.programs, dst).
 require __DIR__ . '/db.php';
+require __DIR__ . '/guard.php';
+$sesi = wajibLogin();
 $pdo = koneksi();
 require __DIR__ . '/lembaga.php';
 require __DIR__ . '/berkas.php';
 $dftLembaga = sinkronSemua($pdo);
+
+// Peserta hanya menerima datanya sendiri. Kelas yang bukan miliknya hanya menampilkan info dasar (tanpa sesi, tugas, daftar peserta).
+function batasiPeserta($o, $me) {
+    $o['peserta'] = array_values(array_filter($o['peserta'], function ($p) use ($me) { return $p['id'] === $me; }));
+    foreach ($o['programs'] as &$p) {
+        $p['nPeserta'] = count($p['peserta']);
+        if (in_array($me, $p['peserta'], true)) {
+            $p['peserta'] = [$me];
+            $p['selesai'] = array_values(array_intersect($p['selesai'], [$me]));
+            foreach ($p['sesi'] as &$s) $s['hadir'] = array_values(array_intersect($s['hadir'], [$me]));
+            unset($s);
+            $k = [];
+            foreach ((array) $p['kumpul'] as $tid => $m) if (isset($m[$me])) $k[$tid] = [$me => $m[$me]];
+            $p['kumpul'] = (object) $k;
+        } else {
+            $p['peserta'] = []; $p['selesai'] = []; $p['sesi'] = []; $p['tugas'] = []; $p['ann'] = ''; $p['kumpul'] = (object) [];
+            unset($p['sertif']);
+        }
+    }
+    unset($p);
+    $o['undangan'] = array_values(array_filter($o['undangan'], function ($u) use ($me) { return $u['pid'] === $me; }));
+    $o['pendaftaran'] = array_values(array_filter($o['pendaftaran'], function ($u) use ($me) { return $u['pid'] === $me; }));
+    $o['pendaftaranLembaga'] = array_values(array_filter($o['pendaftaranLembaga'], function ($u) use ($me) { return $u['pid'] === $me; }));
+    return $o;
+}
 
 try {
     $peserta = [];
@@ -88,7 +115,8 @@ try {
     foreach ($pdo->query("SELECT * FROM lms_pendaftaran ORDER BY id") as $r)
         $dft[] = ['id' => 'r' . $r['id'], 'pid' => pidDari($r['user_id']), 'prog' => $r['program_id'], 'tgl' => substr($r['created_at'], 0, 10), 'status' => $r['status'] === 'diterima' ? 'disetujui' : $r['status'], 'alasan' => (string) $r['alasan']];
 
-    keluar(['peserta' => $peserta, 'programs' => array_values($progs), 'undangan' => $und, 'pendaftaran' => $dft, 'pendaftaranLembaga' => $dftLembaga]);
+    $out = ['peserta' => $peserta, 'programs' => array_values($progs), 'undangan' => $und, 'pendaftaran' => $dft, 'pendaftaranLembaga' => $dftLembaga];
+    keluar($sesi['peran'] === 'admin' ? $out : batasiPeserta($out, $sesi['uid']));
 } catch (Exception $e) {
     keluar(['ok' => false, 'pesan' => 'Gagal membaca data: ' . $e->getMessage()], 500);
 }

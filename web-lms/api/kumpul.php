@@ -4,13 +4,15 @@
 // Setiap pengiriman menggantikan seluruh isian lama: yang tidak ada di keep akan dihapus.
 require __DIR__ . '/db.php';
 require __DIR__ . '/berkas.php';
+require __DIR__ . '/guard.php';
+$sesi = wajibPeran('peserta');
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') keluar(['ok' => false, 'pesan' => 'Hanya POST'], 405);
 if (empty($_POST) && empty($_FILES)) keluar(['ok' => false, 'pesan' => 'Permintaan terlalu besar atau kosong. Periksa batas post_max_size di php.ini.'], 400);
 
 $pdo = koneksi();
 $prog = (string) ($_POST['prog'] ?? '');
 $tid = $prog . '-' . (string) ($_POST['id'] ?? '');
-$uid = idDari($_POST['pid'] ?? '');
+$uid = idDari($sesi['uid']);
 
 $st = $pdo->prepare("SELECT 1 FROM lms_tugas WHERE id = ? AND program_id = ?");
 $st->execute([$tid, $prog]);

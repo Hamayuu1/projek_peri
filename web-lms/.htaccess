@@ -1,0 +1,5 @@
+# Berkas pengaturan tidak boleh dibuka lewat alamat web.
+<FilesMatch "^\.env">
+    Require all denied
+</FilesMatch>
+Options -Indexes

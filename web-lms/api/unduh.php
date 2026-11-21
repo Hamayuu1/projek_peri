@@ -3,6 +3,8 @@
 // GET: jenis=materi&id=SESI  atau  jenis=tugas&prog=PROGRAM&id=TUGAS&pid=PESERTA ; tambahkan inline=1 untuk membuka di browser (PDF, gambar, MP4).
 require __DIR__ . '/db.php';
 require __DIR__ . '/berkas.php';
+require __DIR__ . '/guard.php';
+$sesi = wajibLogin();
 $pdo = koneksi();
 $jenis = (string) ($_GET['jenis'] ?? '');
 if ($jenis === 'materi') {
@@ -10,7 +12,8 @@ if ($jenis === 'materi') {
     $st->execute([(string) ($_GET['id'] ?? '')]);
 } elseif ($jenis === 'tugas') {
     $st = $pdo->prepare("SELECT nama, tipe, path FROM lms_pengumpulan_item WHERE tugas_id = ? AND user_id = ? AND urutan = ?");
-    $st->execute([(string) ($_GET['prog'] ?? '') . '-' . (string) ($_GET['id'] ?? ''), idDari($_GET['pid'] ?? ''), max(1, (int) ($_GET['n'] ?? 1))]);
+    $pemilik = $sesi['peran'] === 'admin' ? idDari($_GET['pid'] ?? '') : idDari($sesi['uid']);
+    $st->execute([(string) ($_GET['prog'] ?? '') . '-' . (string) ($_GET['id'] ?? ''), $pemilik, max(1, (int) ($_GET['n'] ?? 1))]);
 } else keluar(['ok' => false, 'pesan' => 'Permintaan tidak valid.'], 400);
 
 $r = $st->fetch();
