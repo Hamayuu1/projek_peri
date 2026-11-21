@@ -93,6 +93,7 @@
     var base = (window.Api && Api.base) || '../api/';
     var x = new XMLHttpRequest();
     x.open('POST', base + endpoint, true);
+    if (window.Api && Api.csrf) x.setRequestHeader('X-CSRF-Token', Api.csrf);
     if (progres && x.upload) x.upload.onprogress = function (e) { if (e.lengthComputable) progres(e.loaded / e.total); };
     x.onload = function () {
       var r = null; try { r = JSON.parse(x.responseText); } catch (e) {}

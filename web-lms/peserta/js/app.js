@@ -16,7 +16,7 @@
   function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function readJSON(k, d) { try { var s = localStorage.getItem(k); return s ? JSON.parse(s) : d; } catch (e) { return d; } }
   function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  function pid() { try { return sessionStorage.getItem(AUTH); } catch (e) { return null; } }
+  function pid() { if (!window.Api || !Api.on || Api.peran !== 'peserta') return null; try { return sessionStorage.getItem(AUTH); } catch (e) { return null; } } // login ditentukan server
   function setPid(v) { try { if (v) sessionStorage.setItem(AUTH, v); else sessionStorage.removeItem(AUTH); } catch (e) {} }
   function user() { var id = pid(); return db.peserta.filter(function (p) { return p.id === id; })[0]; }
   function save() { Store.save(db); }
@@ -111,7 +111,7 @@
     var R = { beranda: rBeranda, kelas: rKelas, kdetail: rK, program: rProgram, jadwal: rJadwal, sesi: rSesi, materi: rMateri, progres: rProgres, sertifikat: rSert };
     R[p](); window.scrollTo(0, 0);
   }
-  function keluar() { setPid(null); drawer(0); closeSheet(); go('login', null, null, true); }
+  function keluar() { if (window.Api) Api.logout(); setPid(null); drawer(0); closeSheet(); go('login', null, null, true); }
 
   /* ---------- login ---------- */
   function rLogin() {
@@ -121,12 +121,12 @@
   function doLogin(f) {
     var em = f.elements.email.value.trim().toLowerCase(), pw = f.elements.pw.value, e = $('lerr');
     if (!em || !pw) { e.textContent = 'Email dan kata sandi wajib diisi.'; return; }
-    var lid = window.Api ? Api.login(em, pw, 'peserta') : undefined;
-    if (lid) db = Store.load();
-    var u = lid !== undefined
-      ? db.peserta.filter(function (x) { return x.id === lid; })[0]
-      : db.peserta.filter(function (x) { return x.email.toLowerCase() === em && x.pw === pw; })[0];
-    if (!u) { e.textContent = 'Email atau kata sandi salah.'; return; }
+    if (!window.Api || !Api.on) { e.textContent = 'Server LMS belum tersambung. Buka lewat alamat web LMS.'; return; }
+    var lid = Api.login(em, pw, 'peserta');
+    if (!lid) { e.textContent = 'Email atau kata sandi salah, atau akun belum terdaftar di situs PERI.'; return; }
+    db = Store.load();
+    var u = db.peserta.filter(function (x) { return x.id === lid; })[0];
+    if (!u) { e.textContent = 'Akun belum memiliki program. Hubungi pengurus.'; return; }
     setPid(u.id); S.prog = null; go('beranda', null, null, true);
   }
 
@@ -193,37 +193,6 @@
     $('kdetail').innerHTML = hd + tabs + '<div style="padding:16px">' + b + '</div>';
   }
 
-  /* ---------- gabung kelas ---------- */
-  function rJoin() {
-    var tb = [['kode', 'Kode kelas'], ['tautan', 'Tautan'], ['email', 'Email']];
-    var h = '<div class="gr"></div><h2>Gabung ke kelas</h2><div class="seg">' + tb.map(function (t) { return '<button class="' + (S.joinTab === t[0] ? 'on' : '') + '" data-a="join-tab" data-x="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
-    if (S.joinTab === 'kode') h += '<p class="m sm">Masukkan kode kelas dari pengurus atau fasilitator.</p><label>Kode kelas</label><input id="jk" class="in" placeholder="Contoh: KRIYA26" value="' + esc(S.jval) + '" style="text-transform:uppercase"><div class="err">' + esc(S.jmsg) + '</div><br><button class="btn w" data-a="join-kode">Gabung</button><p class="m sm" style="margin-top:10px">Kode ada di halaman Ringkasan setiap kelas. Contoh untuk uji coba: <b>KRIYA26</b></p>';
-    if (S.joinTab === 'tautan') h += '<p class="m sm">Tempel tautan undangan yang Anda terima lewat pesan.</p><label>Tautan undangan</label><input id="jt" class="in" placeholder="https://elearning-peri.id/gabung/..." value="' + esc(S.jval) + '"><div class="err">' + esc(S.jmsg) + '</div><br><button class="btn w" data-a="join-taut">Gabung lewat tautan</button><p class="m sm" style="margin-top:10px">Contoh: elearning-peri.id/gabung/KRIYA26</p>';
-    if (S.joinTab === 'email') {
-      var iv = db.undangan.filter(function (u) { return u.pid === pid() && u.status === 'menunggu'; });
-      h += '<p class="m sm">Undangan yang dikirim pengurus ke email akun Anda.</p>' + (iv.length ? iv.map(function (u) { var p = db.programs.filter(function (x) { return (x.kode || '').toUpperCase() === u.kode.toUpperCase(); })[0]; return '<div class="pc" style="display:block"><h3>' + esc(p ? p.nama : u.kode) + '</h3><div class="mt">Diundang oleh ' + esc(u.dari) + ' &middot; ' + esc(user().email) + '</div><div style="display:flex;gap:8px"><button class="btn" data-a="terima-undang" data-x="' + u.id + '">Terima</button><button class="btn o" data-a="tolak-undang" data-x="' + u.id + '">Tolak</button></div></div>'; }).join('') : '<div class="cert">Tidak ada undangan baru</div>');
-    }
-    openSheet(h);
-  }
-  function batasProg() {
-    var id = pid(), a = mine().filter(function (x) { return !selesai(x) && pct(x) < 100; })[0];
-    if (a) return 'Anda masih mengikuti program "' + a.nama + '" (progres ' + pct(a) + '%). Selesaikan progres program ini (sampai 100%) sebelum mengambil program baru.';
-
-    return '';
-  }
-  function joinKode(k) {
-    S.jval = (k || '').trim(); k = S.jval.toUpperCase();
-    var p = db.programs.filter(function (x) { return (x.kode || '').toUpperCase() === k; })[0];
-    if (!k) { S.jmsg = 'Kode kelas belum diisi.'; return rJoin(); }
-    if (!p) { S.jmsg = 'Kode tidak ditemukan. Periksa lagi atau tanyakan ke pengurus.'; return rJoin(); }
-    if (p.peserta.indexOf(pid()) >= 0) { S.jmsg = 'Anda sudah tergabung di kelas ini.'; return rJoin(); }
-    if (p.peserta.length >= p.kuota) { S.jmsg = 'Kuota kelas ini sudah penuh.'; return rJoin(); }
-    var bt = batasProg(); if (bt) { S.jmsg = bt; return rJoin(); }
-    p.peserta.push(pid());
-    db.undangan.forEach(function (u) { if (u.pid === pid() && u.kode.toUpperCase() === k && u.status === 'menunggu') u.status = 'diterima'; });
-    save(); closeSheet(); toast('Berhasil bergabung ke ' + p.nama); show(cur);
-  }
-
   /* ---------- program baru ---------- */
   function rProgramSaya() {
     var id = pid(), m = mine();
@@ -233,54 +202,6 @@
     $('program').innerHTML = '<h1 style="margin-bottom:2px">Program</h1><p class="m sm" style="margin-bottom:12px">Pendaftaran program dilakukan di situs PERI. Setelah admin mengonfirmasi, kelas Anda muncul di sini secara otomatis.</p><div class="sec"><h2>Program saya</h2></div>' + (kelas || '<div class="card"><p class="m sm">Belum ada kelas.</p></div>') + (info ? '<div class="sec" style="margin-top:16px"><h2>Status pendaftaran</h2></div>' + info : '');
   }
   function rProgram() { return rProgramSaya(); }
-  function rProgramLama() {
-    var m = mine(), id = pid();
-    var minis = m.map(function (p) { return '<div class="mini ' + warna(p) + '" data-a="go" data-p="kdetail" data-x="' + p.id + '" style="cursor:pointer">' + esc(p.nama) + '<small>hadir ' + hadirN(p) + ' dari ' + p.sesi.length + ' sesi</small></div>'; }).join('');
-    var kats = m.map(function (p) { return p.kategori; });
-    var kand = db.programs.filter(function (p) { return p.peserta.indexOf(id) < 0 && p.status === 'buka' && p.peserta.length < p.kuota && kats.indexOf(p.kategori) >= 0; })[0];
-    var chips = CATS.map(function (c) { return '<button class="' + (S.cat === c ? 'on' : '') + '" data-a="kat" data-x="' + c + '">' + c + '</button>'; }).join('');
-    var q = S.q.toLowerCase();
-    var vis = db.programs.filter(function (p) { return p.peserta.indexOf(id) < 0 && (S.cat === 'Semua' || p.kategori === S.cat || (S.cat === 'Usaha' && p.kategori === 'Keuangan')) && (!q || (p.nama + ' ' + p.desc).toLowerCase().indexOf(q) >= 0); });
-    var fav = readJSON(FAV + '_' + id, {});
-    $('program').innerHTML = '<h1 style="margin-bottom:2px">Program</h1><p class="m sm" style="margin-bottom:12px">Temukan program PERI yang tersedia. Untuk bergabung, minta kode kelas ke pengurus lalu masukkan lewat menu Gabung kelas.</p>' + (batasProg() ? '<div class="warn" style="cursor:default;margin-bottom:12px">&#9888; ' + esc(batasProg()) + '</div>' : '') + '<input class="in" id="cari" placeholder="Cari program..." value="' + esc(S.q) + '"><div class="chips">' + chips + '</div>' +
-      '<div class="sec" style="margin-top:8px"><h2>Program yang saya ikuti</h2></div>' + (minis ? '<div class="hs">' + minis + '</div>' : '<p class="m sm">Belum ada.</p>') +
-      (kand ? '<div class="card" style="margin-top:16px;border-color:var(--gold);background:var(--warn);color:var(--warnink)"><div class="sm">&#10024; Cocok untuk Anda</div><b>' + esc(kand.nama) + '</b><div class="sm" style="margin:2px 0 8px">Satu kategori dengan program yang sedang Anda ikuti (' + esc(kand.kategori) + ').</div><button class="btn" data-a="detail-prog" data-x="' + kand.id + '">Lihat program</button></div>' : '') +
-      '<div class="sec"><h2>Program baru</h2><span class="m sm">' + vis.length + ' program</span></div><div id="plist">' + (vis.map(function (p) { return cardP(p, fav); }).join('') || '<div class="cert">Tidak ada program yang cocok</div>') + '</div>';
-  }
-  function statusP(p) {
-
-
-
-    if (p.status === 'segera') return { chip: '<span class="chip g">Segera dibuka</span>', can: false, state: 'segera' };
-    if (p.status === 'tutup') return { chip: '<span class="chip r">Pendaftaran ditutup</span>', can: false, state: 'tutup' };
-    if (p.peserta.length >= p.kuota) return { chip: '<span class="chip r">Kuota penuh</span>', can: false, state: 'penuh' };
-    var bt = batasProg(p.id);
-    if (bt) return { chip: '<span class="chip y">Selesaikan program aktif</span>', can: false, state: 'terkunci', note: bt };
-    return { chip: '<span class="chip">Dibuka</span>', can: true, state: 'buka' };
-  }
-  function cardP(p, fav) {
-    var st = statusP(p), sisa = p.kuota - p.peserta.length;
-    return '<div class="pc"><div class="pi ' + warna(p) + '">' + (IKON[p.kategori] || '&#128214;') + '</div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;gap:6px"><h3 data-a="detail-prog" data-x="' + p.id + '" style="cursor:pointer">' + esc(p.nama) + '</h3><button class="star ' + (fav[p.id] ? 'on' : '') + '" data-a="fav" data-x="' + p.id + '" aria-label="Simpan">&#9733;</button></div><div class="mt">' + esc(p.kategori) + ' &middot; ' + p.sesi.length + ' sesi &middot; ' + esc(p.periode) + '</div>' +
-      (p.status === 'segera' ? '' : '<div class="q"><i style="width:' + Math.min(100, Math.round(p.peserta.length / p.kuota * 100)) + '%"></i></div><div class="sm m">' + (sisa > 0 ? 'Sisa ' + sisa + ' dari ' + p.kuota + ' kursi' : 'Semua kursi terisi') + '</div>') +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:6px">' + st.chip + '<button class="btn o" data-a="detail-prog" data-x="' + p.id + '">Detail</button></div></div></div>';
-  }
-  function detailP(id) {
-    var p = prog(id), st = statusP(p), act = '', bt = batasProg();
-    if (bt && st.can) { st.can = false; st.state = 'terkunci'; act = '<div class="note" style="background:var(--warn);color:var(--warnink)">&#9888; ' + esc(bt) + '</div>'; }
-    if (st.state !== 'menunggu') act += '<div class="note">Untuk bergabung, minta kode kelas ke pengurus, lalu masukkan lewat menu Gabung kelas.</div><button class="btn w" data-a="join">Masukkan kode kelas</button>';
-    else {
-
-
-    }
-    var mulai = p.sesi.length ? tgl(p.sesi[0].tanggal, 2) : 'Belum dijadwalkan';
-    openSheet('<div class="gr"></div><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><div class="pi ' + warna(p) + '">' + (IKON[p.kategori] || '&#128214;') + '</div><div><h2 style="margin:0">' + esc(p.nama) + '</h2><span class="chip">' + esc(p.kategori) + '</span></div></div><p class="m" style="font-size:13px;margin-bottom:10px">' + esc(p.desc) + '</p><dl><dt>Tujuan</dt><dd>' + esc(p.tujuan) + '</dd><dt>Jumlah sesi</dt><dd>' + p.sesi.length + ' sesi</dd><dt>Periode</dt><dd>' + esc(p.periode) + '</dd><dt>Mulai</dt><dd>' + mulai + '</dd><dt>Kuota</dt><dd>' + p.kuota + ' peserta (terisi ' + p.peserta.length + ')</dd></dl><div style="height:14px"></div>' + act);
-  }
-  function konfirmDaftar(id) {
-    var bt = batasProg(); if (bt) { toast(bt); return; }
-    var p = prog(id);
-    openSheet('<div class="gr"></div><h2>Daftar ke ' + esc(p.nama) + '?</h2><p class="m" style="font-size:13px">Pendaftaran akan dikirim ke pengurus untuk dikonfirmasi. Pastikan Anda bisa mengikuti seluruh ' + p.sesi.length + ' sesi.</p><label style="display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-size:13px;margin:14px 0"><input type="checkbox" id="ck" style="margin-top:3px"> Saya bersedia mengikuti seluruh sesi.</label><div class="err" id="ce"></div><button class="btn w" data-a="kirim-daftar" data-x="' + id + '">Kirim pendaftaran</button><button class="btn o w" style="margin-top:8px;font-size:13px" data-a="detail-prog" data-x="' + id + '">Kembali</button>');
-  }
-
   /* ---------- halaman dari menu ---------- */
   function pSel() {
     var m = mine(); if (m.length < 2) return '';
@@ -406,28 +327,8 @@
       window.open(B + 'unduh.php?jenis=tugas&prog=' + encodeURIComponent(S.a1) + '&id=' + encodeURIComponent(el.getAttribute('data-x')) + '&pid=' + encodeURIComponent(pid()) + '&n=' + encodeURIComponent(el.getAttribute('data-n')) + '&inline=1', '_blank', 'noopener');
     },
     'ubah-kumpul': function (el) { S.ubah = el.getAttribute('data-x'); rK(); },
-    'join': function () { S.jmsg = ''; S.jval = ''; rJoin(); },
-    'join-tab': function (el) { S.joinTab = el.getAttribute('data-x'); S.jmsg = ''; S.jval = ''; rJoin(); },
-    'join-kode': function () { joinKode($('jk').value); },
-    'join-taut': function () { var u = $('jt').value, m = (u || '').match(/gabung\/([A-Za-z0-9-]+)/); S.jval = u; if (!m) { S.jmsg = 'Tautan tidak dikenali. Pastikan tautan lengkap.'; rJoin(); return; } joinKode(m[1]); },
-    'terima-undang': function (el) { var u = db.undangan.filter(function (x) { return x.id === el.getAttribute('data-x'); })[0]; joinKode(u.kode); },
-    'tolak-undang': function (el) { db.undangan.forEach(function (u) { if (u.id === el.getAttribute('data-x')) u.status = 'ditolak'; }); save(); rJoin(); toast('Undangan ditolak'); },
     'kat': function (el) { S.cat = el.getAttribute('data-x'); rProgram(); },
     'fav': function (el) { var id = pid(), k = el.getAttribute('data-x'), f = readJSON(FAV + '_' + id, {}); f[k] = !f[k]; writeJSON(FAV + '_' + id, f); rProgram(); toast(f[k] ? 'Disimpan ke minat Anda' : 'Dihapus dari minat'); },
-    'detail-prog': function (el) { detailP(el.getAttribute('data-x')); },
-    'konfirm-daftar': function (el) { konfirmDaftar(el.getAttribute('data-x')); },
-    'kirim-daftar': function (el) {
-      if (!$('ck').checked) { $('ce').textContent = 'Centang dulu pernyataan di atas.'; return; }
-      var id = el.getAttribute('data-x');
-      if (batasProg()) { closeSheet(); toast(batasProg()); return; }
-      db.pendaftaran.push({ id: 'r' + Date.now().toString(36), pid: pid(), prog: id, tgl: TODAY, status: 'menunggu', alasan: '' });
-      save(); closeSheet(); rProgram(); toast('Pendaftaran dikirim, menunggu konfirmasi pengurus');
-    },
-    'batal-daftar': function (el) {
-      var id = el.getAttribute('data-x');
-      db.pendaftaran = db.pendaftaran.filter(function (r) { return !(r.pid === pid() && r.prog === id && r.status === 'menunggu'); });
-      save(); closeSheet(); rProgram(); toast('Pendaftaran dibatalkan');
-    },
     'pilih-prog': function (el) { S.prog = el.value; show(cur); },
     'cetak': function () {
       var p = cp(), t = p && p.sertif, st = $('pgs');
@@ -478,7 +379,7 @@
   });
 
   var pf = readJSON(PREF, {}); S.dark = !!pf.dark; S.notif = pf.notif !== false; document.documentElement.dataset.th = S.dark ? 'dark' : '';
-  window.PS = { go: go, drawer: drawer, openJoin: function () { S.jmsg = ''; S.jval = ''; rJoin(); }, closeSheet: closeSheet, keluar: keluar };
+  window.PS = { go: go, drawer: drawer, closeSheet: closeSheet, keluar: keluar };
   var r0 = parse(); S.a1 = r0.a || null; S.a2 = r0.b || null;
   show(pid() ? (r0.p || 'beranda') : 'login');
 })();

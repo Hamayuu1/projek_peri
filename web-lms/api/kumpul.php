@@ -6,6 +6,7 @@ require __DIR__ . '/db.php';
 require __DIR__ . '/berkas.php';
 require __DIR__ . '/guard.php';
 $sesi = wajibPeran('peserta');
+wajibCsrfHeader();
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') keluar(['ok' => false, 'pesan' => 'Hanya POST'], 405);
 if (empty($_POST) && empty($_FILES)) keluar(['ok' => false, 'pesan' => 'Permintaan terlalu besar atau kosong. Periksa batas post_max_size di php.ini.'], 400);
 

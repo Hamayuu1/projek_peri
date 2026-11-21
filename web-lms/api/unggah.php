@@ -4,6 +4,7 @@ require __DIR__ . '/db.php';
 require __DIR__ . '/berkas.php';
 require __DIR__ . '/guard.php';
 $sesi = wajibLogin();
+wajibCsrfHeader();
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') keluar(['ok' => false, 'pesan' => 'Hanya POST'], 405);
 
 $jenis = (string) ($_POST['jenis'] ?? '');

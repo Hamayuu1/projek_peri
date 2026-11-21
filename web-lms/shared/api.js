@@ -18,6 +18,10 @@
       if (body) x.setRequestHeader('Content-Type', 'application/json');
       if (metode !== 'GET' && Api.csrf) x.setRequestHeader('X-CSRF-Token', Api.csrf);
       x.send(body || null);
+      if (x.status === 401 && Api.peran && path !== 'logout.php') { // sesi berakhir saat sedang dipakai
+        Api.peran = null; Api.csrf = null; bersihkan();
+        peringatan('Sesi berakhir. Silakan login kembali.'); setTimeout(function () { location.reload(); }, 1500);
+      }
       if (x.status < 200 || x.status >= 300) return { ok: false, status: x.status, pesan: (function () { try { return JSON.parse(x.responseText).pesan; } catch (e) { return 'Server mengembalikan kode ' + x.status; } })() };
       return JSON.parse(x.responseText);
     } catch (e) { return null; }
@@ -26,9 +30,11 @@
     var d = new Date(), z = function (n) { return (n < 10 ? '0' : '') + n; };
     return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate());
   }
+  // Data peserta tidak boleh tertinggal di browser setelah keluar atau sesi berakhir.
+  function bersihkan() { try { window.localStorage.removeItem(S.KEY); } catch (e) {} }
   function muat() {
     var d = panggil('GET', 'muat.php');
-    if (d && d.status === 401) { Api.on = true; Api.terakhir = Date.now(); return false; } // API aktif, belum login
+    if (d && d.status === 401) { Api.on = true; Api.terakhir = Date.now(); Api.peran = null; Api.csrf = null; bersihkan(); return false; } // API aktif, belum login
     if (!d || !d.programs) return false;
     if (d.me) { Api.peran = d.me.peran; Api.csrf = d.me.csrf; delete d.me; } // token tidak disimpan di localStorage
     try { asli.call(window.localStorage, S.KEY, JSON.stringify(d)); } catch (e) { return false; }
@@ -68,6 +74,11 @@
     if (!t || !t.csrf) return null;
     var r = panggil('POST', peran === 'admin' ? 'login.php' : 'login_lembaga.php', JSON.stringify({ email: email, pw: pw, csrf: t.csrf }));
     if (r && r.ok) { muat(); return r.id; } return null;
+  };
+
+  Api.logout = function () {
+    if (Api.on) panggil('POST', 'logout.php', '{}');
+    Api.peran = null; Api.csrf = null; bersihkan();
   };
 
   // Aksi tunggal ke endpoint khusus (mis. 'batal_kumpul.php'). Mengembalikan {ok, pesan}.

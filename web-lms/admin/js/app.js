@@ -24,7 +24,7 @@
   }
   var db = load();
   function save() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} }
-  function loggedIn() { try { return sessionStorage.getItem(AUTH) === '1'; } catch (e) { return false; } }
+  function loggedIn() { return !!(window.Api && Api.on && Api.peran === 'admin'); } // status login ditentukan server, bukan browser
   function setLogin(v) { try { if (v) sessionStorage.setItem(AUTH, '1'); else sessionStorage.removeItem(AUTH); } catch (e) {} }
 
   var ui = { prog: 'dsa', sesi: null, daftarTab: 'menunggu', q: '' };
@@ -84,7 +84,7 @@
       var bd = '';
       return '<a href="#/' + k + '" class="' + (k === r ? 'on' : '') + '">' + (window.ICONS && window.ICONS[k] ? window.ICONS[k] : '') + '<span>' + ROUTES[k][0] + '</span>' + bd + '</a>';
     }).join('');
-    root.innerHTML = '<div class="app"><header class="mbar"><button class="burger" data-act="menu" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 6h18v2.5H3zM3 10.8h18v2.5H3zM3 15.6h18v2.5H3z"/></svg></button><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI</div></div></header><div class="scrim" data-act="menu-tutup"></div><aside class="side"><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI<small>Panel pengurus</small></div></div><nav class="nav">' + nav + '</nav><div class="who"><b>Pengurus PERI</b>admin@gmail.com<br><button class="btn o s" style="margin-top:8px" data-act="keluar">Keluar</button></div></aside><main class="main"><div class="top"><div><h1>' + ROUTES[r][0] + '</h1><p class="sub">' + ROUTES[r][1] + '</p></div><div id="topact"></div></div>' + VIEWS[r]() + '</main></div>';
+    root.innerHTML = '<div class="app"><header class="mbar"><button class="burger" data-act="menu" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 6h18v2.5H3zM3 10.8h18v2.5H3zM3 15.6h18v2.5H3z"/></svg></button><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI</div></div></header><div class="scrim" data-act="menu-tutup"></div><aside class="side"><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI<small>Panel pengurus</small></div></div><nav class="nav">' + nav + '</nav><div class="who"><b>Pengurus PERI</b><br><button class="btn o s" style="margin-top:8px" data-act="keluar">Keluar</button></div></aside><main class="main"><div class="top"><div><h1>' + ROUTES[r][0] + '</h1><p class="sub">' + ROUTES[r][1] + '</p></div><div id="topact"></div></div>' + VIEWS[r]() + '</main></div>';
     window.scrollTo(0, 0);
   }
   function viewLogin() {
@@ -334,7 +334,7 @@
   var ACT = {
     'pilih-prog': function (el) { ui.prog = el.value; ui.sesi = null; ui.q = ''; render(); },
     'pilih-sesi': function (el) { ui.sesi = el.value; render(); },
-    'keluar': function () { setLogin(false); render(); },
+    'keluar': function () { if (window.Api) Api.logout(); setLogin(false); render(); },
     'menu': function () { var ap = $('.app'); if (ap) ap.classList.toggle('open'); },
     'menu-tutup': function () { var ap = $('.app'); if (ap) ap.classList.remove('open'); },
     'tutup': closeModal,
@@ -529,8 +529,9 @@
     if (k === 'login') {
       var em = val(f, 'email'), pw = val(f, 'pw'), er = $('#lerr');
       if (!em || !pw) { er.textContent = 'Email dan kata sandi wajib diisi.'; return; }
-      var okA = (window.Api && Api.on) ? !!Api.login(em, pw, 'admin') : (em === 'admin@gmail.com' && pw === 'admin123');
-      if (!okA) { er.textContent = 'Email atau kata sandi salah.'; return; }
+      if (!window.Api || !Api.on) { er.textContent = 'Server LMS belum tersambung. Buka lewat alamat web LMS, bukan dari berkas.'; return; }
+      var okA = Api.login(em, pw, 'admin');
+      if (!okA) { er.textContent = 'Email atau kata sandi salah, atau terlalu banyak percobaan. Coba lagi beberapa menit lagi.'; return; }
       setLogin(true); location.hash = '#/dashboard'; render(); return;
     }
     var m = $('#modal'); if (m._submit) m._submit(f);
