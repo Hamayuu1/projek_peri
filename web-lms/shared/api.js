@@ -76,6 +76,9 @@
     if (r && r.ok) { muat(); return r.id; } return null;
   };
 
+  // Membaca (GET) dari endpoint khusus, mis. 'program_lembaga.php'. Mengembalikan {ok, ...} atau null.
+  Api.ambil = function (endpoint) { return Api.on ? panggil('GET', endpoint) : null; };
+
   Api.logout = function () {
     if (Api.on) panggil('POST', 'logout.php', '{}');
     Api.peran = null; Api.csrf = null; bersihkan();

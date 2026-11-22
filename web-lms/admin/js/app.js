@@ -123,7 +123,7 @@
 
   VIEWS.program = function () {
     var rows = db.programs.map(function (p) {
-      return '<tr><td><b>' + esc(p.nama) + '</b><div class="sm mut">' + esc(p.tujuan) + '</div></td><td>' + esc(p.kategori) + '</td><td>' + p.sesi.length + ' sesi</td><td>' + p.peserta.length + ' / ' + p.kuota + '</td><td>' + statusChip(p.status) + '</td><td><div class="acts"><button class="btn o s" data-act="ubah-prog" data-id="' + p.id + '">Ubah</button><button class="btn r s" data-act="hapus-prog" data-id="' + p.id + '">Hapus</button></div></td></tr>';
+      return '<tr><td><b>' + esc(p.nama) + '</b><div class="sm mut">' + esc(p.tujuan) + '</div>' + (p.lembaga ? '<div class="sm mut">Situs lembaga: ' + esc(p.lembaga) + '</div>' : '<div class="sm" style="color:#b45309">Belum terhubung ke program situs lembaga</div>') + '</td><td>' + esc(p.kategori) + '</td><td>' + p.sesi.length + ' sesi</td><td>' + p.peserta.length + ' / ' + p.kuota + '</td><td>' + statusChip(p.status) + '</td><td><div class="acts"><button class="btn o s" data-act="ubah-prog" data-id="' + p.id + '">Ubah</button><button class="btn r s" data-act="hapus-prog" data-id="' + p.id + '">Hapus</button></div></td></tr>';
     }).join('');
     return '<div class="card"><div class="hd"><h2>Daftar program (' + db.programs.length + ')</h2><button class="btn" data-act="tambah-prog">+ Tambah program</button></div><div class="tw"><table><thead><tr><th>Program</th><th>Kategori</th><th>Sesi</th><th>Peserta / Kuota</th><th>Pendaftaran</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" class="empty">Belum ada program</td></tr>') + '</tbody></table></div></div>';
   };
@@ -300,13 +300,28 @@
   }
   function opts(arr, cur) { return arr.map(function (a) { return '<option' + (a === cur ? ' selected' : '') + '>' + a + '</option>'; }).join(''); }
 
+  // Pilihan program situs lembaga (diambil dari Flask lewat server LMS). Nama yang sudah dipakai kelas lain tidak ditampilkan.
+  function lembagaField(p) {
+    var cur = p.lembaga || '', pakai = {};
+    db.programs.forEach(function (x) { if (x.lembaga && x.id !== p.id) pakai[x.lembaga.toLowerCase()] = 1; });
+    var r = window.Api && Api.ambil ? Api.ambil('program_lembaga.php') : null;
+    var daftar = (r && r.ok && r.program) ? r.program : null;
+    var o = '<option value="">- Belum dihubungkan -</option>', ada = false;
+    (daftar || []).forEach(function (n) {
+      if (n.toLowerCase() === cur.toLowerCase()) ada = true;
+      if (!pakai[n.toLowerCase()] || n.toLowerCase() === cur.toLowerCase()) o += '<option' + (n === cur ? ' selected' : '') + '>' + esc(n) + '</option>';
+    });
+    if (cur && !ada) o += '<option selected>' + esc(cur) + '</option>'; // nama lama tetap dipertahankan
+    return '<div class="fld"><label>Terhubung ke program situs lembaga</label><select name="lembaga">' + o + '</select><div class="sm mut">Peserta yang diterima di program ini pada situs lembaga otomatis masuk ke kelas ini.</div>' +
+      (daftar ? '' : '<div class="sm" style="color:#b45309">Daftar program situs lembaga tidak dapat dimuat. Pastikan Flask berjalan dan LMS_KUNCI sudah benar.</div>') + '</div>';
+  }
   function formProg(p) {
     p = p || { nama: '', kategori: 'Digital', tujuan: '', periode: 'Triwulanan', angkatan: '', kuota: 30, status: 'buka' };
     var st = [['buka', 'Dibuka'], ['segera', 'Segera dibuka'], ['tutup', 'Ditutup']].map(function (s) { return '<option value="' + s[0] + '"' + (s[0] === p.status ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('');
-    return '<div class="fld"><label>Nama program</label><input name="nama" value="' + esc(p.nama) + '"></div><div class="row2"><div class="fld"><label>Kategori</label><select name="kategori">' + opts(['Digital', 'Usaha', 'Kriya', 'Keuangan', 'Kepemimpinan'], p.kategori) + '</select></div><div class="fld"><label>Periode</label><select name="periode">' + opts(['Triwulanan', 'Sekali jalan'], p.periode) + '</select></div></div><div class="fld"><label>Tujuan</label><textarea name="tujuan" rows="2">' + esc(p.tujuan) + '</textarea></div><div class="row2"><div class="fld"><label>Angkatan</label><input name="angkatan" value="' + esc(p.angkatan) + '"></div><div class="fld"><label>Kuota peserta</label><input name="kuota" type="number" min="1" value="' + p.kuota + '"></div></div><div class="fld"><label>Pendaftaran</label><select name="status">' + st + '</select></div>';
+    return '<div class="fld"><label>Nama program</label><input name="nama" value="' + esc(p.nama) + '"></div><div class="row2"><div class="fld"><label>Kategori</label><select name="kategori">' + opts(['Digital', 'Usaha', 'Kriya', 'Keuangan', 'Kepemimpinan'], p.kategori) + '</select></div><div class="fld"><label>Periode</label><select name="periode">' + opts(['Triwulanan', 'Sekali jalan'], p.periode) + '</select></div></div>' + lembagaField(p) + '<div class="fld"><label>Tujuan</label><textarea name="tujuan" rows="2">' + esc(p.tujuan) + '</textarea></div><div class="row2"><div class="fld"><label>Angkatan</label><input name="angkatan" value="' + esc(p.angkatan) + '"></div><div class="fld"><label>Kuota peserta</label><input name="kuota" type="number" min="1" value="' + p.kuota + '"></div></div><div class="fld"><label>Pendaftaran</label><select name="status">' + st + '</select></div>';
   }
   function bacaProg(f, lama) {
-    var d = { nama: val(f, 'nama'), kategori: val(f, 'kategori'), periode: val(f, 'periode'), tujuan: val(f, 'tujuan'), angkatan: val(f, 'angkatan'), kuota: parseInt(val(f, 'kuota'), 10), status: val(f, 'status') };
+    var d = { nama: val(f, 'nama'), lembaga: val(f, 'lembaga'), kategori: val(f, 'kategori'), periode: val(f, 'periode'), tujuan: val(f, 'tujuan'), angkatan: val(f, 'angkatan'), kuota: parseInt(val(f, 'kuota'), 10), status: val(f, 'status') };
     if (!d.nama) { setErr(f, 'Nama program wajib diisi.'); return null; }
     if (!d.tujuan) { setErr(f, 'Tujuan program wajib diisi.'); return null; }
     if (!d.kuota || d.kuota < 1) { setErr(f, 'Kuota minimal 1 peserta.'); return null; }
@@ -532,6 +547,7 @@
       if (!window.Api || !Api.on) { er.textContent = 'Server LMS belum tersambung. Buka lewat alamat web LMS, bukan dari berkas.'; return; }
       var okA = Api.login(em, pw, 'admin');
       if (!okA) { er.textContent = 'Email atau kata sandi salah, atau terlalu banyak percobaan. Coba lagi beberapa menit lagi.'; return; }
+      db = load(); // muat() di api.js sudah mengisi data terbaru setelah login
       setLogin(true); location.hash = '#/dashboard'; render(); return;
     }
     var m = $('#modal'); if (m._submit) m._submit(f);

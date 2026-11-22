@@ -58,6 +58,14 @@ try {
         }
         return [(string) ($k['file'] ?? ''), 'berkas', null, null, null];
     };
+    // Satu program situs lembaga hanya boleh dihubungkan ke satu kelas.
+    $dipakaiLembaga = [];
+    foreach ($d['programs'] as $p) {
+        $n = mb_strtolower(trim((string) ($p['lembaga'] ?? '')));
+        if ($n === '') continue;
+        if (isset($dipakaiLembaga[$n])) keluar(['ok' => false, 'pesan' => 'Dua kelas tidak boleh terhubung ke program situs lembaga yang sama.'], 400);
+        $dipakaiLembaga[$n] = true;
+    }
     $pdo->beginTransaction();
     foreach (['lms_pendaftaran', 'lms_undangan', 'lms_program'] as $t) $pdo->exec("DELETE FROM $t"); // anak-anaknya ikut terhapus (CASCADE)
 
@@ -77,7 +85,8 @@ try {
         $kode = (string) ($p['kode'] ?? strtoupper($id));
         $kodeProg[$kode] = $id;
         $st = in_array($p['status'] ?? '', ['segera', 'buka', 'tutup'], true) ? $p['status'] : 'buka';
-        $inP->execute([$id, $p['nama'] ?? '', $p['kategori'] ?? '', $p['tujuan'] ?? '', $p['desc'] ?? '', $p['periode'] ?? '', $p['angkatan'] ?? '', (int) ($p['kuota'] ?? 30), $st, $kode, $p['fas'] ?? '', $p['ann'] ?? '', $no + 1, $nl[$id] ?? null]);
+        $inP->execute([$id, $p['nama'] ?? '', $p['kategori'] ?? '', $p['tujuan'] ?? '', $p['desc'] ?? '', $p['periode'] ?? '', $p['angkatan'] ?? '', (int) ($p['kuota'] ?? 30), $st, $kode, $p['fas'] ?? '', $p['ann'] ?? '', $no + 1,
+            array_key_exists('lembaga', $p) ? (trim((string) $p['lembaga']) === '' ? null : mb_substr(trim((string) $p['lembaga']), 0, 150)) : ($nl[$id] ?? null)]);
 
         $selesai = array_flip($p['selesai'] ?? []);
         foreach (array_unique($p['peserta'] ?? []) as $pid) {

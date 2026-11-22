@@ -47,7 +47,7 @@ try {
             'id' => $r['id'], 'nama' => $r['nama'], 'kategori' => $r['kategori'], 'tujuan' => (string) $r['tujuan'],
             'periode' => (string) $r['periode'], 'angkatan' => (string) $r['angkatan'], 'kuota' => (int) $r['kuota'],
             'status' => $r['status'], 'kode' => $r['kode_kelas'], 'fas' => (string) $r['fasilitator'],
-            'desc' => (string) $r['deskripsi'], 'ann' => (string) $r['pengumuman'],
+            'desc' => (string) $r['deskripsi'], 'ann' => (string) $r['pengumuman'], 'lembaga' => (string) ($r['nama_lembaga'] ?? ''),
             'peserta' => [], 'selesai' => [], 'sesi' => [], 'tugas' => [], 'kumpul' => (object) [],
         ];
     }
