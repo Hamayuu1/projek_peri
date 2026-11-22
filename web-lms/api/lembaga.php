@@ -46,12 +46,43 @@ function pastikanPengguna($pdo, $periId, $email) {
     } catch (Exception $e) { return null; }
 }
 
-// Peta nama program lembaga (huruf kecil) => id kelas LMS.
+// Peta id program lembaga => id kelas LMS.
 function petaProgram($pdo) {
     $peta = [];
-    foreach ($pdo->query("SELECT id, nama_lembaga FROM lms_program WHERE nama_lembaga IS NOT NULL") as $r)
-        $peta[mb_strtolower(trim($r['nama_lembaga']))] = $r['id'];
+    foreach ($pdo->query("SELECT id, id_lembaga FROM lms_program WHERE id_lembaga IS NOT NULL") as $r)
+        $peta[(int) $r['id_lembaga']] = $r['id'];
     return $peta;
+}
+
+// Katalog program situs lembaga dari Flask (publik): daftar [['id' => n, 'nama' => '...'], ...] atau null kalau gagal.
+function ambilProgramLembaga() {
+    global $LEMBAGA;
+    $ctx = stream_context_create(['http' => ['method' => 'GET', 'timeout' => 8, 'ignore_errors' => true]]);
+    $res = @file_get_contents($LEMBAGA['flask'] . '/api/program', false, $ctx);
+    $j = $res === false ? null : json_decode($res, true);
+    if (!is_array($j) || !isset($j['program']) || !is_array($j['program'])) return null;
+    $out = [];
+    foreach ($j['program'] as $p) if (isset($p['id']) && !empty($p['nama'])) $out[] = ['id' => (int) $p['id'], 'nama' => (string) $p['nama']];
+    return $out;
+}
+
+// Menyamakan kelas dengan katalog lembaga: kelas lama yang terhubung lewat nama diisi id-nya, dan nama kelas mengikuti nama di lembaga.
+function sinkronProgram($pdo) {
+    $kat = ambilProgramLembaga();
+    if ($kat === null) return;
+    try {
+        $nama = []; $perNama = [];
+        foreach ($kat as $p) { $nama[$p['id']] = $p['nama']; $perNama[mb_strtolower(trim($p['nama']))] = $p['id']; }
+        $up = $pdo->prepare("UPDATE lms_program SET id_lembaga = ? WHERE id = ? AND id_lembaga IS NULL");
+        foreach ($pdo->query("SELECT id, nama_lembaga FROM lms_program WHERE id_lembaga IS NULL AND nama_lembaga IS NOT NULL AND nama_lembaga <> ''")->fetchAll() as $r) {
+            $k = mb_strtolower(trim($r['nama_lembaga']));
+            if (!isset($perNama[$k])) continue;
+            try { $up->execute([$perNama[$k], $r['id']]); } catch (Exception $e) { /* id sudah dipakai kelas lain */ }
+        }
+        $un = $pdo->prepare("UPDATE lms_program SET nama = ? WHERE id = ?");
+        foreach ($pdo->query("SELECT id, nama, id_lembaga FROM lms_program WHERE id_lembaga IS NOT NULL")->fetchAll() as $r)
+            if (isset($nama[(int) $r['id_lembaga']]) && $nama[(int) $r['id_lembaga']] !== $r['nama']) $un->execute([$nama[(int) $r['id_lembaga']], $r['id']]);
+    } catch (Exception $e) { /* dilewati; tidak mengganggu aplikasi */ }
 }
 
 // Menyamakan keanggotaan kelas satu pengguna dengan pendaftarannya di lembaga.
@@ -63,7 +94,7 @@ function sinkronKelas($pdo, $uid, $periId, $peta, $baris = null) {
     if ($baris === null) return []; // Flask tidak terjangkau: jangan mengubah keanggotaan kelas
     $daftar = []; $diterima = [];
     foreach ($baris as $b) {
-        $pg = $peta[mb_strtolower(trim($b['program']))] ?? null;
+        $pg = $peta[(int) ($b['program_id'] ?? 0)] ?? null;
         $daftar[] = ['prog' => $pg, 'program' => $b['program'], 'status' => $b['status']];
         if ($b['status'] === 'diterima' && $pg !== null && !in_array($pg, $diterima, true)) $diterima[] = $pg;
     }
@@ -102,6 +133,7 @@ function sinkronSemua($pdo) {
     $hasil = [];
     $semua = ambilPendaftaran();
     if ($semua === null) return [];
+    sinkronProgram($pdo);
     try {
         $per = [];
         foreach ($semua as $b) $per[(int) $b['user_id']][] = $b;

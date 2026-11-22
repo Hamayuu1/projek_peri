@@ -123,7 +123,7 @@
 
   VIEWS.program = function () {
     var rows = db.programs.map(function (p) {
-      return '<tr><td><b>' + esc(p.nama) + '</b><div class="sm mut">' + esc(p.tujuan) + '</div>' + (p.lembaga ? '' : '<div class="sm" style="color:#b45309">Belum terhubung ke program situs lembaga. Klik Ubah untuk memilih.</div>') + '</td><td>' + esc(p.kategori) + '</td><td>' + p.sesi.length + ' sesi</td><td>' + p.peserta.length + ' / ' + p.kuota + '</td><td>' + statusChip(p.status) + '</td><td><div class="acts"><button class="btn o s" data-act="ubah-prog" data-id="' + p.id + '">Ubah</button><button class="btn r s" data-act="hapus-prog" data-id="' + p.id + '">Hapus</button></div></td></tr>';
+      return '<tr><td><b>' + esc(p.nama) + '</b><div class="sm mut">' + esc(p.tujuan) + '</div>' + (p.idLembaga ? '' : '<div class="sm" style="color:#b45309">Belum terhubung ke program situs lembaga. Klik Ubah untuk memilih.</div>') + '</td><td>' + esc(p.kategori) + '</td><td>' + p.sesi.length + ' sesi</td><td>' + p.peserta.length + ' / ' + p.kuota + '</td><td>' + statusChip(p.status) + '</td><td><div class="acts"><button class="btn o s" data-act="ubah-prog" data-id="' + p.id + '">Ubah</button><button class="btn r s" data-act="hapus-prog" data-id="' + p.id + '">Hapus</button></div></td></tr>';
     }).join('');
     return '<div class="card"><div class="hd"><h2>Daftar program (' + db.programs.length + ')</h2><button class="btn" data-act="tambah-prog">+ Tambah program</button></div><div class="tw"><table><thead><tr><th>Program</th><th>Kategori</th><th>Sesi</th><th>Peserta / Kuota</th><th>Pendaftaran</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" class="empty">Belum ada program</td></tr>') + '</tbody></table></div></div>';
   };
@@ -300,23 +300,23 @@
   }
   function opts(arr, cur) { return arr.map(function (a) { return '<option' + (a === cur ? ' selected' : '') + '>' + a + '</option>'; }).join(''); }
 
-  // Isian "Nama program": pilihan dari program situs lembaga (diambil dari Flask lewat server LMS), sehingga nama di LMS
-  // selalu sama dengan nama saat peserta mendaftar. Nama yang sudah dipakai kelas lain tidak ditampilkan.
+  // Isian "Nama program": pilihan dari program situs lembaga (diambil dari Flask lewat server LMS) dan dihubungkan lewat ID program,
+  // sehingga nama di LMS selalu sama dengan nama saat peserta mendaftar. Program yang sudah dipakai kelas lain tidak ditampilkan.
   function namaField(p) {
-    var cur = p.lembaga || '', pakai = {};
-    db.programs.forEach(function (x) { if (x.lembaga && x.id !== p.id) pakai[x.lembaga.toLowerCase()] = 1; });
+    var cur = p.idLembaga || 0, pakai = {};
+    db.programs.forEach(function (x) { if (x.idLembaga && x.id !== p.id) pakai[x.idLembaga] = 1; });
     var r = window.Api && Api.ambil ? Api.ambil('program_lembaga.php') : null;
     var daftar = (r && r.ok && r.program) ? r.program : null;
     if (!daftar) // Flask tidak terjangkau: nama tetap bisa diubah manual, tautan lama dipertahankan
-      return '<div class="fld"><label>Nama program</label><input name="nama" value="' + esc(p.nama) + '"><input type="hidden" name="lembaga" value="' + esc(cur) + '">' +
+      return '<div class="fld"><label>Nama program</label><input name="nama" value="' + esc(p.nama) + '"><input type="hidden" name="idl" value="' + (cur || '') + '">' +
         '<div class="sm" style="color:#b45309">Daftar program situs lembaga tidak dapat dimuat. Pastikan Flask berjalan dan LMS_KUNCI sudah benar.</div></div>';
     var o = '<option value="">- Pilih program -</option>', ada = false;
-    daftar.forEach(function (n) {
-      if (n.toLowerCase() === cur.toLowerCase()) ada = true;
-      if (!pakai[n.toLowerCase()] || n.toLowerCase() === cur.toLowerCase()) o += '<option' + (n === cur ? ' selected' : '') + '>' + esc(n) + '</option>';
+    daftar.forEach(function (x) {
+      if (x.id === cur) ada = true;
+      if (!pakai[x.id] || x.id === cur) o += '<option value="' + x.id + '" data-n="' + esc(x.nama) + '"' + (x.id === cur ? ' selected' : '') + '>' + esc(x.nama) + '</option>';
     });
-    if (cur && !ada) o += '<option selected>' + esc(cur) + '</option>'; // nama lama tetap dipertahankan
-    return '<div class="fld"><label>Nama program</label><select name="lembaga">' + o + '</select>' +
+    if (cur && !ada) o += '<option value="' + cur + '" data-n="' + esc(p.nama) + '" selected>' + esc(p.nama) + ' (tidak ada lagi di situs lembaga)</option>';
+    return '<div class="fld"><label>Nama program</label><select name="idl">' + o + '</select>' +
       '<div class="sm mut">Dipilih dari program di situs lembaga, agar nama sama dengan yang dilihat peserta saat mendaftar. Peserta yang diterima di program ini otomatis masuk ke kelas ini.</div></div>';
   }
   function formProg(p) {
@@ -325,7 +325,7 @@
     return namaField(p) + '<div class="row2"><div class="fld"><label>Kategori</label><select name="kategori">' + opts(['Digital', 'Usaha', 'Kriya', 'Keuangan', 'Kepemimpinan'], p.kategori) + '</select></div><div class="fld"><label>Periode</label><select name="periode">' + opts(['Triwulanan', 'Sekali jalan'], p.periode) + '</select></div></div><div class="fld"><label>Tujuan</label><textarea name="tujuan" rows="2">' + esc(p.tujuan) + '</textarea></div><div class="row2"><div class="fld"><label>Angkatan</label><input name="angkatan" value="' + esc(p.angkatan) + '"></div><div class="fld"><label>Kuota peserta</label><input name="kuota" type="number" min="1" value="' + p.kuota + '"></div></div><div class="fld"><label>Pendaftaran</label><select name="status">' + st + '</select></div>';
   }
   function bacaProg(f, lama) {
-    var d = { nama: f.elements['nama'] ? val(f, 'nama') : val(f, 'lembaga'), lembaga: val(f, 'lembaga'), kategori: val(f, 'kategori'), periode: val(f, 'periode'), tujuan: val(f, 'tujuan'), angkatan: val(f, 'angkatan'), kuota: parseInt(val(f, 'kuota'), 10), status: val(f, 'status') };
+    var d = { nama: f.elements['nama'] ? val(f, 'nama') : (f.elements['idl'].selectedOptions[0] ? f.elements['idl'].selectedOptions[0].getAttribute('data-n') || '' : ''), idLembaga: parseInt(val(f, 'idl'), 10) || null, kategori: val(f, 'kategori'), periode: val(f, 'periode'), tujuan: val(f, 'tujuan'), angkatan: val(f, 'angkatan'), kuota: parseInt(val(f, 'kuota'), 10), status: val(f, 'status') };
     if (!d.nama) { setErr(f, f.elements['nama'] ? 'Nama program wajib diisi.' : 'Pilih program dari situs lembaga.'); return null; }
     if (!d.tujuan) { setErr(f, 'Tujuan program wajib diisi.'); return null; }
     if (!d.kuota || d.kuota < 1) { setErr(f, 'Kuota minimal 1 peserta.'); return null; }

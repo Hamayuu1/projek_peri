@@ -25,6 +25,7 @@ $jam = function ($j) {
 
 try {
     $nl = $pdo->query("SELECT id, nama_lembaga FROM lms_program")->fetchAll(PDO::FETCH_KEY_PAIR);
+    $il = $pdo->query("SELECT id, id_lembaga FROM lms_program")->fetchAll(PDO::FETCH_KEY_PAIR);
     $mOld = []; foreach ($pdo->query("SELECT id, materi_nama, materi_kb, materi_tipe, materi_path, materi_url FROM lms_sesi") as $r) $mOld[$r['id']] = $r;
     $kOld = []; $kMap = []; foreach ($pdo->query("SELECT tugas_id, user_id, urutan, tipe, nama, path, url, kb FROM lms_pengumpulan_item ORDER BY urutan") as $r) { $kOld[] = $r; $kMap[$r['tugas_id'] . '|' . $r['user_id']][] = $r; }
     $dipakai = [];
@@ -61,15 +62,15 @@ try {
     // Satu program situs lembaga hanya boleh dihubungkan ke satu kelas.
     $dipakaiLembaga = [];
     foreach ($d['programs'] as $p) {
-        $n = mb_strtolower(trim((string) ($p['lembaga'] ?? '')));
-        if ($n === '') continue;
+        $n = (int) ($p['idLembaga'] ?? 0);
+        if ($n <= 0) continue;
         if (isset($dipakaiLembaga[$n])) keluar(['ok' => false, 'pesan' => 'Dua kelas tidak boleh terhubung ke program situs lembaga yang sama.'], 400);
         $dipakaiLembaga[$n] = true;
     }
     $pdo->beginTransaction();
     foreach (['lms_pendaftaran', 'lms_undangan', 'lms_program'] as $t) $pdo->exec("DELETE FROM $t"); // anak-anaknya ikut terhapus (CASCADE)
 
-    $inP = $pdo->prepare("INSERT INTO lms_program (id,nama,kategori,tujuan,deskripsi,periode,angkatan,kuota,status,kode_kelas,fasilitator,pengumuman,urutan,nama_lembaga) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    $inP = $pdo->prepare("INSERT INTO lms_program (id,nama,kategori,tujuan,deskripsi,periode,angkatan,kuota,status,kode_kelas,fasilitator,pengumuman,urutan,nama_lembaga,id_lembaga) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     $inPP = $pdo->prepare("INSERT INTO lms_peserta_program (program_id,user_id,status,bergabung_pada,selesai_pada) VALUES (?,?,?,?,?)");
     $inS = $pdo->prepare("INSERT INTO lms_sesi (id,program_id,no,judul,tanggal,jam_mulai,jam_selesai,mode,tempat,materi_nama,materi_kb,materi_tipe,materi_path,materi_url) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     $inH = $pdo->prepare("INSERT INTO lms_kehadiran (sesi_id,user_id,dicatat_pada) VALUES (?,?,?)");
@@ -86,7 +87,8 @@ try {
         $kodeProg[$kode] = $id;
         $st = in_array($p['status'] ?? '', ['segera', 'buka', 'tutup'], true) ? $p['status'] : 'buka';
         $inP->execute([$id, $p['nama'] ?? '', $p['kategori'] ?? '', $p['tujuan'] ?? '', $p['desc'] ?? '', $p['periode'] ?? '', $p['angkatan'] ?? '', (int) ($p['kuota'] ?? 30), $st, $kode, $p['fas'] ?? '', $p['ann'] ?? '', $no + 1,
-            array_key_exists('lembaga', $p) ? (trim((string) $p['lembaga']) === '' ? null : mb_substr(trim((string) $p['lembaga']), 0, 150)) : ($nl[$id] ?? null)]);
+            $nl[$id] ?? null,
+            array_key_exists('idLembaga', $p) ? ((int) $p['idLembaga'] > 0 ? (int) $p['idLembaga'] : null) : ($il[$id] ?? null)]);
 
         $selesai = array_flip($p['selesai'] ?? []);
         foreach (array_unique($p['peserta'] ?? []) as $pid) {

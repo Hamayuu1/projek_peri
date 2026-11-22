@@ -175,6 +175,16 @@ def siapkan_database():
                     "Impor schema.sql lewat phpMyAdmin (tab Import)."
                 )
 
+            # Pendaftaran menyimpan id program (dipakai LMS). Basis data lama ditambah kolomnya dan diisi dari nama program.
+            cur.execute("SHOW COLUMNS FROM pendaftaran_program LIKE 'program_id'")
+            if not cur.fetchone():
+                cur.execute("ALTER TABLE pendaftaran_program ADD COLUMN program_id INT UNSIGNED NULL AFTER program")
+                print("Kolom pendaftaran_program.program_id ditambahkan.", flush=True)
+            cur.execute(
+                "UPDATE pendaftaran_program pp JOIN program pr ON pr.nama = pp.program "
+                "SET pp.program_id = pr.id WHERE pp.program_id IS NULL"
+            )
+
             cur.execute("SELECT COUNT(*) AS n FROM program")
             if cur.fetchone()["n"] == 0:
                 for urut, (nama, kat, desk, per, lebih) in enumerate(PROGRAM_AWAL, start=1):
@@ -599,11 +609,13 @@ def daftar_program():
         if ada:
             return jsonify({"error": "Anda sudah terdaftar pada program ini.",
                             "kode": "sudah_terdaftar", "data": ada}), 409
+        cur.execute("SELECT id FROM program WHERE nama=%s", (program,))
+        pr = cur.fetchone()
         try:
             cur.execute(
-                "INSERT INTO pendaftaran_program (user_id, program, nama, email, wa) "
-                "VALUES (%s,%s,%s,%s,%s)",
-                (user["id"], program, nama, email, wa),
+                "INSERT INTO pendaftaran_program (user_id, program, program_id, nama, email, wa) "
+                "VALUES (%s,%s,%s,%s,%s,%s)",
+                (user["id"], program, pr["id"] if pr else None, nama, email, wa),
             )
         except pymysql.err.IntegrityError:
             # Dua permintaan bersamaan: kunci UNIQUE di database yang menjadi penentu.
@@ -659,8 +671,9 @@ def lms_pendaftaran():
         return galat("Tidak diizinkan.", 403)
     uid = data_json().get("user_id")
     sql = (
-        "SELECT pp.user_id, u.email, pp.program, pp.status, pp.nama "
+        "SELECT pp.user_id, u.email, pr.id AS program_id, COALESCE(pr.nama, pp.program) AS program, pp.status, pp.nama "
         "FROM pendaftaran_program pp JOIN users u ON u.id = pp.user_id "
+        "LEFT JOIN program pr ON pr.id = pp.program_id "
         "WHERE u.role = 'pendaftar'"
     )
     arg = ()
@@ -673,7 +686,8 @@ def lms_pendaftaran():
         cur.execute(sql + " ORDER BY pp.id", arg)
         baris = cur.fetchall()
     return jsonify({"pendaftaran": [
-        {"user_id": b["user_id"], "email": b["email"], "program": b["program"], "status": b["status"], "nama": b["nama"]}
+        {"user_id": b["user_id"], "email": b["email"], "program_id": b["program_id"], "program": b["program"],
+         "status": b["status"], "nama": b["nama"]}
         for b in baris
     ]})
 
@@ -806,6 +820,7 @@ def hapus_program(pid: int):
     if not lama:
         return galat("Program tidak ditemukan.", 404)
     with db().cursor() as cur:
+        cur.execute("UPDATE pendaftaran_program SET program_id=NULL WHERE program_id=%s", (pid,))
         cur.execute("DELETE FROM program WHERE id=%s", (pid,))
     hapus_berkas_foto(lama["gambar"])
     return jsonify({"ok": True})

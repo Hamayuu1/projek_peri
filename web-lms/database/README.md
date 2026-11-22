@@ -7,6 +7,7 @@ Tidak ada lagi data contoh: akun admin dibuat dengan skrip, peserta masuk otomat
 - `lms_schema.sql` membuat database `peri_lms` dan tabel-tabelnya.
 - `migrasi_02_berkas.sql`, `migrasi_03_item.sql` menambah fitur berkas dan isian pengumpulan.
 - `migrasi_04_admin.sql` membuat tabel `lms_admin` dan `lms_percobaan_login`.
+- `migrasi_06_id_lembaga.sql` menambah `lms_program.id_lembaga` (penghubung kelas LMS ke program situs lembaga lewat ID). Kelas lama yang terhubung lewat nama otomatis diisi ID-nya saat panel dibuka dan Flask berjalan.
 - `migrasi_05_lembaga.sql` menambah kolom untuk tautan ke web lembaga (`users.peri_user_id`, `lms_program.nama_lembaga`, status `nonaktif`). Aman dijalankan berulang.
 - `buat_admin.php` membuat atau mengganti kata sandi admin LMS (dijalankan dari terminal).
 - `buat_pengguna_db.sql` membuat pengguna MySQL khusus berhak akses minimum (untuk server sebenarnya).
@@ -15,11 +16,12 @@ Tidak ada lagi data contoh: akun admin dibuat dengan skrip, peserta masuk otomat
 ## Cara memasang (Laragon)
 1. Nyalakan Laragon, klik **Start All** (Apache dan MySQL harus berjalan).
 2. Salin folder `web-lms` ke folder web Laragon (`C:\laragon\www\`).
-3. Buka HeidiSQL dari menu Laragon, lalu import berurutan: `lms_schema.sql`, `migrasi_02_berkas.sql`, `migrasi_03_item.sql`, `migrasi_04_admin.sql`, `migrasi_05_lembaga.sql` (encoding **UTF-8**, tekan F9).
+3. Buka HeidiSQL dari menu Laragon, lalu import berurutan: `lms_schema.sql`, `migrasi_02_berkas.sql`, `migrasi_03_item.sql`, `migrasi_04_admin.sql`, `migrasi_05_lembaga.sql`, `migrasi_06_id_lembaga.sql` (encoding **UTF-8**, tekan F9).
 4. Salin `web-lms/.env.example` menjadi `web-lms/.env`, lalu isi.
    Buat satu kunci rahasia (`python -c "import secrets;print(secrets.token_hex(32))"`), isikan sebagai `LMS_KUNCI` di `web-lms/.env` dan `PERI_LMS_KUNCI` di `web-lembaga/peri-backend/.env`. LMS mengambil data pendaftaran lewat Flask memakai kunci ini, bukan membaca database `peri`.
 5. Buat admin: `php database/buat_admin.php emailanda@contoh.com` (di folder `web-lms`).
-6. Buka `http://localhost/web-lms/admin/` atau `http://localhost/web-lms/peserta/`.
+6. Jalankan ulang Flask sekali (kolom `program_id` di tabel pendaftaran lembaga ditambahkan otomatis saat Flask mulai).
+7. Buka `http://localhost/web-lms/admin/` atau `http://localhost/web-lms/peserta/`.
 
 ## Server sebenarnya
 - Jalankan `buat_pengguna_db.sql` (setelah mengganti kata sandinya), lalu isi `LMS_DB_USER` dan `LMS_DB_PASS` di `.env`. Jangan memakai `root`.
