@@ -23,7 +23,7 @@ Tidak ada permintaan lintas situs dari browser (login peserta diteruskan oleh se
 - `PERI_HTTPS=1` di `peri-backend/.env`. Jalur `/api/lms/pendaftaran` hanya dipakai server LMS, sebaiknya tidak diteruskan oleh reverse proxy ke publik.
 
 ## 5. Database
-- Impor `lms_schema.sql`, `migrasi_02`, `migrasi_03`, `migrasi_04`, lalu `buat_pengguna_db.sql`.
+- Impor `lms_schema.sql`, `migrasi_02`, `migrasi_03`, `migrasi_04`, `migrasi_05`, lalu `buat_pengguna_db.sql`.
 - Jika pernah berisi data contoh, jalankan `bersihkan_data_contoh.sql` sekali.
 - Buat admin: `php database/buat_admin.php email@anda.com`.
 

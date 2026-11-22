@@ -1,7 +1,7 @@
 # Skenario uji integrasi web lembaga dan LMS
 
 Jalankan di Laragon (Apache, MySQL, dan Flask hidup) setelah mengikuti `database/README.md`. Centang yang berhasil; catat yang gagal beserta pesan galatnya.
-Siapkan dua akun pendaftar di situs lembaga (A dan B) dan satu program di LMS yang kolom `nama_lembaga`-nya sama persis dengan nama program di situs lembaga.
+Siapkan dua akun pendaftar di situs lembaga (A dan B) dan satu program di LMS, lalu hubungkan dengan: `UPDATE lms_program SET nama_lembaga = 'Nama Program Di Situs Lembaga' WHERE id = 'ID_KELAS';` (nama harus sama persis).
 
 ## 1. Pemasangan
 | # | Langkah | Hasil yang diharapkan | OK |
