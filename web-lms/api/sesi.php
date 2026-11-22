@@ -4,7 +4,11 @@ require_once __DIR__ . '/db.php';
 
 function mulaiSesi() {
     if (session_status() === PHP_SESSION_ACTIVE) return;
-    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+    global $ENV_LMS;
+    // Cookie 'secure' bila HTTPS langsung, di belakang proxy (X-Forwarded-Proto), atau dipaksa lewat LMS_HTTPS=1 di .env.
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
+        || (($ENV_LMS['LMS_HTTPS'] ?? '') === '1');
     ini_set('session.use_strict_mode', '1');
     ini_set('session.use_only_cookies', '1');
     session_name('lms_sesi');

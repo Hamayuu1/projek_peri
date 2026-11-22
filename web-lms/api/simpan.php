@@ -126,5 +126,6 @@ try {
     keluar(['ok' => true]);
 } catch (Exception $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
-    keluar(['ok' => false, 'pesan' => 'Gagal menyimpan: ' . $e->getMessage()], 500);
+    error_log('LMS simpan: ' . $e->getMessage());
+    keluar(['ok' => false, 'pesan' => 'Gagal menyimpan. Coba lagi atau hubungi pengurus.'], 500);
 }

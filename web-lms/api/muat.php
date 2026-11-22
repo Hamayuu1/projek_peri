@@ -118,5 +118,6 @@ try {
     $out = ['me' => ['peran' => $sesi['peran'], 'csrf' => tokenCsrf()], 'peserta' => $peserta, 'programs' => array_values($progs), 'undangan' => $und, 'pendaftaran' => $dft, 'pendaftaranLembaga' => $dftLembaga];
     keluar($sesi['peran'] === 'admin' ? $out : batasiPeserta($out, $sesi['uid']));
 } catch (Exception $e) {
-    keluar(['ok' => false, 'pesan' => 'Gagal membaca data: ' . $e->getMessage()], 500);
+    error_log('LMS muat: ' . $e->getMessage());
+    keluar(['ok' => false, 'pesan' => 'Gagal membaca data. Coba lagi atau hubungi pengurus.'], 500);
 }
