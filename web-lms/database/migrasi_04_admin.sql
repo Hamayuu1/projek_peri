@@ -1,6 +1,8 @@
 -- Tahap 1a: akun admin LMS terpisah dari admin web lembaga, dan pencatat percobaan login.
--- Jalankan sekali pada database peri_lms (phpMyAdmin > Impor, atau: mysql -u root peri_lms < migrasi_04_admin.sql).
+-- Aman dijalankan berulang. Cara: mysql -u root < migrasi_04_admin.sql
 -- Akun admin dibuat lewat: php database/buat_admin.php email@contoh.com  (kata sandi tidak ditulis di berkas SQL).
+
+USE peri_lms;
 
 CREATE TABLE IF NOT EXISTS lms_admin (
   id            INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
