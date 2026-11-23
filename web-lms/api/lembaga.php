@@ -67,7 +67,9 @@ function ambilProgramLembaga() {
 }
 
 // Menyamakan kelas dengan katalog lembaga: kelas lama yang terhubung lewat nama diisi id-nya, dan nama kelas mengikuti nama di lembaga.
-function sinkronProgram($pdo) {
+// $buat = true (hanya saat admin memuat data): program lembaga yang belum punya kelas dibuatkan kelas kosong otomatis.
+// Dibatasi untuk admin supaya salinan data admin yang sedang terbuka tidak tertinggal dari server.
+function sinkronProgram($pdo, $buat = false) {
     $kat = ambilProgramLembaga();
     if ($kat === null) return;
     try {
@@ -82,6 +84,15 @@ function sinkronProgram($pdo) {
         $un = $pdo->prepare("UPDATE lms_program SET nama = ? WHERE id = ?");
         foreach ($pdo->query("SELECT id, nama, id_lembaga FROM lms_program WHERE id_lembaga IS NOT NULL")->fetchAll() as $r)
             if (isset($nama[(int) $r['id_lembaga']]) && $nama[(int) $r['id_lembaga']] !== $r['nama']) $un->execute([$nama[(int) $r['id_lembaga']], $r['id']]);
+        if ($buat) {
+            $terhubung = array_flip(array_map('intval', array_keys(petaProgram($pdo))));
+            $in = $pdo->prepare("INSERT INTO lms_program (id,nama,kategori,tujuan,deskripsi,periode,angkatan,kuota,status,kode_kelas,fasilitator,pengumuman,urutan,nama_lembaga,id_lembaga) VALUES (?,?,'Digital','','','Triwulanan','',30,'buka',?,'Tim fasilitator PERI','',0,?,?)");
+            foreach ($kat as $p) {
+                if (isset($terhubung[$p['id']])) continue;
+                try { $in->execute(['L' . $p['id'], mb_substr($p['nama'], 0, 150), 'LMS' . $p['id'], mb_strtolower(trim($p['nama'])), $p['id']]); }
+                catch (Exception $e) { /* id atau kode sudah ada: dilewati */ }
+            }
+        }
     } catch (Exception $e) { /* dilewati; tidak mengganggu aplikasi */ }
 }
 
@@ -136,11 +147,11 @@ function sinkronKelas($pdo, $uid, $periId, $peta, $baris = null) {
 // Dipanggil setiap data dimuat: akun peserta yang sudah diterima dibuatkan otomatis, lalu kelas disamakan.
 // Kalau database lembaga belum ada atau Flask belum pernah dijalankan, bagian ini dilewati tanpa mengganggu aplikasi.
 // Hasil: daftar pendaftaran untuk ditampilkan: [['pid' => ..., 'prog' => ..., 'program' => ..., 'status' => ...], ...]
-function sinkronSemua($pdo) {
+function sinkronSemua($pdo, $buatKelas = false) {
     $hasil = [];
     $semua = ambilPendaftaran();
     if ($semua === null) return [];
-    sinkronProgram($pdo);
+    sinkronProgram($pdo, $buatKelas);
     try {
         $per = [];
         foreach ($semua as $b) $per[(int) $b['user_id']][] = $b;

@@ -37,12 +37,22 @@ Siapkan dua akun pendaftar di situs lembaga (A dan B). Di panel admin LMS buat s
 | 4.3 | A membatalkan pengumpulan | Hilang di admin; berkas fisik di `uploads/` ikut terhapus | [ ] |
 | 4.4 | Login sebagai B, buka tautan unduh berkas A (ubah `pid` di URL) | Ditolak atau berkas milik B sendiri yang diberikan | [ ] |
 | 4.5 | A mencoba membuka halaman admin | Tidak bisa melihat data admin; `simpan.php` mengembalikan 403 | [ ] |
+| 4.6 | A mengumpulkan tugas saat admin masih membuka halaman lama; admin lalu mengubah apa saja dan menyimpan | Pengumpulan A tetap ada setelah admin refresh | [ ] |
+| 4.7 | Peserta B (bukan anggota kelas A) membuka tautan `unduh.php?jenis=materi&id=` milik kelas A | Ditolak (404) | [ ] |
 
 ## 5. Sesi
 | # | Langkah | Hasil | OK |
 |---|---|---|---|
 | 5.1 | Setelah login, hapus cookie `lms_sesi` di DevTools lalu klik fitur apa pun | Muncul "Sesi berakhir", halaman kembali ke login | [ ] |
 | 5.2 | Setelah Keluar, periksa Application > Local Storage | Kunci `peri_lms_v1` tidak ada (data peserta tidak tertinggal) | [ ] |
+
+## 5b. Kelas otomatis dari katalog lembaga
+| # | Langkah | Hasil | OK |
+|---|---|---|---|
+| 5b.1 | Di web lembaga (admin) buat program baru, lalu login admin LMS | Kelas baru muncul di daftar program LMS dengan nama yang sama (id `L<nomor>`, kode `LMS<nomor>`) | [ ] |
+| 5b.2 | Muat ulang halaman admin LMS beberapa kali | Tidak ada kelas ganda | [ ] |
+| 5b.3 | Peserta mendaftar ke program baru, admin menerima | Peserta masuk ke kelas itu saat login | [ ] |
+| 5b.4 | Login sebagai peserta (tanpa admin) setelah program baru dibuat di lembaga | Kelas belum dibuat; baru muncul saat admin memuat data | [ ] |
 
 ## 6. Catatan hasil
 Tulis di sini: tanggal uji, versi commit (`git log -1`), dan hal yang gagal.
