@@ -107,21 +107,28 @@ function sinkronKelas($pdo, $uid, $periId, $peta, $baris = null) {
 
     $m = $pdo->prepare("SELECT program_id, status FROM lms_peserta_program WHERE user_id = ?");
     $m->execute([$uid]);
-    $ada = $m->fetch();
-    $masuk = function ($pg) use ($pdo, $uid) {
-        $pdo->prepare("INSERT INTO lms_peserta_program (program_id, user_id, status, bergabung_pada) VALUES (?, ?, 'aktif', ?)")->execute([$pg, $uid, date('Y-m-d H:i:s')]);
-    };
-    if (!$ada) {
-        if ($diterima) $masuk($diterima[0]);
-    } elseif ($ada['status'] !== 'selesai') {
-        if (in_array($ada['program_id'], $diterima, true)) {
-            if ($ada['status'] === 'nonaktif') $pdo->prepare("UPDATE lms_peserta_program SET status = 'aktif' WHERE user_id = ?")->execute([$uid]);
-        } elseif ($diterima) {
-            $pdo->prepare("DELETE FROM lms_peserta_program WHERE user_id = ?")->execute([$uid]);
-            $masuk($diterima[0]);
-        } elseif ($ada['status'] === 'aktif') {
-            $pdo->prepare("UPDATE lms_peserta_program SET status = 'nonaktif' WHERE user_id = ?")->execute([$uid]);
+    $semuaBaris = $m->fetchAll();
+    $punya = []; $kelola = []; // kelola = keanggotaan aktif/nonaktif; yang selesai tidak pernah diubah
+    foreach ($semuaBaris as $r) { $punya[$r['program_id']] = true; if ($r['status'] !== 'selesai') $kelola[$r['program_id']] = $r['status']; }
+    $terdaftar = []; foreach ($daftar as $d) if ($d['prog'] !== null) $terdaftar[$d['prog']] = $d['status'];
+
+    if ($diterima) {
+        $sudahDiterima = array_intersect(array_keys($kelola), $diterima);
+        if ($sudahDiterima) {
+            foreach ($sudahDiterima as $pg) if ($kelola[$pg] === 'nonaktif')
+                $pdo->prepare("UPDATE lms_peserta_program SET status = 'aktif' WHERE user_id = ? AND program_id = ?")->execute([$uid, $pg]);
+        } else {
+            $baru = null; foreach ($diterima as $pg) if (!isset($punya[$pg])) { $baru = $pg; break; }
+            if ($baru !== null) {
+                foreach (array_keys($kelola) as $pg) $pdo->prepare("DELETE FROM lms_peserta_program WHERE user_id = ? AND program_id = ?")->execute([$uid, $pg]);
+                $pdo->prepare("INSERT INTO lms_peserta_program (program_id, user_id, status, bergabung_pada) VALUES (?, ?, 'aktif', ?)")->execute([$baru, $uid, date('Y-m-d H:i:s')]);
+            }
         }
+    } else {
+        // Dinonaktifkan hanya kalau kelas itu memang terhubung ke pendaftarannya yang sudah tidak berstatus diterima.
+        foreach ($kelola as $pg => $st)
+            if ($st === 'aktif' && isset($terdaftar[$pg]))
+                $pdo->prepare("UPDATE lms_peserta_program SET status = 'nonaktif' WHERE user_id = ? AND program_id = ?")->execute([$uid, $pg]);
     }
     return $daftar;
 }

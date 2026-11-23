@@ -28,6 +28,8 @@ try {
     $il = $pdo->query("SELECT id, id_lembaga FROM lms_program")->fetchAll(PDO::FETCH_KEY_PAIR);
     $mOld = []; foreach ($pdo->query("SELECT id, materi_nama, materi_kb, materi_tipe, materi_path, materi_url FROM lms_sesi") as $r) $mOld[$r['id']] = $r;
     $kOld = []; $kMap = []; foreach ($pdo->query("SELECT tugas_id, user_id, urutan, tipe, nama, path, url, kb FROM lms_pengumpulan_item ORDER BY urutan") as $r) { $kOld[] = $r; $kMap[$r['tugas_id'] . '|' . $r['user_id']][] = $r; }
+    $kHead = $pdo->query("SELECT tugas_id, user_id, nama_berkas, catatan, dikumpul_pada FROM lms_pengumpulan")->fetchAll();
+    $sudahK = [];
     $dipakai = [];
     // Berkas dan link hanya dipertahankan kalau penandanya (ref) cocok dengan yang dicatat unggah.php; selain itu dianggap data lama tanpa berkas.
     $simpanMateri = function ($sid, $mat) use (&$mOld, &$dipakai) {
@@ -111,12 +113,26 @@ try {
                 $u = $uid($pid); if ($u === null) continue;
                 $its = $simpanKumpul($id . '-' . $tid, $u, $k); if (!$its) continue;
                 $inK->execute([$id . '-' . $tid, $u, $its[0]['nama'], $k['catatan'] ?? '', $wkt($k['at'] ?? '')]);
+                $sudahK[$id . '-' . $tid . '|' . $u] = true;
                 foreach ($its as $n => $o) $inI->execute([$id . '-' . $tid, $u, $n + 1, $o['tipe'], $o['nama'], $o['path'], $o['url'], $o['kb']]);
             }
         }
         $c = $p['sertif'] ?? null;
         if (is_array($c) && !empty($c['img']))
             $inC->execute([$id, $c['img'], (int) ($c['w'] ?? 0), (int) ($c['h'] ?? 0), (float) ($c['x'] ?? 50), (float) ($c['y'] ?? 56), (float) ($c['size'] ?? 5), $c['color'] ?? '#2B1C1A', (int) ($c['weight'] ?? 600), !empty($c['caps']) ? 1 : 0]);
+    }
+
+    // Pengumpulan ditulis peserta lewat kumpul.php. Salinan admin bisa lebih lama, jadi yang tidak ada di sana dipulihkan (selama tugasnya masih ada).
+    $adaT = $pdo->prepare("SELECT 1 FROM lms_tugas WHERE id = ?");
+    foreach ($kHead as $h) {
+        $kunci = $h['tugas_id'] . '|' . $h['user_id'];
+        if (isset($sudahK[$kunci])) continue;
+        $adaT->execute([$h['tugas_id']]); if (!$adaT->fetch()) continue;
+        $inK->execute([$h['tugas_id'], $h['user_id'], $h['nama_berkas'], $h['catatan'], $h['dikumpul_pada']]);
+        foreach ($kMap[$kunci] ?? [] as $o) {
+            $inI->execute([$o['tugas_id'], $o['user_id'], $o['urutan'], $o['tipe'], $o['nama'], $o['path'], $o['url'], $o['kb']]);
+            if ($o['path']) $dipakai['tugas/' . $o['path']] = true;
+        }
     }
 
     $inD = $pdo->prepare("INSERT INTO lms_pendaftaran (user_id,program_id,status,alasan,created_at) VALUES (?,?,?,?,?)");

@@ -11,6 +11,7 @@ function mulaiSesi() {
         || (($ENV_LMS['LMS_HTTPS'] ?? '') === '1');
     ini_set('session.use_strict_mode', '1');
     ini_set('session.use_only_cookies', '1');
+    ini_set('session.gc_maxlifetime', '7300'); // lebih lama dari batas diam 7200 detik di bawah
     session_name('lms_sesi');
     session_set_cookie_params(['lifetime' => 0, 'path' => '/', 'secure' => $https, 'httponly' => true, 'samesite' => 'Lax']);
     session_start();

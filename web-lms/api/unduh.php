@@ -8,8 +8,14 @@ $sesi = wajibLogin();
 $pdo = koneksi();
 $jenis = (string) ($_GET['jenis'] ?? '');
 if ($jenis === 'materi') {
-    $st = $pdo->prepare("SELECT materi_nama AS nama, materi_tipe AS tipe, materi_path AS path FROM lms_sesi WHERE id = ?");
-    $st->execute([(string) ($_GET['id'] ?? '')]);
+    $sql = "SELECT s.materi_nama AS nama, s.materi_tipe AS tipe, s.materi_path AS path FROM lms_sesi s WHERE s.id = ?";
+    $par = [(string) ($_GET['id'] ?? '')];
+    if ($sesi['peran'] !== 'admin') { // peserta hanya boleh mengunduh materi kelas yang aktif diikutinya
+        $sql .= " AND EXISTS (SELECT 1 FROM lms_peserta_program pp WHERE pp.program_id = s.program_id AND pp.user_id = ? AND pp.status IN ('aktif','selesai'))";
+        $par[] = idDari($sesi['uid']);
+    }
+    $st = $pdo->prepare($sql);
+    $st->execute($par);
 } elseif ($jenis === 'tugas') {
     $st = $pdo->prepare("SELECT nama, tipe, path FROM lms_pengumpulan_item WHERE tugas_id = ? AND user_id = ? AND urutan = ?");
     $pemilik = $sesi['peran'] === 'admin' ? idDari($_GET['pid'] ?? '') : idDari($sesi['uid']);
