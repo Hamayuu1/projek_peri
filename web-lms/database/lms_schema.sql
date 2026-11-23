@@ -1,6 +1,6 @@
 -- SKEMA DATABASE LMS PERI (MySQL / MariaDB, Laragon). Berdiri sendiri, tidak bergantung pada web utama.
 -- Nanti saat digabung, tabel users dan lms_* ini tinggal disesuaikan dengan milik web lembaga.
--- Urutan: 1) file ini, 2) lms_seed.sql.
+-- Urutan: 1) file ini, 2) migrasi_02 sampai migrasi_06 (lihat database/README.md).
 
 CREATE DATABASE IF NOT EXISTS peri_lms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE peri_lms;

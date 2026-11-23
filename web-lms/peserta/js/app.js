@@ -123,7 +123,7 @@
     if (!em || !pw) { e.textContent = 'Email dan kata sandi wajib diisi.'; return; }
     if (!window.Api || !Api.on) { e.textContent = 'Server LMS belum tersambung. Buka lewat alamat web LMS.'; return; }
     var lid = Api.login(em, pw, 'peserta');
-    if (!lid) { e.textContent = 'Email atau kata sandi salah, atau akun belum terdaftar di situs PERI.'; return; }
+    if (!lid) { e.textContent = Api.pesanLogin || 'Email atau kata sandi salah, atau akun belum terdaftar di situs PERI.'; return; }
     db = Store.load();
     var u = db.peserta.filter(function (x) { return x.id === lid; })[0];
     if (!u) { e.textContent = 'Akun belum memiliki program. Hubungi pengurus.'; return; }

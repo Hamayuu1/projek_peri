@@ -73,6 +73,7 @@
     var t = panggil('GET', 'token.php');
     if (!t || !t.csrf) return null;
     var r = panggil('POST', peran === 'admin' ? 'login.php' : 'login_lembaga.php', JSON.stringify({ email: email, pw: pw, csrf: t.csrf }));
+    Api.pesanLogin = r && r.pesan ? r.pesan : '';
     if (r && r.ok) { muat(); return r.id; } return null;
   };
 

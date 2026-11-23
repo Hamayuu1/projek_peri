@@ -15,6 +15,7 @@ $r = panggilFlask('/api/auth/login', ['email' => $em, 'password' => $pw]);
 if ($r === null) keluar(['ok' => false, 'pesan' => 'Server login lembaga belum berjalan. Jalankan peri-backend (python app.py).'], 503);
 [$kode, $j] = $r;
 $u = is_array($j) ? ($j['user'] ?? null) : null;
+if ($kode === 429) keluar(['ok' => false, 'pesan' => (string) ($j['error'] ?? 'Terlalu banyak percobaan. Coba lagi beberapa menit lagi.')], 429);
 if ($kode !== 200 || !is_array($u) || ($u['role'] ?? '') !== 'pendaftar') keluar(['ok' => false]);
 
 $pdo = koneksi();
