@@ -85,7 +85,7 @@ export default function KatalogProgram() {
       </div>
 
       {/* Program unggulan (5 + 7) */}
-      <section className="section section--sm pg-featured" aria-labelledby="pg-unggulan">
+      <section className="section section--sm pg-featured" aria-labelledby="pg-unggulan" hidden={menyaring}>
         <div className="container">
           <div className="grid grid--center">
             <div className="media-fill col-5" data-reveal="">
