@@ -53,7 +53,7 @@ export const kirimBukuTamu = (b: BukuTamuInput) =>
   request("/api/buku-tamu", "POST", b);
 
 export const kirimPendaftaranProgram = (b: PendaftaranProgramInput) =>
-  request<{ data?: RingkasanPendaftaran; kolom?: string }>(
+  request<{ data?: RingkasanPendaftaran; kolom?: string; kode?: string }>(
     "/api/pendaftaran-program",
     "POST",
     b,

@@ -175,7 +175,9 @@ function Popup({ info, user, tampilan, ringkasan, onTutup, onLain, onTampilan, o
     const r = await kirimPendaftaranProgram(body);
 
     if (r.status === 201) return onTampilan("berhasil", r.data.data ?? body);
-    if (r.status === 409) return onTampilan("duplikat", r.data.data ?? body);
+    if (r.status === 409 && r.data.kode !== "program_lain") {
+      return onTampilan("duplikat", r.data.data ?? body);
+    }
     setMengirim(false);
     if (r.status === 401) return onButuhLogin(cariProgram(body.program));
 

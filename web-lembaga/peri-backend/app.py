@@ -26,6 +26,7 @@ import re
 import secrets
 import smtplib
 import sys
+import threading
 import time
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -567,10 +568,15 @@ def kirim_umpan_balik():
     return jsonify({"ok": True}), 201
 
 
+# Menserialkan pengecekan + INSERT pendaftaran agar dua permintaan bersamaan
+# tidak lolos aturan "satu peserta, satu program" (koneksi memakai autocommit).
+_kunci_daftar = threading.Lock()
+
+
 @app.post("/api/pendaftaran-program")
 def daftar_program():
     """Pendaftaran program dari pop-up 'Daftar Program' (harus sudah masuk).
-    Satu akun hanya boleh mendaftar satu kali pada program yang sama (409 bila ganda)."""
+    Satu akun hanya boleh terdaftar pada satu program (409 bila ganda atau sudah di program lain)."""
     user = user_saat_ini()
     if not user:
         return galat("Silakan masuk terlebih dahulu untuk mendaftar program.", 401)
@@ -600,7 +606,7 @@ def daftar_program():
         return galat("Terlalu banyak percobaan pendaftaran. Coba lagi beberapa menit lagi.", 429)
     _catat(kunci)
 
-    with db().cursor() as cur:
+    with _kunci_daftar, db().cursor() as cur:
         cur.execute(
             "SELECT nama, email, wa, program FROM pendaftaran_program WHERE user_id=%s AND program=%s",
             (user["id"], program),
@@ -609,6 +615,20 @@ def daftar_program():
         if ada:
             return jsonify({"error": "Anda sudah terdaftar pada program ini.",
                             "kode": "sudah_terdaftar", "data": ada}), 409
+        # Satu peserta satu program: tolak bila masih punya pendaftaran pada program lain
+        # yang masih ada (menunggu maupun diterima). Program yang sudah dihapus tidak dihitung.
+        cur.execute(
+            "SELECT pp.program FROM pendaftaran_program pp "
+            "JOIN program p ON p.id = pp.program_id "
+            "WHERE pp.user_id=%s ORDER BY pp.id LIMIT 1",
+            (user["id"],),
+        )
+        lain = cur.fetchone()
+        if lain:
+            return jsonify({
+                "error": f'Anda sudah terdaftar pada program "{lain["program"]}". '
+                         "Satu peserta hanya dapat mengikuti satu program.",
+                "kode": "program_lain"}), 409
         cur.execute("SELECT id FROM program WHERE nama=%s", (program,))
         pr = cur.fetchone()
         try:
@@ -618,7 +638,7 @@ def daftar_program():
                 (user["id"], program, pr["id"] if pr else None, nama, email, wa),
             )
         except pymysql.err.IntegrityError:
-            # Dua permintaan bersamaan: kunci UNIQUE di database yang menjadi penentu.
+            # Kunci UNIQUE di database tetap menjadi penentu terakhir.
             return jsonify({"error": "Anda sudah terdaftar pada program ini.",
                             "kode": "sudah_terdaftar",
                             "data": {"nama": nama, "email": email, "wa": wa, "program": program}}), 409
