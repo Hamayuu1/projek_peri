@@ -8,7 +8,14 @@
   var BULAN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
   var HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
   var EXT_OK = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'jpg', 'jpeg', 'png'];
-  var MAX_KB = 10240;
+  var MAX_KB = 51200;
+  function ukuranMateri(m) { if (m.tipe === 'link') return 'Link'; return m.kb < 1024 ? m.kb + ' KB' : (m.kb / 1024).toFixed(1) + ' MB'; }
+  function namaMateri(s) {
+    var m = s.materi, b = (window.Api && Api.base) || '../api/';
+    if (m.tipe === 'link' && m.url) return '<a href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">' + esc(m.nama) + '</a>';
+    if (m.tipe === 'berkas') return '<a href="' + b + 'unduh.php?jenis=materi&id=' + encodeURIComponent(s.id) + '&inline=1" target="_blank" rel="noopener">' + esc(m.nama) + '</a>';
+    return esc(m.nama);
+  }
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function load() {
@@ -17,7 +24,7 @@
   }
   var db = load();
   function save() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} }
-  function loggedIn() { try { return sessionStorage.getItem(AUTH) === '1'; } catch (e) { return false; } }
+  function loggedIn() { return !!(window.Api && Api.on && Api.peran === 'admin'); } // status login ditentukan server, bukan browser
   function setLogin(v) { try { if (v) sessionStorage.setItem(AUTH, '1'); else sessionStorage.removeItem(AUTH); } catch (e) {} }
 
   var ui = { prog: 'dsa', sesi: null, daftarTab: 'menunggu', q: '' };
@@ -44,7 +51,7 @@
   function sorted(p) { p.sesi.sort(function (a, b) { return a.tanggal < b.tanggal ? -1 : a.tanggal > b.tanggal ? 1 : 0; }); p.sesi.forEach(function (s, i) { s.no = i + 1; }); }
   function uid(pre) { return pre + Date.now().toString(36) + Math.floor(Math.random() * 1000).toString(36); }
   function curProg() { var p = prog(ui.prog); if (!p) { ui.prog = db.programs[0] ? db.programs[0].id : null; p = prog(ui.prog); } return p; }
-  function menunggu() { return db.pendaftaran.filter(function (r) { return r.status === 'menunggu'; }); }
+
   function statusChip(st) {
     if (st === 'buka') return '<span class="chip">Dibuka</span>';
     if (st === 'segera') return '<span class="chip g">Segera dibuka</span>';
@@ -60,10 +67,11 @@
     program: ['Kelola Program', 'Tambah, ubah, atau hapus program pelatihan.'],
     jadwal: ['Kelola Jadwal', 'Atur sesi pada setiap program.'],
     materi: ['Kelola Materi', 'Unggah materi untuk tiap sesi.'],
+    tugas: ['Kelola Tugas', 'Buat tugas dan lihat hasil pengumpulan peserta.'],
     kehadiran: ['Catat Kehadiran', 'Tandai peserta yang hadir pada sebuah sesi.'],
     rekap: ['Rekap Progres', 'Pantau progres peserta dan tandai yang sudah selesai.'],
     sertifikat: ['Sertifikat', 'Unggah template sertifikat. Nama peserta ditulis otomatis.'],
-    pendaftaran: ['Pendaftaran', 'Setujui atau tolak peserta yang mendaftar ke program.']
+
   };
   function route() { var h = location.hash.replace('#/', ''); return ROUTES[h] ? h : 'dashboard'; }
 
@@ -73,10 +81,10 @@
     if (!loggedIn()) { root.innerHTML = viewLogin(); return; }
     var r = route();
     var nav = Object.keys(ROUTES).map(function (k) {
-      var bd = k === 'pendaftaran' && menunggu().length ? '<span class="bd">' + menunggu().length + '</span>' : '';
+      var bd = '';
       return '<a href="#/' + k + '" class="' + (k === r ? 'on' : '') + '">' + (window.ICONS && window.ICONS[k] ? window.ICONS[k] : '') + '<span>' + ROUTES[k][0] + '</span>' + bd + '</a>';
     }).join('');
-    root.innerHTML = '<div class="app"><header class="mbar"><button class="burger" data-act="menu" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 6h18v2.5H3zM3 10.8h18v2.5H3zM3 15.6h18v2.5H3z"/></svg></button><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI</div></div></header><div class="scrim" data-act="menu-tutup"></div><aside class="side"><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI<small>Panel pengurus</small></div></div><nav class="nav">' + nav + '</nav><div class="who"><b>Pengurus PERI</b>admin@gmail.com<br><button class="btn o s" style="margin-top:8px" data-act="keluar">Keluar</button></div></aside><main class="main"><div class="top"><div><h1>' + ROUTES[r][0] + '</h1><p class="sub">' + ROUTES[r][1] + '</p></div><div id="topact"></div></div>' + VIEWS[r]() + '</main></div>';
+    root.innerHTML = '<div class="app"><header class="mbar"><button class="burger" data-act="menu" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 6h18v2.5H3zM3 10.8h18v2.5H3zM3 15.6h18v2.5H3z"/></svg></button><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI</div></div></header><div class="scrim" data-act="menu-tutup"></div><aside class="side"><div class="brand"><div class="lg">' + (window.LOGO_HTML || 'P') + '</div><div>E-Learning PERI<small>Panel pengurus</small></div></div><nav class="nav">' + nav + '</nav><div class="who"><b>Pengurus PERI</b><br><button class="btn o s" style="margin-top:8px" data-act="keluar">Keluar</button></div></aside><main class="main"><div class="top"><div><h1>' + ROUTES[r][0] + '</h1><p class="sub">' + ROUTES[r][1] + '</p></div><div id="topact"></div></div>' + VIEWS[r]() + '</main></div>';
     window.scrollTo(0, 0);
   }
   function viewLogin() {
@@ -96,26 +104,26 @@
     var tanpaMateri = [];
     db.programs.forEach(function (p) { p.sesi.forEach(function (s) { if (!s.materi && s.tanggal >= TODAY) tanpaMateri.push({ p: p, s: s }); }); });
     tanpaMateri.sort(function (a, b) { return a.s.tanggal < b.s.tanggal ? -1 : 1; });
-    var m = menunggu();
-    var stats = '<div class="stats"><div class="stat"><span>Peserta aktif</span><b>' + Object.keys(semua).length + '</b><small>di ' + db.programs.length + ' program</small></div><div class="stat"><span>Sesi minggu ini</span><b>' + minggu.length + '</b><small>5 - 11 Okt 2026</small></div><div class="stat"><span>Rata-rata progres</span><b>' + (tot ? Math.round(jml / tot) : 0) + '%</b><small>seluruh peserta</small></div><div class="stat"><span>Pendaftaran menunggu</span><b>' + m.length + '</b><small><a href="#/pendaftaran">Tinjau sekarang</a></small></div></div>';
+
+    var stats = '<div class="stats"><div class="stat"><span>Peserta aktif</span><b>' + Object.keys(semua).length + '</b><small>di ' + db.programs.length + ' program</small></div><div class="stat"><span>Sesi minggu ini</span><b>' + minggu.length + '</b><small>5 - 11 Okt 2026</small></div><div class="stat"><span>Rata-rata progres</span><b>' + (tot ? Math.round(jml / tot) : 0) + '%</b><small>seluruh peserta</small></div></div>';
     var rows = minggu.map(function (x) {
       return '<tr><td>' + tgl(x.s.tanggal, true) + '</td><td>' + esc(x.p.nama) + '<div class="sm mut">Sesi ' + x.s.no + ': ' + esc(x.s.judul) + '</div></td><td>' + x.s.jam + '</td><td>' + x.s.mode + ', ' + esc(x.s.tempat) + '</td></tr>';
     }).join('');
     var mm = tanpaMateri.slice(0, 6).map(function (x) {
       return '<tr><td>' + esc(x.p.nama) + '<div class="sm mut">Sesi ' + x.s.no + ': ' + esc(x.s.judul) + '</div></td><td>' + tgl(x.s.tanggal) + '</td><td><a href="#/materi" data-act="ke-materi" data-id="' + x.p.id + '">Unggah</a></td></tr>';
     }).join('');
-    var mp = m.slice(0, 5).map(function (r) {
+    var m = [], mp = m.slice(0, 5).map(function (r) {
       return '<tr><td>' + esc(pes(r.pid).nama) + '<div class="sm mut">' + esc(prog(r.prog).nama) + '</div></td><td>' + tgl(r.tgl) + '</td></tr>';
     }).join('');
     return stats +
       '<div class="card"><div class="hd"><h2>Sesi minggu ini</h2></div><div class="tw"><table><thead><tr><th>Hari</th><th>Kelas</th><th>Jam</th><th>Tempat</th></tr></thead><tbody>' + (rows || '<tr><td colspan="4" class="empty">Tidak ada sesi minggu ini</td></tr>') + '</tbody></table></div></div>' +
       '<div class="grid2"><div class="card"><div class="hd"><h2>Materi belum diunggah</h2><span class="chip y">' + tanpaMateri.length + ' sesi</span></div><div class="tw"><table><thead><tr><th>Sesi</th><th>Tanggal</th><th></th></tr></thead><tbody>' + (mm || '<tr><td colspan="3" class="empty">Semua sesi sudah punya materi</td></tr>') + '</tbody></table></div></div>' +
-      '<div class="card"><div class="hd"><h2>Pendaftaran menunggu</h2><a href="#/pendaftaran">Lihat semua</a></div><div class="tw"><table><thead><tr><th>Peserta</th><th>Tanggal</th></tr></thead><tbody>' + (mp || '<tr><td colspan="2" class="empty">Tidak ada pendaftaran baru</td></tr>') + '</tbody></table></div></div></div>';
+      '</div>';
   };
 
   VIEWS.program = function () {
     var rows = db.programs.map(function (p) {
-      return '<tr><td><b>' + esc(p.nama) + '</b><div class="sm mut">' + esc(p.tujuan) + '</div></td><td>' + esc(p.kategori) + '</td><td>' + p.sesi.length + ' sesi</td><td>' + p.peserta.length + ' / ' + p.kuota + '</td><td>' + statusChip(p.status) + '</td><td><div class="acts"><button class="btn o s" data-act="ubah-prog" data-id="' + p.id + '">Ubah</button><button class="btn r s" data-act="hapus-prog" data-id="' + p.id + '">Hapus</button></div></td></tr>';
+      return '<tr><td><b>' + esc(p.nama) + '</b><div class="sm mut">' + esc(p.tujuan) + '</div>' + (p.idLembaga ? '' : '<div class="sm" style="color:#b45309">Belum terhubung ke program situs lembaga. Klik Ubah untuk memilih.</div>') + '</td><td>' + esc(p.kategori) + '</td><td>' + p.sesi.length + ' sesi</td><td>' + p.peserta.length + ' / ' + p.kuota + '</td><td>' + statusChip(p.status) + '</td><td><div class="acts"><button class="btn o s" data-act="ubah-prog" data-id="' + p.id + '">Ubah</button><button class="btn r s" data-act="hapus-prog" data-id="' + p.id + '">Hapus</button></div></td></tr>';
     }).join('');
     return '<div class="card"><div class="hd"><h2>Daftar program (' + db.programs.length + ')</h2><button class="btn" data-act="tambah-prog">+ Tambah program</button></div><div class="tw"><table><thead><tr><th>Program</th><th>Kategori</th><th>Sesi</th><th>Peserta / Kuota</th><th>Pendaftaran</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" class="empty">Belum ada program</td></tr>') + '</tbody></table></div></div>';
   };
@@ -134,10 +142,55 @@
     var p = curProg();
     if (!p) return '<div class="card empty">Belum ada program.</div>';
     var rows = p.sesi.map(function (s) {
-      var f = s.materi ? esc(s.materi.nama) + '<div class="sm mut">' + (s.materi.kb / 1024).toFixed(1) + ' MB</div>' : '<span class="chip y">Belum ada</span>';
-      return '<tr><td>' + s.no + '</td><td><b>' + esc(s.judul) + '</b><div class="sm mut">' + tgl(s.tanggal) + '</div></td><td>' + f + '</td><td><div class="acts"><label class="btn ' + (s.materi ? 'o' : '') + ' s" style="cursor:pointer">' + (s.materi ? 'Ganti' : 'Unggah') + '<input type="file" data-act="unggah" data-id="' + s.id + '" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png" hidden></label>' + (s.materi ? '<button class="btn r s" data-act="hapus-materi" data-id="' + s.id + '">Hapus</button>' : '') + '</div></td></tr>';
+      var f = s.materi ? namaMateri(s) + '<div class="sm mut">' + ukuranMateri(s.materi) + '</div>' : '<span class="chip y">Belum ada</span>';
+      return '<tr><td>' + s.no + '</td><td><b>' + esc(s.judul) + '</b><div class="sm mut">' + tgl(s.tanggal) + '</div></td><td>' + f + '</td><td><div class="acts"><button class="btn ' + (s.materi ? 'o' : '') + ' s" data-act="unggah" data-id="' + s.id + '">' + (s.materi ? 'Ganti' : 'Unggah') + '</button>' + (s.materi ? '<button class="btn r s" data-act="hapus-materi" data-id="' + s.id + '">Hapus</button>' : '') + '</div></td></tr>';
     }).join('');
-    return progSelect() + '<div class="note">Jenis berkas yang boleh: PDF, Word, PowerPoint, JPG, atau PNG, paling besar 10 MB. (Pada prototype ini hanya nama dan ukuran berkas yang disimpan.)</div><div class="card"><div class="hd"><h2>' + esc(p.nama) + '</h2></div><div class="tw"><table><thead><tr><th>#</th><th>Sesi</th><th>Materi</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="4" class="empty">Belum ada sesi pada program ini.</td></tr>') + '</tbody></table></div></div>';
+    return progSelect() + '<div class="note">Materi berupa berkas (PDF, Word, PowerPoint, Excel, JPG, PNG, ZIP, atau MP4, paling besar 50 MB) atau link http/https.</div><div class="card"><div class="hd"><h2>' + esc(p.nama) + '</h2></div><div class="tw"><table><thead><tr><th>#</th><th>Sesi</th><th>Materi</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="4" class="empty">Belum ada sesi pada program ini.</td></tr>') + '</tbody></table></div></div>';
+  };
+
+  /* ---------- tugas ---------- */
+  function tugasId(p) { var m = 0; (p.tugas || []).forEach(function (t) { var n = parseInt(String(t.id).replace(/\D/g, ''), 10); if (n > m) m = n; }); return 't' + (m + 1); }
+  function formTugas(p, t) {
+    t = t || { judul: '', sesi: '', due: '', desc: '' };
+    var so = p.sesi.map(function (s) { return '<option value="' + s.no + '"' + (+t.sesi === s.no ? ' selected' : '') + '>Sesi ' + s.no + ': ' + esc(s.judul) + '</option>'; }).join('');
+    return '<div class="fld"><label>Judul tugas</label><input name="judul" value="' + esc(t.judul) + '"></div><div class="row2"><div class="fld"><label>Terkait sesi</label><select name="sesi">' + so + '</select></div><div class="fld"><label>Tenggat</label><input name="due" type="date" value="' + esc(t.due) + '"></div></div><div class="fld"><label>Petunjuk tugas</label><textarea name="desc" rows="4">' + esc(t.desc) + '</textarea></div>';
+  }
+  function bacaTugas(f) {
+    var d = { judul: val(f, 'judul'), sesi: parseInt(val(f, 'sesi'), 10), due: val(f, 'due'), desc: val(f, 'desc') };
+    if (!d.judul) { setErr(f, 'Judul tugas wajib diisi.'); return null; }
+    if (!d.sesi) { setErr(f, 'Pilih sesi yang terkait.'); return null; }
+    if (!d.due) { setErr(f, 'Tenggat wajib diisi.'); return null; }
+    return d;
+  }
+  function isiHtml(t, id, k) {
+    if (!k.items || !k.items.length) return esc(k.file || '');
+    return k.items.map(function (it, i) {
+      var link = it.tipe === 'link';
+      return '<div class="sm" style="margin-bottom:4px"><button class="btn o s" data-act="buka-isi" data-id="' + esc(t.id) + '" data-pid="' + esc(id) + '" data-n="' + (i + 1) + '"' + (link ? ' data-u="' + esc(it.url) + '"' : '') + '>' + (link ? 'Buka' : 'Unduh') + '</button> ' + esc(it.nama) + '</div>';
+    }).join('');
+  }
+  function viewKumpul(p, t) {
+    var rows = p.peserta.map(function (id) {
+      var u = pes(id), k = p.kumpul[t.id] && p.kumpul[t.id][id];
+      if (!u) return '';
+      return '<tr><td><b>' + esc(u.nama) + '</b><div class="sm mut">' + esc(u.email) + '</div></td><td>' + (k ? '<span class="chip">Terkumpul</span>' : '<span class="chip y">Belum</span>') + '</td><td>' + (k ? esc(k.at) : '') + '</td><td>' + (k ? isiHtml(t, id, k) : '') + '</td><td>' + (k ? esc(k.catatan || '') : '') + '</td></tr>';
+    }).join('');
+    return '<button class="btn o s" data-act="semua-tugas" style="margin-bottom:12px">&larr; Semua tugas</button>' + (t.desc ? '<div class="note">' + esc(t.desc) + '</div>' : '') +
+      '<div class="card"><div class="hd"><h2>' + esc(t.judul) + '</h2><span class="sub">Sesi ' + t.sesi + ' &middot; tenggat ' + tgl(t.due) + '</span></div><div class="tw"><table><thead><tr><th>Peserta</th><th>Status</th><th>Dikirim</th><th>Isian</th><th>Catatan</th></tr></thead><tbody>' + (rows || '<tr><td colspan="5" class="empty">Belum ada peserta di kelas ini.</td></tr>') + '</tbody></table></div></div>';
+  }
+
+  VIEWS.tugas = function () {
+    var p = curProg();
+    if (!p) return '<div class="card empty">Belum ada program.</div>';
+    p.tugas = p.tugas || []; p.kumpul = p.kumpul || {};
+    var t = ui.tugas ? p.tugas.filter(function (x) { return x.id === ui.tugas; })[0] : null;
+    if (t) return viewKumpul(p, t);
+    var rows = p.tugas.map(function (x) {
+      var n = p.peserta.filter(function (id) { return p.kumpul[x.id] && p.kumpul[x.id][id]; }).length;
+      return '<tr><td><b>' + esc(x.judul) + '</b></td><td>Sesi ' + x.sesi + '</td><td>' + tgl(x.due) + '</td><td>' + n + ' / ' + p.peserta.length + '</td><td><div class="acts"><button class="btn s" data-act="lihat-kumpul" data-id="' + esc(x.id) + '">Lihat pengumpulan</button><button class="btn o s" data-act="ubah-tugas" data-id="' + esc(x.id) + '">Ubah</button><button class="btn r s" data-act="hapus-tugas" data-id="' + esc(x.id) + '">Hapus</button></div></td></tr>';
+    }).join('');
+    return progSelect('<button class="btn" data-act="tambah-tugas" style="margin-left:auto">+ Tambah tugas</button>') +
+      '<div class="card"><div class="hd"><h2>' + esc(p.nama) + '</h2><span class="sub">' + p.tugas.length + ' tugas</span></div><div class="tw"><table><thead><tr><th>Judul tugas</th><th>Sesi</th><th>Tenggat</th><th>Terkumpul</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="5" class="empty">Belum ada tugas. Tekan Tambah tugas.</td></tr>') + '</tbody></table></div></div>';
   };
 
   VIEWS.kehadiran = function () {
@@ -188,6 +241,7 @@
   };
 
   /* ---------- sertifikat ---------- */
+  if (window.ICONS) window.ICONS.tugas = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>';
   if (window.ICONS) window.ICONS.sertifikat = '<svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M8.5 13.2 7 22l5-3 5 3-1.5-8.800"/></svg>';
   var SAMPLE = 'Nama Lengkap Peserta';
   function sertSave() {
@@ -246,14 +300,33 @@
   }
   function opts(arr, cur) { return arr.map(function (a) { return '<option' + (a === cur ? ' selected' : '') + '>' + a + '</option>'; }).join(''); }
 
+  // Isian "Nama program": pilihan dari program situs lembaga (diambil dari Flask lewat server LMS) dan dihubungkan lewat ID program,
+  // sehingga nama di LMS selalu sama dengan nama saat peserta mendaftar. Program yang sudah dipakai kelas lain tidak ditampilkan.
+  function namaField(p) {
+    var cur = p.idLembaga || 0, pakai = {};
+    db.programs.forEach(function (x) { if (x.idLembaga && x.id !== p.id) pakai[x.idLembaga] = 1; });
+    var r = window.Api && Api.ambil ? Api.ambil('program_lembaga.php') : null;
+    var daftar = (r && r.ok && r.program) ? r.program : null;
+    if (!daftar) // Flask tidak terjangkau: nama tetap bisa diubah manual, tautan lama dipertahankan
+      return '<div class="fld"><label>Nama program</label><input name="nama" value="' + esc(p.nama) + '"><input type="hidden" name="idl" value="' + (cur || '') + '">' +
+        '<div class="sm" style="color:#b45309">Daftar program situs lembaga tidak dapat dimuat. Pastikan Flask berjalan dan LMS_KUNCI sudah benar.</div></div>';
+    var o = '<option value="">- Pilih program -</option>', ada = false;
+    daftar.forEach(function (x) {
+      if (x.id === cur) ada = true;
+      if (!pakai[x.id] || x.id === cur) o += '<option value="' + x.id + '" data-n="' + esc(x.nama) + '"' + (x.id === cur ? ' selected' : '') + '>' + esc(x.nama) + '</option>';
+    });
+    if (cur && !ada) o += '<option value="' + cur + '" data-n="' + esc(p.nama) + '" selected>' + esc(p.nama) + ' (tidak ada lagi di situs lembaga)</option>';
+    return '<div class="fld"><label>Nama program</label><select name="idl">' + o + '</select>' +
+      '<div class="sm mut">Dipilih dari program di situs lembaga, agar nama sama dengan yang dilihat peserta saat mendaftar. Peserta yang diterima di program ini otomatis masuk ke kelas ini.</div></div>';
+  }
   function formProg(p) {
     p = p || { nama: '', kategori: 'Digital', tujuan: '', periode: 'Triwulanan', angkatan: '', kuota: 30, status: 'buka' };
     var st = [['buka', 'Dibuka'], ['segera', 'Segera dibuka'], ['tutup', 'Ditutup']].map(function (s) { return '<option value="' + s[0] + '"' + (s[0] === p.status ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('');
-    return '<div class="fld"><label>Nama program</label><input name="nama" value="' + esc(p.nama) + '"></div><div class="row2"><div class="fld"><label>Kategori</label><select name="kategori">' + opts(['Digital', 'Usaha', 'Kriya', 'Keuangan', 'Kepemimpinan'], p.kategori) + '</select></div><div class="fld"><label>Periode</label><select name="periode">' + opts(['Triwulanan', 'Sekali jalan'], p.periode) + '</select></div></div><div class="fld"><label>Tujuan</label><textarea name="tujuan" rows="2">' + esc(p.tujuan) + '</textarea></div><div class="row2"><div class="fld"><label>Angkatan</label><input name="angkatan" value="' + esc(p.angkatan) + '"></div><div class="fld"><label>Kuota peserta</label><input name="kuota" type="number" min="1" value="' + p.kuota + '"></div></div><div class="fld"><label>Pendaftaran</label><select name="status">' + st + '</select></div>';
+    return namaField(p) + '<div class="row2"><div class="fld"><label>Kategori</label><select name="kategori">' + opts(['Digital', 'Usaha', 'Kriya', 'Keuangan', 'Kepemimpinan'], p.kategori) + '</select></div><div class="fld"><label>Periode</label><select name="periode">' + opts(['Triwulanan', 'Sekali jalan'], p.periode) + '</select></div></div><div class="fld"><label>Tujuan</label><textarea name="tujuan" rows="2">' + esc(p.tujuan) + '</textarea></div><div class="row2"><div class="fld"><label>Angkatan</label><input name="angkatan" value="' + esc(p.angkatan) + '"></div><div class="fld"><label>Kuota peserta</label><input name="kuota" type="number" min="1" value="' + p.kuota + '"></div></div><div class="fld"><label>Pendaftaran</label><select name="status">' + st + '</select></div>';
   }
   function bacaProg(f, lama) {
-    var d = { nama: val(f, 'nama'), kategori: val(f, 'kategori'), periode: val(f, 'periode'), tujuan: val(f, 'tujuan'), angkatan: val(f, 'angkatan'), kuota: parseInt(val(f, 'kuota'), 10), status: val(f, 'status') };
-    if (!d.nama) { setErr(f, 'Nama program wajib diisi.'); return null; }
+    var d = { nama: f.elements['nama'] ? val(f, 'nama') : (f.elements['idl'].selectedOptions[0] ? f.elements['idl'].selectedOptions[0].getAttribute('data-n') || '' : ''), idLembaga: parseInt(val(f, 'idl'), 10) || null, kategori: val(f, 'kategori'), periode: val(f, 'periode'), tujuan: val(f, 'tujuan'), angkatan: val(f, 'angkatan'), kuota: parseInt(val(f, 'kuota'), 10), status: val(f, 'status') };
+    if (!d.nama) { setErr(f, f.elements['nama'] ? 'Nama program wajib diisi.' : 'Pilih program dari situs lembaga.'); return null; }
     if (!d.tujuan) { setErr(f, 'Tujuan program wajib diisi.'); return null; }
     if (!d.kuota || d.kuota < 1) { setErr(f, 'Kuota minimal 1 peserta.'); return null; }
     if (lama && d.kuota < lama.peserta.length) { setErr(f, 'Kuota tidak boleh lebih kecil dari jumlah peserta saat ini (' + lama.peserta.length + ').'); return null; }
@@ -280,13 +353,13 @@
   var ACT = {
     'pilih-prog': function (el) { ui.prog = el.value; ui.sesi = null; ui.q = ''; render(); },
     'pilih-sesi': function (el) { ui.sesi = el.value; render(); },
-    'keluar': function () { setLogin(false); render(); },
+    'keluar': function () { if (window.Api) Api.logout(); setLogin(false); render(); },
     'menu': function () { var ap = $('.app'); if (ap) ap.classList.toggle('open'); },
     'menu-tutup': function () { var ap = $('.app'); if (ap) ap.classList.remove('open'); },
     'tutup': closeModal,
     'ke-materi': function (el) { ui.prog = el.getAttribute('data-id'); },
     'cari': function (el) { ui.q = el.value; var pos = el.selectionStart; render(); var i = $('input[data-act="cari"]'); if (i) { i.focus(); i.setSelectionRange(pos, pos); } },
-    'tab-daftar': function (el) { ui.daftarTab = el.getAttribute('data-id'); render(); },
+
     'sert-file': function (el) { sertFile(el); },
     'sert-tengah': function () { var p = curProg(); if (!p || !p.sertif) return; p.sertif.x = 50; sertApply(); sertSave(); },
     'sert-hapus': function () {
@@ -315,7 +388,7 @@
       var p = prog(el.getAttribute('data-id'));
       openModal('Hapus program?', '<p>Program <b>' + esc(p.nama) + '</b> beserta ' + p.sesi.length + ' sesi dan catatan kehadiran dari ' + p.peserta.length + ' peserta akan dihapus. Tindakan ini tidak bisa dibatalkan.</p>', 'Ya, hapus', function () {
         db.programs = db.programs.filter(function (x) { return x.id !== p.id; });
-        db.pendaftaran = db.pendaftaran.filter(function (r) { return r.prog !== p.id; });
+
         save(); closeModal(); render(); toast('Program dihapus');
       }, true);
     },
@@ -336,6 +409,38 @@
         sorted(p); save(); closeModal(); render(); toast('Jadwal diperbarui');
       });
     },
+    'tambah-tugas': function () {
+      var p = curProg();
+      if (!p.sesi.length) { toast('Tambahkan sesi dulu di Kelola Jadwal.'); return; }
+      openModal('Tambah tugas - ' + esc(p.nama), formTugas(p), 'Simpan', function (f) {
+        var d = bacaTugas(f); if (!d) return;
+        p.tugas = p.tugas || []; p.tugas.push({ id: tugasId(p), sesi: d.sesi, judul: d.judul, due: d.due, desc: d.desc });
+        save(); closeModal(); render(); toast('Tugas ditambahkan');
+      });
+    },
+    'ubah-tugas': function (el) {
+      var p = curProg(), t = (p.tugas || []).filter(function (x) { return x.id === el.getAttribute('data-id'); })[0]; if (!t) return;
+      openModal('Ubah tugas', formTugas(p, t), 'Simpan perubahan', function (f) {
+        var d = bacaTugas(f); if (!d) return;
+        t.judul = d.judul; t.sesi = d.sesi; t.due = d.due; t.desc = d.desc;
+        save(); closeModal(); render(); toast('Tugas diperbarui');
+      });
+    },
+    'hapus-tugas': function (el) {
+      var p = curProg(), t = (p.tugas || []).filter(function (x) { return x.id === el.getAttribute('data-id'); })[0]; if (!t) return;
+      var n = Object.keys((p.kumpul || {})[t.id] || {}).length;
+      openModal('Hapus tugas?', '<p>Tugas <b>' + esc(t.judul) + '</b> akan dihapus, termasuk ' + n + ' pengumpulan peserta beserta berkasnya.</p>', 'Ya, hapus', function () {
+        p.tugas = p.tugas.filter(function (x) { return x.id !== t.id; }); if (p.kumpul) delete p.kumpul[t.id];
+        save(); closeModal(); render(); toast('Tugas dihapus');
+      }, true);
+    },
+    'lihat-kumpul': function (el) { ui.tugas = el.getAttribute('data-id'); render(); },
+    'semua-tugas': function () { ui.tugas = null; render(); },
+    'buka-isi': function (el) {
+      var u = el.getAttribute('data-u'), b = (window.Api && Api.base) || '../api/', p = curProg();
+      if (u) { if (/^https?:\/\//i.test(u)) window.open(u, '_blank', 'noopener,noreferrer'); return; }
+      window.open(b + 'unduh.php?jenis=tugas&prog=' + encodeURIComponent(p.id) + '&id=' + encodeURIComponent(el.getAttribute('data-id')) + '&pid=' + encodeURIComponent(el.getAttribute('data-pid')) + '&n=' + encodeURIComponent(el.getAttribute('data-n')) + '&inline=1', '_blank', 'noopener');
+    },
     'hapus-sesi': function (el) {
       var p = curProg(), s = cariSesi(el.getAttribute('data-id'));
       openModal('Hapus sesi?', '<p>Sesi <b>' + s.no + ': ' + esc(s.judul) + '</b> akan dihapus, termasuk materi dan catatan kehadirannya (' + s.hadir.length + ' peserta hadir). Progres peserta akan dihitung ulang.</p>', 'Ya, hapus', function () {
@@ -344,6 +449,22 @@
     },
 
     'unggah': function (el) {
+      var sid = el.getAttribute('data-id'), s = cariSesi(sid); if (!s) return;
+      var ada = s.materi ? '<div class="note y">Materi saat ini: <b>' + esc(s.materi.nama) + '</b> (' + ukuranMateri(s.materi) + '). Yang baru akan menggantikannya.</div>' : '';
+      openModal('Materi Sesi ' + s.no + ': ' + esc(s.judul), ada + Unggah.buat('materi', { materi: true, maksKb: MAX_KB }), 'Simpan', function (f) {
+        var a = Unggah.ambil('materi');
+        if (!a.berkas.length && !a.link.length) { toast('Pilih berkas atau tempel link.'); return; }
+        if (!window.Api || !Api.on) { toast('Database belum tersambung. Buka lewat http://localhost/web-lms/'); return; }
+        var p = [['jenis', 'materi'], ['id', sid]];
+        if (a.link.length) p.push(['tipe', 'link'], ['url', a.link[0]]); else p.push(['tipe', 'berkas'], ['berkas', a.berkas[0]]);
+        var btn = f.querySelector('.mf button:last-child'); btn.disabled = true; btn.textContent = 'Mengunggah...';
+        Unggah.kirim('unggah.php', p, function (x) { btn.textContent = 'Mengunggah ' + Math.round(x * 100) + '%'; }, function (r) {
+          if (!r || !r.ok) { btn.disabled = false; btn.textContent = 'Simpan'; toast((r && r.pesan) || 'Unggah gagal.'); return; }
+          var s2 = cariSesi(sid) || s; s2.materi = r.data; save(); closeModal(); render(); toast('Materi Sesi ' + s2.no + ' tersimpan');
+        });
+      });
+    },
+    'unggah-lama': function (el) {
       var f = el.files[0]; if (!f) return;
       var ext = f.name.split('.').pop().toLowerCase();
       if (EXT_OK.indexOf(ext) < 0) { toast('Jenis berkas tidak diizinkan. Pakai PDF, Word, PowerPoint, JPG, atau PNG.'); el.value = ''; return; }
@@ -389,6 +510,8 @@
     'setuju': function (el) {
       var r = db.pendaftaran.filter(function (x) { return x.id === el.getAttribute('data-id'); })[0], p = prog(r.prog);
       if (p.peserta.length >= p.kuota) { toast('Kuota ' + p.nama + ' sudah penuh.'); return; }
+      var lain = db.programs.filter(function (x) { return x.id !== p.id && x.peserta.indexOf(r.pid) >= 0 && x.selesai.indexOf(r.pid) < 0 && x.sesi.length && hadirN(x, r.pid) < x.sesi.length; })[0];
+      if (lain) { toast(pes(r.pid).nama + ' masih menjalani ' + lain.nama + '. Selesaikan dulu sebelum menyetujui program baru.'); return; }
       if (p.peserta.indexOf(r.pid) < 0) p.peserta.push(r.pid);
       r.status = 'disetujui'; save(); render(); toast(pes(r.pid).nama + ' diterima di ' + p.nama);
     },
@@ -425,7 +548,10 @@
     if (k === 'login') {
       var em = val(f, 'email'), pw = val(f, 'pw'), er = $('#lerr');
       if (!em || !pw) { er.textContent = 'Email dan kata sandi wajib diisi.'; return; }
-      if (em !== 'admin@gmail.com' || pw !== 'admin123') { er.textContent = 'Email atau kata sandi salah.'; return; }
+      if (!window.Api || !Api.on) { er.textContent = 'Server LMS belum tersambung. Buka lewat alamat web LMS, bukan dari berkas.'; return; }
+      var okA = Api.login(em, pw, 'admin');
+      if (!okA) { er.textContent = 'Email atau kata sandi salah, atau terlalu banyak percobaan. Coba lagi beberapa menit lagi.'; return; }
+      db = load(); // muat() di api.js sudah mengisi data terbaru setelah login
       setLogin(true); location.hash = '#/dashboard'; render(); return;
     }
     var m = $('#modal'); if (m._submit) m._submit(f);

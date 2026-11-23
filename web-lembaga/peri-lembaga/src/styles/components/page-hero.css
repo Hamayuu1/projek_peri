@@ -50,3 +50,18 @@
   font-weight: 500;
   font-size: var(--fs-small);
 }
+
+/* ---------- Tablet dan mobile ---------- */
+@media (max-width: 1024px) {
+  .page-hero {
+    height: 320px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-hero {
+    height: auto;
+    min-height: 260px;
+    padding-block: var(--space-8);
+  }
+}

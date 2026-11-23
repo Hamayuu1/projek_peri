@@ -73,3 +73,33 @@
 .dk-case--flip .dk-media {
   order: 1;
 }
+
+/* ---------- Tablet dan mobile ---------- */
+@media (max-width: 1024px) {
+  .dk-media,
+  .dk-collage {
+    height: 280px;
+  }
+  /* Kasus berselang-seling: saat bertumpuk, teks selalu di atas foto */
+  .dk-case--flip .dk-case-text,
+  .dk-case--flip .dk-media {
+    order: 0;
+  }
+  .dk-cases {
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 640px) {
+  .dk-media,
+  .dk-collage {
+    height: 220px;
+  }
+  .dk-collage {
+    gap: var(--space-1);
+  }
+  .dk-case-text p {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+}

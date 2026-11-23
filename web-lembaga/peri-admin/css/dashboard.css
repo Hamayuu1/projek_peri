@@ -6,12 +6,7 @@
 body[data-page="dashboard"] .main {
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
-  gap: 24px;
-  padding: 32px;
-=======
   gap: var(--gutter);
->>>>>>> web-lembaga
 }
 .dash-head {
   display: flex;
@@ -52,24 +47,15 @@ body[data-page="dashboard"] .page-sub {
   font-weight: 700;
 }
 .dash-sec-head span {
-<<<<<<< HEAD
-  font-size: 13px;
-=======
   font-size: 14px;
->>>>>>> web-lembaga
   color: var(--text-secondary);
 }
 
 /* ---------- Perlu tindakan ---------- */
 .action-grid {
   display: grid;
-<<<<<<< HEAD
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-=======
   grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 x 4 kolom */
   gap: var(--gutter);
->>>>>>> web-lembaga
 }
 .dash-card {
   background: #fff;
@@ -123,11 +109,7 @@ body[data-page="dashboard"] .page-sub {
 }
 .action-hint {
   margin: 0;
-<<<<<<< HEAD
-  font-size: 13px;
-=======
   font-size: 14px;
->>>>>>> web-lembaga
   line-height: 1.45;
   color: var(--text-secondary);
 }
@@ -166,10 +148,6 @@ body[data-page="dashboard"] .page-sub {
 /* ---------- Tren & topik ---------- */
 .dash-row {
   display: grid;
-<<<<<<< HEAD
-  grid-template-columns: minmax(0, 1fr) 376px;
-  gap: 20px;
-=======
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gutter);
 }
@@ -178,7 +156,6 @@ body[data-page="dashboard"] .page-sub {
 }
 .topic-card {
   grid-column: span 4;
->>>>>>> web-lembaga
 }
 .chart-card,
 .topic-card {
@@ -197,11 +174,7 @@ body[data-page="dashboard"] .page-sub {
 }
 .card-head p {
   margin: 2px 0 0;
-<<<<<<< HEAD
-  font-size: 13px;
-=======
   font-size: 14px;
->>>>>>> web-lembaga
   color: var(--text-secondary);
 }
 .link-arrow {
@@ -232,11 +205,7 @@ body[data-page="dashboard"] .page-sub {
   font-weight: 700;
 }
 .trend-stat span {
-<<<<<<< HEAD
-  font-size: 13px;
-=======
   font-size: 14px;
->>>>>>> web-lembaga
   color: var(--text-secondary);
 }
 .delta {
@@ -287,11 +256,7 @@ body[data-page="dashboard"] .page-sub {
   height: 100%;
 }
 .bar-val {
-<<<<<<< HEAD
-  font-size: 13px;
-=======
   font-size: 14px;
->>>>>>> web-lembaga
   color: var(--text-secondary);
 }
 .bar {
@@ -308,11 +273,7 @@ body[data-page="dashboard"] .page-sub {
   color: var(--brand);
 }
 .bar-mon {
-<<<<<<< HEAD
-  font-size: 13px;
-=======
   font-size: 14px;
->>>>>>> web-lembaga
   color: var(--text-secondary);
 }
 .bar-col.now .bar-mon {
@@ -367,24 +328,15 @@ body[data-page="dashboard"] .page-sub {
 }
 .topic-note {
   margin: 0;
-<<<<<<< HEAD
-  font-size: 13px;
-=======
   font-size: 14px;
->>>>>>> web-lembaga
   color: var(--text-secondary);
 }
 
 /* ---------- Responsif ---------- */
 @media (max-width: 1100px) {
-<<<<<<< HEAD
-  .dash-row {
-    grid-template-columns: 1fr;
-=======
   .chart-card,
   .topic-card {
     grid-column: 1 / -1;
->>>>>>> web-lembaga
   }
 }
 @media (max-width: 900px) {
@@ -394,8 +346,4 @@ body[data-page="dashboard"] .page-sub {
   body[data-page="dashboard"] .main {
     padding: 20px 16px;
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> web-lembaga

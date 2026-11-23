@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/peserta.css">
+<link rel="stylesheet" href="../shared/unggah.css">
 </head>
 <body>
 <div id="login" class="pg on"></div>
@@ -21,7 +22,7 @@
 <div id="materi" class="pg"></div>
 <div id="progres" class="pg"></div>
 <div id="sertifikat" class="pg"></div>
-<button id="fab" class="fab" onclick="PS.openJoin()">+ Gabung kelas</button>
+
 <div class="nav"><button id="b-menu" onclick="PS.drawer(1)" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 6h18v2.5H3zM3 10.8h18v2.5H3zM3 15.6h18v2.5H3z"/></svg></button>
 <button id="b-beranda" onclick="PS.go('beranda')" aria-label="Beranda"><svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h5v-5h4v5h5v-8h3z"/></svg></button>
 <button id="b-kelas" onclick="PS.go('kelas')" aria-label="Kelas"><svg viewBox="0 0 24 24"><circle cx="7" cy="9" r="3"/><path d="M1.5 19c0-3 2.4-5 5.5-5s5.5 2 5.5 5zM13 5h9v8h-9z"/></svg></button>
@@ -32,6 +33,8 @@
 <div id="toast" class="toast"></div>
 </div>
 <script src="../shared/store.js"></script>
+<script src="../shared/api.js"></script>
+<script src="../shared/unggah.js"></script>
 <script src="../shared/eye.js"></script>
 <script src="../shared/sertifikat.js"></script>
 <script src="js/logo.js"></script>

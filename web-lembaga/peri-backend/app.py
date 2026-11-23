@@ -13,6 +13,8 @@ Aturan peran:
   - Role 'admin' hanya bisa ditambahkan lewat database (buat_admin.py atau SQL).
   - Pendaftar hanya boleh memakai web lembaga; endpoint admin menolaknya (403).
   - Pendaftaran program (POST /api/pendaftaran-program) wajib sudah masuk; satu akun satu kali per program.
+  - Umpan balik (POST /api/buku-tamu) wajib sudah masuk; email diambil dari akun, akun admin ditolak.
+  - Katalog program: GET /api/program (publik); tambah/ubah/hapus/foto hanya admin. Foto disimpan di folder uploads/.
 
 Pengaturan koneksi ada di file .env (salin dari .env.example).
 """
@@ -33,7 +35,7 @@ from pathlib import Path
 
 import pymysql
 from dotenv import load_dotenv
-from flask import Flask, g, jsonify, request, session
+from flask import Flask, g, jsonify, request, send_from_directory, session
 from pymysql.cursors import DictCursor
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -45,6 +47,9 @@ DB_PORT = int(os.environ.get("PERI_DB_PORT", "3306"))
 DB_USER = os.environ.get("PERI_DB_USER", "root")
 DB_PASS = os.environ.get("PERI_DB_PASS", "")
 DB_NAME = os.environ.get("PERI_DB_NAME", "peri")
+
+# Kunci bersama antara server Flask ini dan server LMS (server ke server). Kosong = jalur LMS dinonaktifkan.
+LMS_KUNCI = os.environ.get("PERI_LMS_KUNCI", "")
 
 NLP_URL = os.environ.get("PERI_NLP_URL", "http://127.0.0.1:5000/api/kategori")
 
@@ -62,6 +67,24 @@ LOGIN_MAKS_GAGAL, LOGIN_KUNCI = 5, 5 * 60   # 5 kali gagal -> tunggu 5 menit
 KIRIM_MAKS_PER_IP, KIRIM_JENDELA = 10, 10 * 60
 UMPAN_MAKS_PER_IP, UMPAN_JENDELA = 5, 10 * 60   # 5 umpan balik per 10 menit per IP
 DAFTAR_MAKS_PER_USER, DAFTAR_JENDELA = 10, 10 * 60   # 10 percobaan daftar program per 10 menit per akun
+
+FOTO_MAKS = 2 * 1024 * 1024
+FOTO_DIR = BASE / "uploads" / "program"
+KATEGORI_PROGRAM = {"pelatihan", "bisnis", "kesehatan", "komunitas"}
+PERIODE_PROGRAM = {"Mingguan", "Bulanan", "Triwulanan", "Semesteran", "Tahunan"}
+# Isi awal tabel program (sama dengan katalog yang tampil di web lembaga). Hanya dipakai saat tabel masih kosong.
+PROGRAM_AWAL = [
+    ("Bangkit dan Berdaya", "kesehatan", "Menggabungkan pemulihan trauma, pengembangan diri, dan peningkatan harapan.", "Mingguan", 0),
+    ("Inkubator Bisnis Perempuan", "bisnis", "Mentoring dan pendampingan bisnis mikro untuk anggota komunitas.", "Tahunan", 0),
+    ("Kelas Kreasi Mandiri", "bisnis", "Sistem simpan pinjam berbasis komunitas untuk mendukung usaha kecil anggota.", "Bulanan", 0),
+    ("Digital Skill Academy", "pelatihan", "Pelatihan digital marketing, desain grafis, dan content creation untuk perempuan.", "Triwulanan", 0),
+    ("Ruang Temu & Kolaborasi", "komunitas", "Sesi diskusi, sharing, dan networking antaranggota dan komunitas lain.", "Bulanan", 0),
+    ("Perempuan Sehat & Bahagia", "kesehatan", "Program edukasi kesehatan, parenting, mental health, dan kesehatan reproduksi.", "Semesteran", 0),
+    ("Beasiswa Kreatifitas Anak Perempuan", "pelatihan", "Bantuan pendidikan dan pelatihan untuk anak perempuan dari keluarga tidak mampu.", "Tahunan", 0),
+    ("Podcast Suara Perempuan", "komunitas", "Platform berbagi cerita inspiratif, edukatif, dan aspiratif untuk perempuan.", "Mingguan", 0),
+    ("Festival Perempuan Kreatif", "komunitas", "Event pameran, talkshow, dan workshop terbuka untuk masyarakat umum.", "Tahunan", 1),
+    ("Gerakan Sosial & Lingkungan", "komunitas", "Aksi sosial, daur ulang, dan kegiatan lingkungan berbasis komunitas.", "Bulanan", 1),
+]
 
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 WA_RE = re.compile(r"^08\d{8,12}$")   # nomor WhatsApp Indonesia setelah dinormalkan
@@ -93,6 +116,7 @@ app.config.update(
     SESSION_COOKIE_SECURE=os.environ.get("PERI_HTTPS") == "1",
     PERMANENT_SESSION_LIFETIME=timedelta(days=7),
     JSON_AS_ASCII=False,
+    MAX_CONTENT_LENGTH=3 * 1024 * 1024,   # batas ukuran seluruh permintaan (foto maks 2 MB)
 )
 
 
@@ -144,12 +168,32 @@ def siapkan_database():
             # Pastikan tabelnya benar-benar ada, dan tampilkan di terminal.
             cur.execute("SHOW TABLES")
             ada = {str(list(b.values())[0]).lower() for b in cur.fetchall()}
-            hilang = {"users", "kode_verifikasi", "buku_tamu", "pendaftaran_program"} - ada
+            hilang = {"users", "kode_verifikasi", "buku_tamu", "pendaftaran_program", "program"} - ada
             if hilang:
                 raise RuntimeError(
                     f"Tabel {', '.join(sorted(hilang))} gagal dibuat di database '{DB_NAME}'. "
                     "Impor schema.sql lewat phpMyAdmin (tab Import)."
                 )
+
+            # Pendaftaran menyimpan id program (dipakai LMS). Basis data lama ditambah kolomnya dan diisi dari nama program.
+            cur.execute("SHOW COLUMNS FROM pendaftaran_program LIKE 'program_id'")
+            if not cur.fetchone():
+                cur.execute("ALTER TABLE pendaftaran_program ADD COLUMN program_id INT UNSIGNED NULL AFTER program")
+                print("Kolom pendaftaran_program.program_id ditambahkan.", flush=True)
+            cur.execute(
+                "UPDATE pendaftaran_program pp JOIN program pr ON pr.nama = pp.program "
+                "SET pp.program_id = pr.id WHERE pp.program_id IS NULL"
+            )
+
+            cur.execute("SELECT COUNT(*) AS n FROM program")
+            if cur.fetchone()["n"] == 0:
+                for urut, (nama, kat, desk, per, lebih) in enumerate(PROGRAM_AWAL, start=1):
+                    cur.execute(
+                        "INSERT INTO program (nama, kategori, deskripsi, periode, lebih, urutan) "
+                        "VALUES (%s,%s,%s,%s,%s,%s)",
+                        (nama, kat, desk, per, lebih, urut),
+                    )
+                print(f"Katalog program diisi {len(PROGRAM_AWAL)} program awal.", flush=True)
             print(f"Tabel siap di database '{DB_NAME}': {', '.join(sorted(ada))}", flush=True)
     finally:
         koneksi.close()
@@ -284,15 +328,20 @@ def _cors(resp):
         resp.headers["Access-Control-Allow-Origin"] = origin
         resp.headers["Access-Control-Allow-Credentials"] = "true"
         resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
-        resp.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        resp.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
         resp.headers["Vary"] = "Origin"
-    resp.headers["Cache-Control"] = "no-store"
+    resp.headers.setdefault("Cache-Control", "no-store")
     return resp
 
 
 @app.errorhandler(404)
 def _404(_e):
     return galat("Endpoint tidak ditemukan.", 404)
+
+
+@app.errorhandler(413)
+def _413(_e):
+    return galat("Ukuran berkas terlalu besar (foto maksimal 2 MB).", 413)
 
 
 @app.errorhandler(405)
@@ -402,15 +451,17 @@ def register():
     return jsonify({"user": user}), 201
 
 
-@app.post("/api/auth/login")
-def login():
+def _proses_login(khusus_admin: bool):
+    """Login bersama. Pintu publik menolak akun admin, pintu admin menolak selain admin.
+    Pesan galat dibuat sama agar tidak membocorkan jenis akun."""
     data = data_json()
     email = bersihkan_email(data.get("email"))
     sandi = data.get("password")
     if not email or not isinstance(sandi, str) or not sandi:
         return galat("Email atau kata sandi salah.", 401)
 
-    kunci = ("login", request.remote_addr or "?", email)
+    pintu = "admin" if khusus_admin else "publik"
+    kunci = (f"login-{pintu}", request.remote_addr or "?", email)
     tunggu = _sisa_tunggu(kunci, LOGIN_MAKS_GAGAL, LOGIN_KUNCI)
     if tunggu:
         return galat(f"Terlalu banyak percobaan gagal. Coba lagi dalam {tunggu // 60 + 1} menit.", 429)
@@ -419,7 +470,8 @@ def login():
         cur.execute("SELECT id, email, role, password_hash FROM users WHERE email=%s", (email,))
         baris = cur.fetchone()
         cocok = check_password_hash(baris["password_hash"] if baris else HASH_PALSU, sandi)
-        if not baris or not cocok:
+        peran_sesuai = bool(baris) and ((baris["role"] == "admin") == khusus_admin)
+        if not baris or not cocok or not peran_sesuai:
             _catat(kunci)
             return galat("Email atau kata sandi salah.", 401)
         cur.execute("UPDATE users SET last_login=%s WHERE id=%s", (sekarang(), baris["id"]))
@@ -428,6 +480,18 @@ def login():
     user = user_publik(baris)
     masuk_sesi(user)
     return jsonify({"user": user})
+
+
+@app.post("/api/auth/login")
+def login():
+    """Pintu login web lembaga (publik). Akun admin tidak bisa masuk lewat sini."""
+    return _proses_login(khusus_admin=False)
+
+
+@app.post("/api/admin/login")
+def login_admin():
+    """Pintu login khusus panel admin. Hanya akun ber-role 'admin' yang diterima."""
+    return _proses_login(khusus_admin=True)
 
 
 @app.post("/api/auth/logout")
@@ -439,7 +503,7 @@ def logout():
 @app.get("/api/auth/me")
 def saya():
     user = user_saat_ini()
-    if not user:
+    if not user or user["role"] == "admin":   # sesi admin tidak dikenali web publik
         return galat("Belum masuk.", 401)
     return jsonify({"user": user_publik(user)})
 
@@ -471,15 +535,21 @@ def tentukan_kategori(pesan: str):
 
 @app.post("/api/buku-tamu")
 def kirim_umpan_balik():
-    """Dipakai form umpan balik web lembaga. Kategori ditentukan otomatis oleh model NLP."""
+    """Dipakai form umpan balik web lembaga (harus sudah masuk).
+    Email diambil dari akun yang sedang masuk, bukan dari isian formulir, supaya tidak bisa dipalsukan.
+    Kategori ditentukan otomatis oleh model NLP."""
+    user = user_saat_ini()
+    if not user:
+        return galat("Silakan masuk terlebih dahulu untuk mengirim umpan balik.", 401)
+    if user["role"] == "admin":
+        return galat("Akun admin tidak dapat mengirim umpan balik.", 403)
+
     d = data_json()
     nama = str(d.get("nama") or "").strip()
-    email = bersihkan_email(d.get("email"))
+    email = user["email"]
     pesan = str(d.get("pesan") or "").strip()
     if not nama or len(nama) > 100:
         return galat("Nama wajib diisi (maksimal 100 karakter).")
-    if not email:
-        return galat("Masukkan email yang valid.")
     if not 5 <= len(pesan) <= 2000:
         return galat("Pesan harus 5–2000 karakter.")
 
@@ -539,11 +609,13 @@ def daftar_program():
         if ada:
             return jsonify({"error": "Anda sudah terdaftar pada program ini.",
                             "kode": "sudah_terdaftar", "data": ada}), 409
+        cur.execute("SELECT id FROM program WHERE nama=%s", (program,))
+        pr = cur.fetchone()
         try:
             cur.execute(
-                "INSERT INTO pendaftaran_program (user_id, program, nama, email, wa) "
-                "VALUES (%s,%s,%s,%s,%s)",
-                (user["id"], program, nama, email, wa),
+                "INSERT INTO pendaftaran_program (user_id, program, program_id, nama, email, wa) "
+                "VALUES (%s,%s,%s,%s,%s,%s)",
+                (user["id"], program, pr["id"] if pr else None, nama, email, wa),
             )
         except pymysql.err.IntegrityError:
             # Dua permintaan bersamaan: kunci UNIQUE di database yang menjadi penentu.
@@ -589,6 +661,37 @@ def konfirmasi_pendaftar_program(pid: int):
     return jsonify({"ok": True, "status": status})
 
 
+@app.post("/api/lms/pendaftaran")
+def lms_pendaftaran():
+    """Dipanggil server LMS (bukan browser): daftar pendaftaran program milik akun pendaftar.
+    Wajib header X-LMS-Key sesuai PERI_LMS_KUNCI. Isi opsional: {"user_id": n} untuk satu akun saja."""
+    if not LMS_KUNCI:
+        return galat("Jalur LMS belum diaktifkan.", 503)
+    if not hmac.compare_digest(request.headers.get("X-LMS-Key", ""), LMS_KUNCI):
+        return galat("Tidak diizinkan.", 403)
+    uid = data_json().get("user_id")
+    sql = (
+        "SELECT pp.user_id, u.email, pr.id AS program_id, COALESCE(pr.nama, pp.program) AS program, pp.status, pp.nama "
+        "FROM pendaftaran_program pp JOIN users u ON u.id = pp.user_id "
+        "LEFT JOIN program pr ON pr.id = pp.program_id "
+        "WHERE u.role = 'pendaftar'"
+    )
+    arg = ()
+    if uid is not None:
+        if not isinstance(uid, int) or isinstance(uid, bool):
+            return galat("user_id tidak valid.")
+        sql += " AND pp.user_id = %s"
+        arg = (uid,)
+    with db().cursor() as cur:
+        cur.execute(sql + " ORDER BY pp.id", arg)
+        baris = cur.fetchall()
+    return jsonify({"pendaftaran": [
+        {"user_id": b["user_id"], "email": b["email"], "program_id": b["program_id"], "program": b["program"],
+         "status": b["status"], "nama": b["nama"]}
+        for b in baris
+    ]})
+
+
 @app.get("/api/buku-tamu")
 @peran_wajib("admin")
 def daftar_umpan_balik():
@@ -617,6 +720,166 @@ def tandai_dibaca(pid: int):
     with db().cursor() as cur:
         cur.execute("UPDATE buku_tamu SET dibaca=%s WHERE id=%s", (1 if nilai else 0, pid))
     return jsonify({"ok": True})
+
+
+# ------------------------------------------------------------------ katalog program
+def program_publik(b: dict) -> dict:
+    return {
+        "id": b["id"], "nama": b["nama"], "kategori": b["kategori"],
+        "deskripsi": b["deskripsi"], "periode": b["periode"],
+        "gambar": f"/uploads/program/{b['gambar']}" if b["gambar"] else None,
+        "lebih": bool(b["lebih"]),
+    }
+
+
+def ambil_program(pid: int):
+    with db().cursor() as cur:
+        cur.execute("SELECT * FROM program WHERE id=%s", (pid,))
+        return cur.fetchone()
+
+
+def periksa_isi_program(d: dict, baru: bool):
+    """Kembalikan (nilai, None) bila sah, atau (None, pesan galat)."""
+    nama = re.sub(r"\s+", " ", str(d.get("nama") or "")).strip()
+    deskripsi = re.sub(r"\s+", " ", str(d.get("deskripsi") or "")).strip()
+    kategori = str(d.get("kategori") or "").strip()
+    periode = str(d.get("periode") or "").strip()
+    if baru and (not nama or len(nama) > 150):
+        return None, "Nama program wajib diisi (maksimal 150 karakter)."
+    if not deskripsi or len(deskripsi) > 300:
+        return None, "Tujuan/deskripsi wajib diisi (maksimal 300 karakter)."
+    if kategori not in KATEGORI_PROGRAM:
+        return None, "Pilih kategori program."
+    if periode not in PERIODE_PROGRAM:
+        return None, "Pilih periode program."
+    return {"nama": nama, "deskripsi": deskripsi, "kategori": kategori,
+            "periode": periode, "lebih": 1 if d.get("lebih") is True else 0}, None
+
+
+def hapus_berkas_foto(nama_berkas):
+    if nama_berkas:
+        try:
+            (FOTO_DIR / nama_berkas).unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
+@app.get("/api/program")
+def daftar_program_publik():
+    """Katalog program untuk web lembaga (tanpa login)."""
+    with db().cursor() as cur:
+        cur.execute("SELECT * FROM program ORDER BY urutan, id")
+        return jsonify({"program": [program_publik(b) for b in cur.fetchall()]})
+
+
+@app.post("/api/program")
+@peran_wajib("admin")
+def tambah_program():
+    nilai, pesan = periksa_isi_program(data_json(), baru=True)
+    if pesan:
+        return galat(pesan)
+    with db().cursor() as cur:
+        cur.execute("SELECT 1 FROM program WHERE nama=%s", (nilai["nama"],))
+        if cur.fetchone():
+            return galat("Nama program sudah dipakai.", 409)
+        cur.execute("SELECT COALESCE(MAX(urutan), 0) + 1 AS u FROM program")
+        urutan = cur.fetchone()["u"]
+        cur.execute(
+            "INSERT INTO program (nama, kategori, deskripsi, periode, lebih, urutan) VALUES (%s,%s,%s,%s,%s,%s)",
+            (nilai["nama"], nilai["kategori"], nilai["deskripsi"], nilai["periode"], nilai["lebih"], urutan),
+        )
+        pid = cur.lastrowid
+    return jsonify({"program": program_publik(ambil_program(pid))}), 201
+
+
+@app.put("/api/program/<int:pid>")
+@peran_wajib("admin")
+def ubah_program(pid: int):
+    lama = ambil_program(pid)
+    if not lama:
+        return galat("Program tidak ditemukan.", 404)
+    d = data_json()
+    # Pendaftaran dicocokkan lewat nama, jadi nama dikunci setelah program dibuat.
+    if "nama" in d and str(d["nama"]).strip() != lama["nama"]:
+        return galat("Nama program tidak dapat diubah karena dipakai pada data pendaftaran.")
+    nilai, pesan = periksa_isi_program(d, baru=False)
+    if pesan:
+        return galat(pesan)
+    with db().cursor() as cur:
+        cur.execute(
+            "UPDATE program SET kategori=%s, deskripsi=%s, periode=%s, lebih=%s WHERE id=%s",
+            (nilai["kategori"], nilai["deskripsi"], nilai["periode"], nilai["lebih"], pid),
+        )
+    return jsonify({"program": program_publik(ambil_program(pid))})
+
+
+@app.delete("/api/program/<int:pid>")
+@peran_wajib("admin")
+def hapus_program(pid: int):
+    lama = ambil_program(pid)
+    if not lama:
+        return galat("Program tidak ditemukan.", 404)
+    with db().cursor() as cur:
+        cur.execute("UPDATE pendaftaran_program SET program_id=NULL WHERE program_id=%s", (pid,))
+        cur.execute("DELETE FROM program WHERE id=%s", (pid,))
+    hapus_berkas_foto(lama["gambar"])
+    return jsonify({"ok": True})
+
+
+def jenis_gambar(isi: bytes) -> str:
+    """Kenali jenis gambar dari isi berkas (bukan dari nama/ekstensi). Kosong bila bukan gambar yang diizinkan."""
+    if isi.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if isi.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if isi[:4] == b"RIFF" and isi[8:12] == b"WEBP":
+        return ".webp"
+    return ""
+
+
+@app.post("/api/program/<int:pid>/foto")
+@peran_wajib("admin")
+def unggah_foto_program(pid: int):
+    lama = ambil_program(pid)
+    if not lama:
+        return galat("Program tidak ditemukan.", 404)
+    berkas = request.files.get("foto")
+    if not berkas:
+        return galat("Pilih file foto terlebih dahulu.")
+    isi = berkas.read(FOTO_MAKS + 1)
+    if len(isi) > FOTO_MAKS:
+        return galat("Ukuran foto maksimal 2 MB.", 413)
+    ekstensi = jenis_gambar(isi)
+    if not ekstensi:
+        return galat("Format foto harus JPG, PNG, atau WebP.", 415)
+    FOTO_DIR.mkdir(parents=True, exist_ok=True)
+    nama_baru = f"{secrets.token_hex(8)}{ekstensi}"
+    (FOTO_DIR / nama_baru).write_bytes(isi)
+    with db().cursor() as cur:
+        cur.execute("UPDATE program SET gambar=%s WHERE id=%s", (nama_baru, pid))
+    hapus_berkas_foto(lama["gambar"])
+    return jsonify({"program": program_publik(ambil_program(pid))})
+
+
+@app.delete("/api/program/<int:pid>/foto")
+@peran_wajib("admin")
+def hapus_foto_program(pid: int):
+    lama = ambil_program(pid)
+    if not lama:
+        return galat("Program tidak ditemukan.", 404)
+    with db().cursor() as cur:
+        cur.execute("UPDATE program SET gambar=NULL WHERE id=%s", (pid,))
+    hapus_berkas_foto(lama["gambar"])
+    return jsonify({"program": program_publik(ambil_program(pid))})
+
+
+@app.get("/uploads/program/<path:nama_berkas>")
+def sajikan_foto_program(nama_berkas: str):
+    """Foto program (publik). send_from_directory menolak jalur keluar folder."""
+    resp = send_from_directory(FOTO_DIR, nama_berkas)
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    resp.headers["X-Content-Type-Options"] = "nosniff"
+    return resp
 
 
 if __name__ == "__main__":

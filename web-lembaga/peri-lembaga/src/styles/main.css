@@ -3,6 +3,7 @@
 @import "./tokens.css";
 @import "./base.css";
 @import "./grid.css";
+@import "./responsive.css";
 @import "./layout/navbar.css";
 @import "./layout/footer.css";
 @import "./layout/section.css";
@@ -22,3 +23,4 @@
 @import "./pages/tentang.css";
 @import "./pages/dokumentasi.css";
 @import "./pages/umpan-balik.css";
+@import "./aksesibilitas.css";

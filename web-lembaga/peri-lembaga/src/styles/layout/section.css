@@ -73,3 +73,11 @@
   height: 100%;
   object-fit: cover;
 }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 640px) {
+  .media-fill {
+    min-height: 240px;
+    border-radius: var(--radius-card);
+  }
+}

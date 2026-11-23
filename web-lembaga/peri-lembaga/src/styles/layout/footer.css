@@ -90,3 +90,34 @@
   line-height: var(--lh-small);
   color: var(--color-ink);
 }
+
+/* ---------- Tablet dan mobile ---------- */
+@media (max-width: 1024px) {
+  .footer-main .grid > .footer-brand,
+  .footer-main .grid > .footer-group:last-child {
+    grid-column: auto / span 12; /* merek dan kontak satu baris penuh */
+  }
+  .footer-main .grid > .footer-group:not(:last-child) {
+    grid-column: auto / span 4; /* tiga grup tautan berjajar */
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-main {
+    padding-block: var(--space-6);
+  }
+  .footer-main .grid {
+    row-gap: var(--space-4);
+  }
+  /* Dua grup tautan berdampingan, sosial media satu baris penuh */
+  .footer-main .grid > .footer-group:not(:last-child) {
+    grid-column: auto / span 6;
+  }
+  .footer-main .grid > .footer-group:nth-child(4) {
+    grid-column: auto / span 12;
+  }
+  .footer-group .footer-social {
+    flex-direction: row;
+    gap: var(--space-3);
+  }
+}

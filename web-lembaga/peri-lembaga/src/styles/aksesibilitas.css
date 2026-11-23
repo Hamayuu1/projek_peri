@@ -1,0 +1,406 @@
+/* =========================================================
+   Aksesibilitas — widget (react/islands/Aksesibilitas.tsx) dan efek pilihannya.
+   Semua efek hanya aktif bila <html> memiliki atribut data-a11y-*; tanpa atribut
+   itu, tampilan situs tidak berubah sama sekali. Impor paling akhir di main.css.
+   ========================================================= */
+
+/* ---------- 1. Ukuran teks: menimpa token tipografi ---------- */
+:root[data-a11y-teks="besar"] {
+  --fs-h1: 55px;
+  --lh-h1: 64px;
+  --fs-h2: 37px;
+  --lh-h2: 46px;
+  --fs-h3: 28px;
+  --lh-h3: 37px;
+  --fs-h4: 23px;
+  --lh-h4: 32px;
+  --fs-body: 18px;
+  --lh-body: 30px;
+  --fs-lead: 21px;
+  --lh-lead: 32px;
+  --fs-small: 16px;
+  --lh-small: 25px;
+  --fs-label: 14px;
+  --lh-label: 21px;
+}
+:root[data-a11y-teks="lebih-besar"] {
+  --fs-h1: 62px;
+  --lh-h1: 73px;
+  --fs-h2: 42px;
+  --lh-h2: 52px;
+  --fs-h3: 31px;
+  --lh-h3: 42px;
+  --fs-h4: 26px;
+  --lh-h4: 36px;
+  --fs-body: 21px;
+  --lh-body: 34px;
+  --fs-lead: 23px;
+  --lh-lead: 36px;
+  --fs-small: 18px;
+  --lh-small: 29px;
+  --fs-label: 16px;
+  --lh-label: 23px;
+}
+@media (max-width: 1024px) {
+  :root[data-a11y-teks="besar"] {
+    --fs-h1: 46px;
+    --lh-h1: 55px;
+    --fs-h2: 32px;
+    --lh-h2: 41px;
+    --fs-h3: 25px;
+    --lh-h3: 34px;
+  }
+  :root[data-a11y-teks="lebih-besar"] {
+    --fs-h1: 52px;
+    --lh-h1: 62px;
+    --fs-h2: 36px;
+    --lh-h2: 47px;
+    --fs-h3: 29px;
+    --lh-h3: 39px;
+  }
+}
+@media (max-width: 640px) {
+  :root[data-a11y-teks="besar"] {
+    --fs-h1: 37px;
+    --lh-h1: 46px;
+    --fs-h2: 28px;
+    --lh-h2: 37px;
+    --fs-h3: 23px;
+    --lh-h3: 32px;
+    --fs-h4: 21px;
+    --lh-h4: 30px;
+    --fs-lead: 18px;
+    --lh-lead: 30px;
+  }
+  :root[data-a11y-teks="lebih-besar"] {
+    --fs-h1: 42px;
+    --lh-h1: 52px;
+    --fs-h2: 31px;
+    --lh-h2: 42px;
+    --fs-h3: 26px;
+    --lh-h3: 36px;
+    --fs-h4: 23px;
+    --lh-h4: 34px;
+    --fs-lead: 21px;
+    --lh-lead: 34px;
+  }
+}
+
+/* Teks pada pop-up memakai ukuran tetap, jadi diperbesar dengan zoom */
+html[data-a11y-teks="besar"] :is(.dp-modal, .tp-page) {
+  zoom: 1.15;
+}
+html[data-a11y-teks="lebih-besar"] :is(.dp-modal, .tp-page) {
+  zoom: 1.3;
+}
+
+/* ---------- 2. Kurangi animasi ---------- */
+html[data-a11y-animasi],
+html[data-a11y-animasi] * ,
+html[data-a11y-animasi] *::before,
+html[data-a11y-animasi] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+html[data-a11y-animasi].anim-ready .reveal {
+  opacity: 1 !important;
+  translate: none !important;
+}
+html[data-a11y-animasi]::view-transition-old(root),
+html[data-a11y-animasi]::view-transition-new(root) {
+  animation: none !important;
+}
+
+/* ---------- 3. Tandai tautan ---------- */
+html[data-a11y-tautan] a:not(.btn):not(.a11y-root *) {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 3px !important;
+}
+
+/* ---------- 4. Font mudah dibaca ---------- */
+html[data-a11y-font] body :not(.a11y-root, .a11y-root *) {
+  font-family: "Atkinson Hyperlegible", "Lexend", Verdana, Tahoma, "Segoe UI", sans-serif !important;
+}
+
+/* ---------- 5. Jarak teks (WCAG 1.4.12) ---------- */
+html[data-a11y-jarak] body :not(.a11y-root, .a11y-root *, svg, svg *) {
+  line-height: 1.6 !important;
+  letter-spacing: 0.12em !important;
+  word-spacing: 0.16em !important;
+}
+html[data-a11y-jarak] body p {
+  margin-bottom: 1.5em;
+}
+
+/* ---------- 6. Sembunyikan gambar latar ---------- */
+html[data-a11y-latar] :is(.br-hero-bg, .page-hero-bg) {
+  display: none !important;
+}
+html[data-a11y-latar] :is(.br-hero, .page-hero)::after {
+  display: none;
+}
+
+/* ---------- 7. Kontras tinggi: latar hitam, teks putih, tautan kuning ---------- */
+html[data-a11y-kontras] body,
+html[data-a11y-kontras] body :not(.a11y-root, .a11y-root *, img, svg, svg *, picture, video) {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+html[data-a11y-kontras] body :is(a, a *):not(.a11y-root *),
+html[data-a11y-kontras] body :is(.btn, button):not(.a11y-root *) {
+  color: #ffeb3b !important;
+}
+html[data-a11y-kontras] body :is(.btn, button, input, select, textarea):not(.a11y-root *) {
+  border: 2px solid #ffeb3b !important;
+}
+html[data-a11y-kontras] body ::placeholder {
+  color: #d0d0d0 !important;
+  opacity: 1;
+}
+html[data-a11y-kontras] body :focus-visible {
+  outline: 3px solid #ffeb3b !important;
+  outline-offset: 2px;
+}
+html[data-a11y-kontras] body img {
+  filter: contrast(1.1);
+}
+
+/* =========================================================
+   Widget: tombol melayang dan panel pengaturan
+   ========================================================= */
+.a11y-root {
+  position: fixed;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 900; /* di atas halaman dan navbar, di bawah pop-up login (1000) dan daftar program (1100) */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+  font-family: var(--font-body);
+}
+.a11y-fab {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 2px solid var(--color-white);
+  border-radius: var(--radius-pill);
+  background: var(--color-maroon);
+  color: var(--color-white);
+  box-shadow: var(--shadow-raised);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.a11y-fab:hover {
+  background: var(--color-ink);
+}
+.a11y-fab:focus-visible,
+.a11y-root button:focus-visible {
+  outline: 3px solid var(--color-red);
+  outline-offset: 2px;
+}
+
+.a11y-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 320px;
+  max-width: calc(100vw - 2 * var(--space-2));
+  max-height: calc(100dvh - 120px);
+  overflow-y: auto;
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--color-white);
+  box-shadow: var(--shadow-raised);
+  color: var(--color-text);
+}
+.a11y-panel:focus {
+  outline: none;
+}
+.a11y-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+.a11y-title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+  color: var(--color-ink);
+}
+.a11y-close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+.a11y-close:hover {
+  background: var(--color-border-soft);
+}
+
+.a11y-label {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-ink);
+}
+.a11y-seg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+.a11y-seg-btn {
+  min-height: 40px;
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: var(--fs-small);
+  line-height: 1.2;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.a11y-seg-btn[aria-pressed="true"] {
+  background: var(--color-maroon);
+  color: var(--color-white);
+}
+
+.a11y-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.a11y-list li + li {
+  border-top: 1px solid var(--color-border-soft);
+}
+.a11y-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  text-align: left;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.a11y-track {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border);
+  transition: background var(--dur-fast) var(--ease);
+}
+.a11y-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: translate var(--dur-fast) var(--ease);
+}
+.a11y-switch[aria-checked="true"] .a11y-track {
+  background: var(--color-maroon);
+}
+.a11y-switch[aria-checked="true"] .a11y-thumb {
+  translate: 18px 0;
+}
+
+.a11y-reset {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--color-maroon);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  color: var(--color-maroon);
+  cursor: pointer;
+}
+.a11y-reset:hover {
+  background: var(--color-tint);
+}
+
+/* Widget tetap terbaca dalam mode kontras tinggi */
+html[data-a11y-kontras] .a11y-fab,
+html[data-a11y-kontras] .a11y-panel {
+  background: #000;
+  color: #fff;
+  border: 2px solid #ffeb3b;
+}
+html[data-a11y-kontras] .a11y-title,
+html[data-a11y-kontras] .a11y-label,
+html[data-a11y-kontras] .a11y-switch,
+html[data-a11y-kontras] .a11y-reset,
+html[data-a11y-kontras] .a11y-close {
+  color: #fff;
+}
+html[data-a11y-kontras] .a11y-close,
+html[data-a11y-kontras] .a11y-seg {
+  background: #222;
+}
+html[data-a11y-kontras] .a11y-seg-btn {
+  color: #fff;
+}
+html[data-a11y-kontras] .a11y-seg-btn[aria-pressed="true"] {
+  background: #ffeb3b;
+  color: #000;
+}
+html[data-a11y-kontras] .a11y-reset {
+  border-color: #ffeb3b;
+}
+html[data-a11y-kontras] .a11y-track {
+  background: #555;
+}
+html[data-a11y-kontras] .a11y-switch[aria-checked="true"] .a11y-track {
+  background: #ffeb3b;
+}
+
+@media (max-width: 640px) {
+  .a11y-root {
+    right: var(--space-2);
+    bottom: var(--space-2);
+  }
+  .a11y-fab {
+    width: 48px;
+    height: 48px;
+  }
+}

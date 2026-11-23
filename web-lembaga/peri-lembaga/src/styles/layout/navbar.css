@@ -59,3 +59,111 @@
   gap: 12px;
   justify-self: end;
 }
+
+/* ---------- Tombol hamburger: tersembunyi di desktop ---------- */
+.navbar-toggle {
+  display: none;
+  grid-area: toggle;
+  justify-self: end;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-ink);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.navbar-toggle:hover {
+  background: var(--color-tint);
+}
+.navbar-toggle-bar {
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition:
+    transform var(--dur-fast) var(--ease),
+    opacity var(--dur-fast) var(--ease);
+}
+.navbar-toggle[aria-expanded="true"] .navbar-toggle-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.navbar-toggle[aria-expanded="true"] .navbar-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+.navbar-toggle[aria-expanded="true"] .navbar-toggle-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ---------- Tablet kecil dan mobile (<= 960px): menu jadi panel ---------- */
+@media (max-width: 960px) {
+  :root {
+    --navbar-h: 72px;
+  }
+
+  .navbar {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "logo toggle"
+      "links links"
+      "actions actions";
+    height: auto;
+    min-height: var(--navbar-h);
+  }
+  .navbar-logo {
+    grid-area: logo;
+    min-height: var(--navbar-h);
+  }
+  .navbar-logo img {
+    height: 44px;
+  }
+  .navbar-links {
+    grid-area: links;
+  }
+  .navbar-actions {
+    grid-area: actions;
+  }
+  .navbar-toggle {
+    display: inline-flex;
+  }
+
+  /* Menu tersembunyi sampai tombol hamburger ditekan. */
+  .navbar-links,
+  .navbar-actions {
+    display: none;
+  }
+  .site-header[data-menu="open"] {
+    max-height: 100dvh;
+    overflow-y: auto;
+  }
+  .site-header[data-menu="open"] .navbar-links {
+    display: flex;
+  }
+  .site-header[data-menu="open"] .navbar-actions {
+    display: flex;
+  }
+
+  .navbar-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    border-top: 1px solid var(--color-border-soft);
+  }
+  .navbar-links a {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--color-border-soft);
+    font-size: var(--fs-body);
+  }
+  .navbar-actions {
+    justify-self: stretch;
+    padding-block: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+  }
+  .navbar-actions .btn {
+    flex: 1;
+  }
+}

@@ -49,3 +49,11 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--grid-gutter);
 }
+
+/* ---------- Mobile: kolom sejajar jadi satu kolom ---------- */
+@media (max-width: 640px) {
+  .field-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}

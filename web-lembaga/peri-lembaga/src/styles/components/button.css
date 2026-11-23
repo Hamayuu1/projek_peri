@@ -84,3 +84,15 @@
 .btn--sm {
   padding: 8px 16px;
 }
+
+/* ---------- Mobile: kartu selebar layar, tombol tidak ikut melebar ---------- */
+@media (max-width: 640px) {
+  .btn--block {
+    width: auto;
+    align-self: flex-start;
+    gap: var(--space-2);
+  }
+  .btn--lg {
+    padding: 14px 28px;
+  }
+}

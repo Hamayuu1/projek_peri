@@ -1,25 +1,15 @@
 // Titik masuk bersama semua halaman.
-// Setiap HTML memuat skrip ini dan menandai dirinya: <body data-page="program">.
+// Memuat CSS, animasi, transisi halaman, dan memasang komponen React.
 import "../styles/main.css";
-import { initAuthModal } from "./components/auth-modal";
+import { terapkanTersimpan } from "../react/lib/aksesibilitas";
+import { initReact } from "../react/mount";
 import { initPageTransition } from "./components/page-transition";
 import { initReveal } from "./components/reveal";
 
-type ModulHalaman = { init: () => void };
+// Pengaturan aksesibilitas pengunjung diterapkan paling awal agar tidak berkedip.
+terapkanTersimpan();
 
-// Skrip khusus per halaman, dimuat hanya di halaman yang memerlukannya.
-const HALAMAN: Record<string, () => Promise<ModulHalaman>> = {
-  program: () => import("./pages/program"),
-  hubungi: () => import("./pages/umpan-balik"),
-};
-
-async function mulai(): Promise<void> {
-  initAuthModal();
-  const muat = HALAMAN[document.body.dataset.page ?? ""];
-  if (muat) (await muat()).init();
-  // Setelah skrip halaman, agar kartu yang dibuatnya ikut dianimasikan.
-  initReveal();
-  initPageTransition();
-}
-
-void mulai();
+// Komponen React ("pulau") dipasang pada elemen [data-react] (lihat src/react/README.md).
+void initReact();
+initReveal();
+initPageTransition();
