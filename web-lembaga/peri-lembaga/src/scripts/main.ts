@@ -1,6 +1,5 @@
 // Titik masuk bersama semua halaman.
-// Memuat CSS, animasi, transisi halaman, dan memasang komponen React.
-import "../styles/main.css";
+// Animasi, transisi halaman, dan komponen React. CSS dimuat lewat <link> di tiap HTML agar tidak berkedip.
 import { terapkanTersimpan } from "../react/lib/aksesibilitas";
 import { initReact } from "../react/mount";
 import { initPageTransition } from "./components/page-transition";
