@@ -24,7 +24,7 @@ def health():
 
 @app.route("/api/kategori", methods=["POST", "OPTIONS"])
 def kategori():
-    """Menentukan kategori umpan balik: saran, kritik, pertanyaan, kerjasama, atau lainnya."""
+    """Menentukan kategori umpan balik: saran, kritik, pertanyaan, kerjasama, apresiasi, atau lainnya."""
     if request.method == "OPTIONS":
         return "", 204
     data = request.get_json(force=True, silent=True) or {}

@@ -1,6 +1,6 @@
 """Melatih model klasifikasi kategori umpan balik PERI.
 
-Kategori: saran, kritik, pertanyaan, kerjasama, lainnya.
+Kategori: saran, kritik, pertanyaan, kerjasama, apresiasi, lainnya.
 Data: dataset_kategori.csv (kolom: teks, label). Tambahkan umpan balik asli PERI ke file ini
 agar model makin akurat, lalu jalankan:  python train.py
 """

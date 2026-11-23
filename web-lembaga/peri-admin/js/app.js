@@ -820,6 +820,7 @@ const KATEGORI_LABEL = {
   kritik: "Kritik",
   pertanyaan: "Pertanyaan Program",
   kerjasama: "Kerja Sama & Kolaborasi",
+  apresiasi: "Apresiasi",
   lainnya: "Lainnya",
 };
 function esc(s) {

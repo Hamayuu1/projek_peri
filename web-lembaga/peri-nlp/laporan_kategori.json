@@ -1,19 +1,20 @@
 {
-  "jumlah_data": 240,
-  "data_latih": 192,
-  "data_uji": 48,
+  "jumlah_data": 287,
+  "data_latih": 229,
+  "data_uji": 58,
   "konfigurasi": {
     "algoritma": "logistic_regression",
     "fitur": "unigram",
     "parameter": 10.0
   },
-  "cv_f1_macro": 0.8814,
-  "accuracy": 0.8333,
-  "precision_macro": 0.8374,
-  "recall_macro": 0.8289,
-  "f1_macro": 0.8286,
+  "cv_f1_macro": 0.8665,
+  "accuracy": 0.7241,
+  "precision_macro": 0.7438,
+  "recall_macro": 0.7241,
+  "f1_macro": 0.7233,
   "confusion_matrix": {
     "label": [
+      "apresiasi",
       "kerjasama",
       "kritik",
       "lainnya",
@@ -22,39 +23,52 @@
     ],
     "nilai": [
       [
+        6,
+        3,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
         8,
         0,
+        0,
         1,
-        0,
-        1
-      ],
-      [
-        0,
-        7,
-        2,
-        0,
         0
       ],
       [
         0,
         0,
-        9,
+        8,
+        2,
         0,
-        1
+        0
       ],
       [
+        2,
+        1,
+        1,
+        5,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
         0,
         0,
-        0,
-        10,
+        8,
         0
       ],
       [
         0,
-        2,
         0,
+        2,
         1,
-        6
+        0,
+        7
       ]
     ]
   },
