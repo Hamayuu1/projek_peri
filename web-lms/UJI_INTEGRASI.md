@@ -46,13 +46,5 @@ Siapkan dua akun pendaftar di situs lembaga (A dan B). Di panel admin LMS buat s
 | 5.1 | Setelah login, hapus cookie `lms_sesi` di DevTools lalu klik fitur apa pun | Muncul "Sesi berakhir", halaman kembali ke login | [ ] |
 | 5.2 | Setelah Keluar, periksa Application > Local Storage | Kunci `peri_lms_v1` tidak ada (data peserta tidak tertinggal) | [ ] |
 
-## 5b. Kelas otomatis dari katalog lembaga
-| # | Langkah | Hasil | OK |
-|---|---|---|---|
-| 5b.1 | Di web lembaga (admin) buat program baru, lalu login admin LMS | Kelas baru muncul di daftar program LMS dengan nama yang sama (id `L<nomor>`, kode `LMS<nomor>`) | [ ] |
-| 5b.2 | Muat ulang halaman admin LMS beberapa kali | Tidak ada kelas ganda | [ ] |
-| 5b.3 | Peserta mendaftar ke program baru, admin menerima | Peserta masuk ke kelas itu saat login | [ ] |
-| 5b.4 | Login sebagai peserta (tanpa admin) setelah program baru dibuat di lembaga | Kelas belum dibuat; baru muncul saat admin memuat data | [ ] |
-
 ## 6. Catatan hasil
 Tulis di sini: tanggal uji, versi commit (`git log -1`), dan hal yang gagal.

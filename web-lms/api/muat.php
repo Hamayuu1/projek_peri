@@ -6,7 +6,7 @@ $sesi = wajibLogin();
 $pdo = koneksi();
 require __DIR__ . '/lembaga.php';
 require __DIR__ . '/berkas.php';
-$dftLembaga = sinkronSemua($pdo, $sesi['peran'] === 'admin');
+$dftLembaga = sinkronSemua($pdo);
 
 // Peserta hanya menerima datanya sendiri. Kelas yang bukan miliknya hanya menampilkan info dasar (tanpa sesi, tugas, daftar peserta).
 function batasiPeserta($o, $me) {
