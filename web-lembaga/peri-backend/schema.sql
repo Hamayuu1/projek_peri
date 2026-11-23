@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS pendaftaran_program (
   id         INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   user_id    INT UNSIGNED NOT NULL,
   program    VARCHAR(150) NOT NULL,
+  program_id INT UNSIGNED NULL,
   nama       VARCHAR(100) NOT NULL,
   email      VARCHAR(190) NOT NULL,
   wa         VARCHAR(20) NOT NULL,

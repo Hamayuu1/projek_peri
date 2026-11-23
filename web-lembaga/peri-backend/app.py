@@ -48,6 +48,9 @@ DB_USER = os.environ.get("PERI_DB_USER", "root")
 DB_PASS = os.environ.get("PERI_DB_PASS", "")
 DB_NAME = os.environ.get("PERI_DB_NAME", "peri")
 
+# Kunci bersama antara server Flask ini dan server LMS (server ke server). Kosong = jalur LMS dinonaktifkan.
+LMS_KUNCI = os.environ.get("PERI_LMS_KUNCI", "")
+
 NLP_URL = os.environ.get("PERI_NLP_URL", "http://127.0.0.1:5000/api/kategori")
 
 SMTP_HOST = os.environ.get("SMTP_HOST", "")
@@ -171,6 +174,16 @@ def siapkan_database():
                     f"Tabel {', '.join(sorted(hilang))} gagal dibuat di database '{DB_NAME}'. "
                     "Impor schema.sql lewat phpMyAdmin (tab Import)."
                 )
+
+            # Pendaftaran menyimpan id program (dipakai LMS). Basis data lama ditambah kolomnya dan diisi dari nama program.
+            cur.execute("SHOW COLUMNS FROM pendaftaran_program LIKE 'program_id'")
+            if not cur.fetchone():
+                cur.execute("ALTER TABLE pendaftaran_program ADD COLUMN program_id INT UNSIGNED NULL AFTER program")
+                print("Kolom pendaftaran_program.program_id ditambahkan.", flush=True)
+            cur.execute(
+                "UPDATE pendaftaran_program pp JOIN program pr ON pr.nama = pp.program "
+                "SET pp.program_id = pr.id WHERE pp.program_id IS NULL"
+            )
 
             cur.execute("SELECT COUNT(*) AS n FROM program")
             if cur.fetchone()["n"] == 0:
@@ -596,11 +609,13 @@ def daftar_program():
         if ada:
             return jsonify({"error": "Anda sudah terdaftar pada program ini.",
                             "kode": "sudah_terdaftar", "data": ada}), 409
+        cur.execute("SELECT id FROM program WHERE nama=%s", (program,))
+        pr = cur.fetchone()
         try:
             cur.execute(
-                "INSERT INTO pendaftaran_program (user_id, program, nama, email, wa) "
-                "VALUES (%s,%s,%s,%s,%s)",
-                (user["id"], program, nama, email, wa),
+                "INSERT INTO pendaftaran_program (user_id, program, program_id, nama, email, wa) "
+                "VALUES (%s,%s,%s,%s,%s,%s)",
+                (user["id"], program, pr["id"] if pr else None, nama, email, wa),
             )
         except pymysql.err.IntegrityError:
             # Dua permintaan bersamaan: kunci UNIQUE di database yang menjadi penentu.
@@ -644,6 +659,37 @@ def konfirmasi_pendaftar_program(pid: int):
             return galat("Pendaftar tidak ditemukan.", 404)
         cur.execute("UPDATE pendaftaran_program SET status=%s WHERE id=%s", (status, pid))
     return jsonify({"ok": True, "status": status})
+
+
+@app.post("/api/lms/pendaftaran")
+def lms_pendaftaran():
+    """Dipanggil server LMS (bukan browser): daftar pendaftaran program milik akun pendaftar.
+    Wajib header X-LMS-Key sesuai PERI_LMS_KUNCI. Isi opsional: {"user_id": n} untuk satu akun saja."""
+    if not LMS_KUNCI:
+        return galat("Jalur LMS belum diaktifkan.", 503)
+    if not hmac.compare_digest(request.headers.get("X-LMS-Key", ""), LMS_KUNCI):
+        return galat("Tidak diizinkan.", 403)
+    uid = data_json().get("user_id")
+    sql = (
+        "SELECT pp.user_id, u.email, pr.id AS program_id, COALESCE(pr.nama, pp.program) AS program, pp.status, pp.nama "
+        "FROM pendaftaran_program pp JOIN users u ON u.id = pp.user_id "
+        "LEFT JOIN program pr ON pr.id = pp.program_id "
+        "WHERE u.role = 'pendaftar'"
+    )
+    arg = ()
+    if uid is not None:
+        if not isinstance(uid, int) or isinstance(uid, bool):
+            return galat("user_id tidak valid.")
+        sql += " AND pp.user_id = %s"
+        arg = (uid,)
+    with db().cursor() as cur:
+        cur.execute(sql + " ORDER BY pp.id", arg)
+        baris = cur.fetchall()
+    return jsonify({"pendaftaran": [
+        {"user_id": b["user_id"], "email": b["email"], "program_id": b["program_id"], "program": b["program"],
+         "status": b["status"], "nama": b["nama"]}
+        for b in baris
+    ]})
 
 
 @app.get("/api/buku-tamu")
@@ -774,6 +820,7 @@ def hapus_program(pid: int):
     if not lama:
         return galat("Program tidak ditemukan.", 404)
     with db().cursor() as cur:
+        cur.execute("UPDATE pendaftaran_program SET program_id=NULL WHERE program_id=%s", (pid,))
         cur.execute("DELETE FROM program WHERE id=%s", (pid,))
     hapus_berkas_foto(lama["gambar"])
     return jsonify({"ok": True})
