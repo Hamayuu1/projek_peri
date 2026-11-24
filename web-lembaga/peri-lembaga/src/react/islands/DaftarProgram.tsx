@@ -175,7 +175,7 @@ function Popup({ info, user, tampilan, ringkasan, onTutup, onLain, onTampilan, o
     const r = await kirimPendaftaranProgram(body);
 
     if (r.status === 201) return onTampilan("berhasil", r.data.data ?? body);
-    if (r.status === 409 && r.data.kode !== "program_lain") {
+    if (r.status === 409 && r.data.kode === "sudah_terdaftar") {
       return onTampilan("duplikat", r.data.data ?? body);
     }
     setMengirim(false);
@@ -189,7 +189,7 @@ function Popup({ info, user, tampilan, ringkasan, onTutup, onLain, onTampilan, o
       setuju: "dp-setuju",
     };
     const idKolom = r.data.kolom ? peta[r.data.kolom] : undefined;
-    if (r.status === 400 && idKolom) {
+    if ((r.status === 400 || r.status === 409) && idKolom) {
       setGalat({ [idKolom]: r.error });
       document.getElementById(idKolom)?.focus();
     } else {

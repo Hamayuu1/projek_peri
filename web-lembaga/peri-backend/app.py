@@ -627,8 +627,19 @@ def daftar_program():
         if lain:
             return jsonify({
                 "error": f'Anda sudah terdaftar pada program "{lain["program"]}". '
-                         "Satu peserta hanya dapat mengikuti satu program.",
+                        "Satu peserta hanya dapat mengikuti satu program.",
                 "kode": "program_lain"}), 409
+        # Email yang sudah dipakai mendaftar oleh akun lain juga ditolak (nama boleh beda).
+        cur.execute(
+            "SELECT pp.id FROM pendaftaran_program pp "
+            "JOIN program p ON p.id = pp.program_id "
+            "WHERE pp.email=%s AND pp.user_id<>%s LIMIT 1",
+            (email, user["id"]),
+        )
+        if cur.fetchone():
+            return jsonify({
+                "error": "Email ini sudah digunakan untuk mendaftar program. Gunakan email lain.",
+                "kode": "email_terpakai", "kolom": "email"}), 409
         cur.execute("SELECT id FROM program WHERE nama=%s", (program,))
         pr = cur.fetchone()
         try:
